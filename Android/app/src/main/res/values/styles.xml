@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Table"/>
+    <style name="Table.TextView">
+        <item name="android:padding">16dp</item>
+    </style>
+    <style name="Table.TextView.Header">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>
