@@ -24,6 +24,6 @@ jobs:
       name: Build and publish docker image
       with:
         github-push-secret: ${{secrets.GITHUB_TOKEN}}
-        docker-image-name: chengeta-backend:$(date +%s)
+        docker-image-name: chengeta-backend
         dockerfile-path: ./Backend/Dockerfile
         build-context: ./Backend
