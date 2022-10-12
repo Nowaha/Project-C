@@ -3,6 +3,7 @@ using System;
 using ChengetaBackend;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChengetaBackend.Migrations
 {
     [DbContext(typeof(ChengetaContext))]
-    partial class ChengetaContextModelSnapshot : ModelSnapshot
+    [Migration("20221012182740_mi-2")]
+    partial class mi2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,7 +99,7 @@ namespace ChengetaBackend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("RangerId")
+                    b.Property<int>("IdRanger")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Start")
@@ -105,20 +107,7 @@ namespace ChengetaBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RangerId");
-
-                    b.ToTable("sessions");
-                });
-
-            modelBuilder.Entity("ChengetaBackend.Session", b =>
-                {
-                    b.HasOne("ChengetaBackend.Account", "Ranger")
-                        .WithMany()
-                        .HasForeignKey("RangerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ranger");
+                    b.ToTable("session");
                 });
 #pragma warning restore 612, 618
         }

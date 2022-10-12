@@ -3,7 +3,7 @@ using System.Diagnostics;
 namespace ChengetaBackend {
     public class AuthenticationTest {
         public static void testSessionCreationOnlyWhenPasswordValid() {
-            Sessions a = new Sessions();
+            SessionManager a = new SessionManager();
 
             string username = "account1";
             string password = "test123";
@@ -23,7 +23,7 @@ namespace ChengetaBackend {
         }
 
         public static void testHashSaltAndPasswordUniqueness() {
-            Sessions a = new Sessions();
+            SessionManager a = new SessionManager();
 
             string password1 = "test123";
             string password2 = "Test123";
