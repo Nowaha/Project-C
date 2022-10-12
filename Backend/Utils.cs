@@ -29,9 +29,9 @@ namespace ChengetaBackend
 
         public static string GenerateSecureRandomString(int lengthInBytes)
         {
-            // Ensure it is never a lenght below 1.
+            // Ensure it is never a length below 1.
             lengthInBytes = Math.Max(1, lengthInBytes);
-            
+
             /*
                 RandomNumberGenerator offers a cryptographically strong random, compared to the default random.
                 This is why I'm choosing to use it instead. Even Guid.NewGuid() is not very secure.
