@@ -4,11 +4,13 @@ using System.Collections.Generic;
 namespace ChengetaBackend
 {
     public class Sessions
-    {   
-        public List<(string username, string password, string salt)> TestAccounts = new();
-        Dictionary<Guid, string> SessionDictionary = new();
+    {
+        private static int SESSION_LENGTH_IN_BYTES = 64;
 
-        public Guid? Authenticate(string username, string password)
+        public List<(string username, string password, string salt)> TestAccounts = new();
+        Dictionary<string, string> SessionDictionary = new();
+
+        public string Authenticate(string username, string password)
         {
             foreach (var account in TestAccounts)
             {
@@ -16,7 +18,7 @@ namespace ChengetaBackend
                 {
                     if (Utils.HashPassword(password, account.salt) == account.password)
                     {
-                        var session = Guid.NewGuid();
+                        var session = Utils.GenerateSecureRandomString(SESSION_LENGTH_IN_BYTES);
                         SessionDictionary.Add(session, username);
                         return session;
                     }
@@ -24,7 +26,5 @@ namespace ChengetaBackend
             }
             return null;
         }
-
-
     }
 }
