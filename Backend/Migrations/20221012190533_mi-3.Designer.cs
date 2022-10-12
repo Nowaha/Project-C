@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ChengetaBackend.Migrations
 {
     [DbContext(typeof(ChengetaContext))]
-    [Migration("20221012185537_mi-3")]
+    [Migration("20221012190533_mi-3")]
     partial class mi3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,7 +109,7 @@ namespace ChengetaBackend.Migrations
 
                     b.HasIndex("RangerId");
 
-                    b.ToTable("session");
+                    b.ToTable("sessions");
                 });
 
             modelBuilder.Entity("ChengetaBackend.Session", b =>

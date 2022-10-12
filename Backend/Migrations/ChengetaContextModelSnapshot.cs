@@ -107,7 +107,7 @@ namespace ChengetaBackend.Migrations
 
                     b.HasIndex("RangerId");
 
-                    b.ToTable("session");
+                    b.ToTable("sessions");
                 });
 
             modelBuilder.Entity("ChengetaBackend.Session", b =>
