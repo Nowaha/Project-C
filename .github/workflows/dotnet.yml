@@ -16,7 +16,7 @@ jobs:
       run: dotnet restore
     - name: Build
       working-directory: ./Backend
-      run: dotnet build --runtime linux-x64
+      run: dotnet build --runtime linux-x64 --no-self-contained
     - name: Test
       working-directory: ./Backend
       run: dotnet test --no-build --verbosity normal
