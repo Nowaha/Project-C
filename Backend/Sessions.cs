@@ -4,9 +4,8 @@ using System.Collections.Generic;
 namespace ChengetaBackend
 {
     public class Sessions
-    {
-
-        List<(string username, string password, string salt)> TestAccounts = new();
+    {   
+        public List<(string username, string password, string salt)> TestAccounts = new();
         Dictionary<Guid, string> SessionDictionary = new();
 
         public Guid? Authenticate(string username, string password)
