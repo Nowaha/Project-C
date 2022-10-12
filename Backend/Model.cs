@@ -12,12 +12,12 @@ namespace ChengetaBackend
 
         public DbSet<Event> events { get; set; } = null!;
         public DbSet<Account> accounts { get; set; } = null!;
-        public DbSet<Session> session { get; set; } = null!;
+        public DbSet<Session> sessions { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(
-                $"UserID=postgres;Password=eniddehalas;Host=localhost;port=5432;Database=ChengetaApp;Pooling=true"
+                $"UserID=postgres;Password={DB_PASSWORD};Host=localhost;port={DB_PORT};Database=ChengetaApp;Pooling=true"
             );
         }
 

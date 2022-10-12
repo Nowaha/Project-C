@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 
 namespace ChengetaBackend
 {
-    public class Sessions
+    public class SessionManager
     {
         private static int SESSION_LENGTH_IN_BYTES = 64;
 
