@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
+using Newtonsoft.Json;
 
 namespace ChengetaBackend
 {
@@ -38,6 +39,27 @@ namespace ChengetaBackend
                     string now = DateTime.Now.ToString("HH:mm:ss");
                     Console.WriteLine("\n[" + now + "] New message:");
                     Console.WriteLine("[" + now + "] " + e.ApplicationMessage.ConvertPayloadToString());
+
+                    // Convert the details we got from the broker into a JSON object.
+                    dynamic json = JsonConvert.DeserializeObject(e.ApplicationMessage.ConvertPayloadToString());
+
+                    using (var context = new ChengetaContext()) {
+                        try {
+                            context.events.Add(new Event() {
+                                NodeId = json.nodeId,
+                                Date = Utils.UnixTimeStampToDateTime((long)json.time),
+                                Latitude = json.latitude,
+                                Longitude = json.longitude,
+                                SoundLabel = json.sound_type,
+                                Probability = json.probability,
+                                SoundURL = json.sound
+                            });
+                            context.SaveChanges();
+                        } catch (Exception ex) {
+                            Console.WriteLine(ex);
+                        }
+                    }
+
                     return Task.CompletedTask;
                 };
 
