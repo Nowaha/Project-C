@@ -7,23 +7,14 @@ namespace ChengetaBackend
 {
     public class ChengetaContext : DbContext
     {
-        public static string DB_PASSWORD = "123";
-        public static int DB_PORT = 5432;
-
         public DbSet<Event> events { get; set; } = null!;
         public DbSet<Account> accounts { get; set; } = null!;
         public DbSet<Session> sessions { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(
-                $"UserID=postgres;Password={DB_PASSWORD};Host=localhost;port={DB_PORT};Database=ChengetaApp;Pooling=true"
-            );
+            optionsBuilder.UseNpgsql(DatabaseLogin.generateConnectionString());
         }
-
-        // protected override void OnModelCreating(ModelBuilder modelBuilder) {
-        //     modelBuilder.Entity<Session>().HasOne(a => a.Ranger).WithOne().HasForeignKey<Session>(b => b.Id);
-        // }  
     }
 
     public class Event
