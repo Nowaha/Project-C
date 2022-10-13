@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0
+FROM mcr.microsoft.com/dotnet/runtime:6.0
 
 # Copy built files to appropiate directories
 COPY ./bin/Debug/net6.0/linux-x64 .
@@ -16,4 +16,5 @@ RUN apt-get install -y dotnet-sdk-6.0
 RUN dotnet tool install --global dotnet-ef
 ENV PATH $PATH:/root/.dotnet/tools
 
-ENTRYPOINT ["dotnet", "ChengetaBackend.dll"]
+# Update database & run server
+ENTRYPOINT ["/bin/sh -c \"(cd /src/; dotnet ef database update)\" && dotnet ChengetaBackend.dll"]
