@@ -17,4 +17,4 @@ RUN dotnet tool install --global dotnet-ef
 ENV PATH $PATH:/root/.dotnet/tools
 
 # Update database & run server
-ENTRYPOINT ["/bin/sh -c '(cd /src/; dotnet ef database update)' && dotnet ChengetaBackend.dll"]
+ENTRYPOINT ["/bin/sh" "-c" "(cd /src/; dotnet ef database update) && dotnet ChengetaBackend.dll"]
