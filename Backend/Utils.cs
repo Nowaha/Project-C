@@ -42,6 +42,11 @@ namespace ChengetaBackend
             return Convert.ToBase64String(RandomNumberGenerator.GetBytes(lengthInBytes));
         }
 
+        public static (string hashed, string salt) HashNewPassword(string password) {
+            string salt = GenerateSecureRandomString(32);
+            return (HashPassword(password, salt), salt);
+        }
+
     }
 
 }
