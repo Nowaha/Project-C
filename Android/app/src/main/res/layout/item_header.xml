@@ -1,32 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rowLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:background="@color/chengeta_primary">
 
     <TextView
-        android:id="@+id/text1"
-        style="@style/Table.TextView"
+        style="@style/Table.TextView.Header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        tools:text="Test1" />
+        android:text="Time" />
 
     <TextView
-        android:id="@+id/text2"
-        style="@style/Table.TextView"
+        style="@style/Table.TextView.Header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        tools:text="Test2" />
+        android:text="Sound" />
 
     <TextView
-        android:id="@+id/text3"
-        style="@style/Table.TextView"
+        style="@style/Table.TextView.Header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        tools:text="Test3" />
+        android:text="Percentage" />
 
 </LinearLayout>
