@@ -15,7 +15,8 @@ namespace ChengetaBackend
         private static int maxSize = 100;
         private static Dictionary<string, RequestHandler> requestHandlers = new Dictionary<string, RequestHandler>();
 
-        private static void setupHandlers() {
+        private static void setupHandlers()
+        {
             requestHandlers.Clear();
             requestHandlers.Add("/user/login", new LoginRequestHandler());
         }
@@ -77,11 +78,15 @@ namespace ChengetaBackend
                     var argsRaw = subArgs.Split("&");
 
                     var argsFinal = new Dictionary<string, string>();
-                    foreach (string raw in argsRaw) {
+                    foreach (string raw in argsRaw)
+                    {
                         var split = raw.Split("=");
-                        if (split.Length == 2) {
+                        if (split.Length == 2)
+                        {
                             argsFinal.Add(HttpUtility.UrlDecode(split[0]), HttpUtility.UrlDecode(split[1]));
-                        } else {
+                        }
+                        else
+                        {
                             argsFinal.Add(HttpUtility.UrlDecode(raw), null);
                         }
                     }
@@ -90,15 +95,20 @@ namespace ChengetaBackend
                     var codeName = Message.NOT_FOUND;
                     var res = new byte[0];
 
-                    foreach (string key in requestHandlers.Keys) {
-                        if (key.ToLower() == subUrl.ToLower()) {
+                    foreach (string key in requestHandlers.Keys)
+                    {
+                        if (key.ToLower() == subUrl.ToLower())
+                        {
                             var handler = requestHandlers[key];
-                            if (Enum.GetName(handler.Method) == requestMethod) {
+                            if (Enum.GetName(handler.Method) == requestMethod)
+                            {
                                 var handled = handler.HandleRequest(argsFinal);
                                 code = handled.Code;
                                 codeName = handled.Message;
                                 res = handled.Data;
-                            } else {
+                            }
+                            else
+                            {
                                 code = Code.METHOD_NOT_ALLOWED;
                                 codeName = Message.METHOD_NOT_ALLOWED;
                             }
