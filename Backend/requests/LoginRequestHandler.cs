@@ -16,8 +16,6 @@ namespace ChengetaBackend
             if ((!args.ContainsKey("password") || args["password"] == null)) return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Missing \"password\" field.");
             if (Program.sessionManager.SessionDictionary.ContainsKey(session)) return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Error: ALREADY_LOGGED_IN");
 
-            System.Console.WriteLine(session);
-
             string username = args["username"];
             string password = args["password"];
 
