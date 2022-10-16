@@ -14,8 +14,13 @@ namespace ChengetaBackend
         {
             runTests();
 
-            var ses = new SessionManager();
+            // Should probably be removed or replaced in production.
+            createTestAdminAccount();
 
+            Run().Wait();
+        }
+
+        private static void createTestAdminAccount() {
             using (var db = new ChengetaContext())
             {
                 if (db.accounts.Where(a => a.Username == "admin").FirstOrDefault() == null)
@@ -36,10 +41,6 @@ namespace ChengetaBackend
                     db.SaveChanges();
                 }
             }
-
-            System.Console.WriteLine(ses.Authenticate("admin", "Pass123").sessionKey);
-
-            //Run().Wait();
         }
 
         public static async Task Run()
