@@ -9,7 +9,7 @@ namespace ChengetaBackend
         private static int SESSION_LENGTH_IN_BYTES = 64;
 
         // public List<(string username, string password, string salt)> TestAccounts = new();
-        Dictionary<string, string> SessionDictionary = new();
+        public Dictionary<string, string> SessionDictionary = new();
 
         public AuthResult Authenticate(string username, string password)
         {
