@@ -17,7 +17,7 @@ namespace ChengetaBackend
 
         private static void setupHandlers() {
             requestHandlers.Clear();
-            requestHandlers.Add("/user/login", new TestRH());
+            requestHandlers.Add("/user/login", new LoginRequestHandler());
         }
 
         public static void Run()
