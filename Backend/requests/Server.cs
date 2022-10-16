@@ -4,11 +4,14 @@ using System.Net.Sockets;
 using System.Text;
 using System;
 using System.Web;
+using System.Threading.Tasks;
 
 namespace ChengetaBackend
 {
     class Server
     {
+        private static string LOG_TAG = "HTTP";
+
         private static string LISTENING_IP = "192.168.178.175";
         private static int LISTENING_PORT = 34100;
 
@@ -23,13 +26,18 @@ namespace ChengetaBackend
             requestHandlers.Add("/user/login", new LoginRequestHandler());
         }
 
-        public static void Run()
+        public static async Task Run()
         {
-            System.Console.WriteLine("Server is starting...");
+            Program.log(LOG_TAG, "Server is starting...");
 
             // Register all of the handlers
             setupHandlers();
+    
+            await Start();
+        }
 
+        private static async Task Start()
+        {
             IPAddress ipAddress = IPAddress.Parse(LISTENING_IP);
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, LISTENING_PORT);
 
@@ -37,11 +45,13 @@ namespace ChengetaBackend
             listener.Bind(localEndPoint);
             listener.Listen(100);
 
-            while (true)
+            Program.log(LOG_TAG, "Restful API started, not waiting for requests...");
+
+            while (listener.Connected)
             {
                 Socket currentConnection = listener.Accept();
 
-                System.Console.WriteLine("New request, reading...");
+                Program.log(LOG_TAG, "New request, reading...");
 
                 string data = "";
 
@@ -56,7 +66,7 @@ namespace ChengetaBackend
                     loop++;
                     if (loop > DATA_READ_TIMEOUT)
                     {
-                        System.Console.WriteLine("Terminated early!");
+                        Program.log(LOG_TAG, "Terminated early!");
                     }
                 } while (currentConnection.Available > 0);
 
@@ -84,6 +94,7 @@ namespace ChengetaBackend
                     // We only support HTTP/1.1 requests - we are now certain it is actually a HTTP request.
                     if (requestVersion == "HTTP/1.1")
                     {
+                        Program.log(LOG_TAG, httpLine);
                         Dictionary<string, string> argsFinal = new();
 
                         // Split the URL at the "?", if there is one.
@@ -112,7 +123,8 @@ namespace ChengetaBackend
 
                         // Try to retrieve an Authorization header (has the session key) if there is one present
                         string auth = "";
-                        if (data.Contains("Authorization: ")) {
+                        if (data.Contains("Authorization: "))
+                        {
                             auth = data.Split("Authorization: ")[1].Split("\n")[0].Replace("\r", "").Trim();
                         }
 
