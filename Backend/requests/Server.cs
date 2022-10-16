@@ -95,9 +95,9 @@ namespace ChengetaBackend
                             var handler = requestHandlers[key];
                             if (Enum.GetName(handler.Method) == requestMethod) {
                                 var handled = handler.HandleRequest(argsFinal);
-                                code = handled.code;
-                                codeName = handled.message;
-                                res = handled.data;
+                                code = handled.Code;
+                                codeName = handled.Message;
+                                res = handled.Data;
                             } else {
                                 code = Code.METHOD_NOT_ALLOWED;
                                 codeName = Message.METHOD_NOT_ALLOWED;
