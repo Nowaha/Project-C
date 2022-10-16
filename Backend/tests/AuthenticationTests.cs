@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace ChengetaBackend {
     public class AuthenticationTest {
-        public static void testSessionCreationOnlyWhenPasswordValid() {
+        /* public static void testSessionCreationOnlyWhenPasswordValid() {
             SessionManager a = new SessionManager();
 
             string username = "account1";
@@ -20,7 +20,7 @@ namespace ChengetaBackend {
             Debug.Assert(a.Authenticate(username, closePassword) == null);
             Debug.Assert(a.Authenticate(username, wrongPassword) == null);
             Debug.Assert(a.Authenticate(username, password) != null);
-        }
+        } */
 
         public static void testHashSaltAndPasswordUniqueness() {
             SessionManager a = new SessionManager();

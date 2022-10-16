@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ChengetaBackend
 {
@@ -6,24 +8,54 @@ namespace ChengetaBackend
     {
         private static int SESSION_LENGTH_IN_BYTES = 64;
 
-        public List<(string username, string password, string salt)> TestAccounts = new();
+        // public List<(string username, string password, string salt)> TestAccounts = new();
         Dictionary<string, string> SessionDictionary = new();
 
-        public string Authenticate(string username, string password)
+        public AuthResult Authenticate(string username, string password)
         {
-            foreach (var account in TestAccounts)
+            try
             {
-                if (username == account.username)
+                using (var db = new ChengetaContext())
                 {
-                    if (Utils.HashPassword(password, account.salt) == account.password)
-                    {
-                        var session = Utils.GenerateSecureRandomString(SESSION_LENGTH_IN_BYTES);
-                        SessionDictionary.Add(session, username);
-                        return session;
-                    }
+                    var account = db.accounts.Where(acc => acc.Username.ToLower() == username.ToLower()).FirstOrDefault();
+                    if (account == null) return new AuthResult(ResultCode.INVALID_USERNAME);
+                    if (Utils.HashPassword(password, account.Salt) != account.Password) return new AuthResult(ResultCode.INCORRECT_PASSWORD);
+
+                    // Username & password are correct, create new session
+                    var session = Utils.GenerateSecureRandomString(SESSION_LENGTH_IN_BYTES);
+                    SessionDictionary.Add(session, username);
+                    return new AuthResult(ResultCode.SUCCESS, session);
                 }
+            } catch (Exception ex) {
+                System.Console.WriteLine(ex.ToString());
+                return new AuthResult(ResultCode.ERROR);
             }
-            return null;
+        }
+
+        public class AuthResult
+        {
+            public ResultCode resultCode { get; private set; }
+            public string sessionKey { get; private set; } = null;
+
+            public AuthResult(ResultCode resultCode)
+            {
+                this.resultCode = resultCode;
+            }
+
+            public AuthResult(ResultCode code, string sessionKey)
+            {
+                this.resultCode = code;
+                this.sessionKey = sessionKey;
+            }
+
+        }
+
+        public enum ResultCode
+        {
+            INVALID_USERNAME,
+            INCORRECT_PASSWORD,
+            ERROR,
+            SUCCESS
         }
     }
 }
