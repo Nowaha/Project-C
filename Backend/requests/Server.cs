@@ -12,9 +12,6 @@ namespace ChengetaBackend
     {
         private static string LOG_TAG = "HTTP";
 
-        private static string LISTENING_IP = "192.168.178.175";
-        private static int LISTENING_PORT = 34100;
-
         private static int DATA_READ_TIMEOUT = 100;
         private static Dictionary<string, RequestHandler> requestHandlers = new Dictionary<string, RequestHandler>();
 
@@ -36,18 +33,38 @@ namespace ChengetaBackend
             await Start();
         }
 
+        public static bool run = true;
+
+        private static Socket listener;
+
+        public static void Stop() {
+            run = false;
+            var w = new byte[0];
+            
+            Console.ForegroundColor = ConsoleColor.Red;
+            Program.log(LOG_TAG, "Shutting down socket...");
+            Console.ResetColor();
+
+            listener.Close();
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Program.log(LOG_TAG, "Socket shut down.");
+            Console.ResetColor();
+        }
+
         private static async Task Start()
         {
-            IPAddress ipAddress = IPAddress.Parse(LISTENING_IP);
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, LISTENING_PORT);
+            IPAddress ipAddress = IPAddress.Parse(Environment.HTTP_IP);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Environment.HTTP_PORT);
 
-            Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             listener.Bind(localEndPoint);
             listener.Listen(100);
 
-            Program.log(LOG_TAG, "Restful API started, now waiting for requests...");
+            Program.log(LOG_TAG, $"Restful API started ({ipAddress}:{Environment.HTTP_PORT}).");
+            Program.log(LOG_TAG, "Now waiting for requests...");
 
-            while (listener.Connected)
+            while (run)
             {
                 Socket currentConnection = listener.Accept();
 

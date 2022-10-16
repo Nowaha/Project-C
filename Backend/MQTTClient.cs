@@ -36,7 +36,6 @@ namespace ChengetaBackend
 
                 mqttClient.ApplicationMessageReceivedAsync += e =>
                 {
-                    Program.log(LOG_TAG, " ");
                     Program.log(LOG_TAG, "New message:");
                     Program.log(LOG_TAG, e.ApplicationMessage.ConvertPayloadToString());
 
@@ -82,9 +81,12 @@ namespace ChengetaBackend
         public async Task Disconnect() {
             var mqttClientDisconnectOptions = factory.CreateClientDisconnectOptionsBuilder().Build();
             await mqttClient.DisconnectAsync(mqttClientDisconnectOptions, CancellationToken.None);
+
             Console.ForegroundColor = ConsoleColor.Red;
             Program.log(LOG_TAG, "Disconnected from broker.");
             Console.ResetColor();
+
+            Server.Stop();
         }
 
     }
