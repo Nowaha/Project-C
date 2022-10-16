@@ -9,12 +9,14 @@ namespace ChengetaBackend
 {
     class Server
     {
-        private static string listeningIP = "192.168.178.175";
-        private static int listeningPort = 34100;
+        private static string LISTENING_IP = "192.168.178.175";
+        private static int LISTENING_PORT = 34100;
 
-        private static int maxSize = 100;
+        private static int DATA_READ_TIMEOUT = 100;
         private static Dictionary<string, RequestHandler> requestHandlers = new Dictionary<string, RequestHandler>();
 
+
+        // Any new handlers for paths should be added here
         private static void setupHandlers()
         {
             requestHandlers.Clear();
@@ -25,10 +27,11 @@ namespace ChengetaBackend
         {
             System.Console.WriteLine("Server is starting...");
 
+            // Register all of the handlers
             setupHandlers();
 
-            IPAddress ipAddress = IPAddress.Parse(listeningIP);
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, listeningPort);
+            IPAddress ipAddress = IPAddress.Parse(LISTENING_IP);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, LISTENING_PORT);
 
             Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             listener.Bind(localEndPoint);
@@ -42,6 +45,7 @@ namespace ChengetaBackend
 
                 string data = "";
 
+                // A loop to read any and all incoming data until there is no more left to read (.Available)
                 int loop = 0;
                 do
                 {
@@ -50,12 +54,13 @@ namespace ChengetaBackend
                     data += Encoding.ASCII.GetString(buffer, 0, receivedData);
 
                     loop++;
-                    if (loop > maxSize)
+                    if (loop > DATA_READ_TIMEOUT)
                     {
                         System.Console.WriteLine("Terminated early!");
                     }
                 } while (currentConnection.Available > 0);
 
+                // If there is no data, we can not do anything with it, so we close it here.
                 if (data.Length == 0 || data.Trim().Length == 0)
                 {
                     currentConnection.Send(Encoding.ASCII.GetBytes("empty request"));
@@ -64,72 +69,106 @@ namespace ChengetaBackend
                     continue;
                 }
 
-                var httpLine = data.Split("\n")[0];
-                var httpRequestData = httpLine.Split(" ");
+                // The first line should be the HTTP info header (format is <Method> <URL> <version>)
+                string httpLine = data.Split("\n")[0];
+                string[] httpRequestData = httpLine.Split(" ");
+
+                // If there is 3 values (see format above), then it's most likely a valid HTTP header.
                 if (httpRequestData.Length == 3)
                 {
-                    var requestMethod = httpRequestData[0].Trim();
+                    // 0:<Method> 1:<URL> 2:<version>
+                    string requestMethod = httpRequestData[0];
+                    string requestUrlFull = httpRequestData[1];
+                    string requestVersion = httpRequestData[2].Replace("\r", "");
 
-                    var requestSub = httpRequestData[1].Trim();
-                    var requestSplit = requestSub.Split("?");
-                    var subUrl = requestSplit[0];
-                    var subArgs = requestSplit[1];
-
-                    var argsRaw = subArgs.Split("&");
-
-                    var argsFinal = new Dictionary<string, string>();
-                    foreach (string raw in argsRaw)
+                    // We only support HTTP/1.1 requests - we are now certain it is actually a HTTP request.
+                    if (requestVersion == "HTTP/1.1")
                     {
-                        var split = raw.Split("=");
-                        if (split.Length == 2)
-                        {
-                            argsFinal.Add(HttpUtility.UrlDecode(split[0]), HttpUtility.UrlDecode(split[1]));
-                        }
-                        else
-                        {
-                            argsFinal.Add(HttpUtility.UrlDecode(raw), null);
-                        }
-                    }
+                        Dictionary<string, string> argsFinal = new();
 
-                    var code = Code.NOT_FOUND;
-                    var codeName = Message.NOT_FOUND;
-                    var res = new byte[0];
+                        // Split the URL at the "?", if there is one.
+                        string[] requestUrlArgsSplit = requestUrlFull.Split("?");
+                        // Even if there is no "?", this will still contain the full URl then.
+                        string requestUrlOnly = requestUrlArgsSplit[0];
 
-                    foreach (string key in requestHandlers.Keys)
-                    {
-                        if (key.ToLower() == subUrl.ToLower())
+                        // If the split == 2, then there's valid values at the right of the "?" - read arguments
+                        // Example: login?username=User&password=Pass
+                        // Split to login and username=...
+                        if (requestUrlArgsSplit.Length == 2)
                         {
-                            var handler = requestHandlers[key];
-                            if (Enum.GetName(handler.Method) == requestMethod)
+                            string subArgs = requestUrlArgsSplit[1];
+                            string[] argsRaw = subArgs.Split("&");
+
+                            foreach (string raw in argsRaw)
                             {
-                                var handled = handler.HandleRequest(argsFinal);
-                                code = handled.Code;
-                                codeName = handled.Message;
-                                res = handled.Data;
+                                // Split the values, username=User -> ["username", "User"] (or if there is no =, it's just the key)
+                                string[] split = raw.Split("=");
+                                if (split.Length == 2)
+                                    argsFinal.Add(HttpUtility.UrlDecode(split[0]), HttpUtility.UrlDecode(split[1]));
+                                else
+                                    argsFinal.Add(HttpUtility.UrlDecode(raw), null);
                             }
-                            else
-                            {
-                                code = Code.METHOD_NOT_ALLOWED;
-                                codeName = Message.METHOD_NOT_ALLOWED;
-                            }
-                            break;
                         }
-                    }
 
-                    var header = Encoding.UTF8.GetBytes($"HTTP/1.1 {code} {codeName} \r\n Connection: close \r\n\r\n");
+                        // Try to retrieve an Authorization header (has the session key) if there is one present
+                        string auth = "";
+                        if (data.Contains("Authorization: ")) {
+                            auth = data.Split("Authorization: ")[1].Split("\n")[0].Replace("\r", "").Trim();
+                        }
 
-                    byte[] result = new byte[header.Length + res.Length];
-                    for (int i = 0; i < header.Length; i++)
-                    {
-                        result[i] = header[i];
+                        int code = Code.NOT_FOUND;
+                        string codeName = Message.NOT_FOUND;
+                        byte[] payload = new byte[0];
+
+                        foreach (string key in requestHandlers.Keys)
+                        {
+                            // Check if the handler is set up to accept this url (i.e. "/user/login")
+                            // The second if is incase the request includes an extra / (/user/login/)
+                            if (key.ToLower() == requestUrlOnly.ToLower() || key.ToLower() + "/" == requestUrlOnly.ToLower())
+                            {
+                                var handler = requestHandlers[key];
+
+                                // Check if the handler is set up to use the requested method.
+                                if (Enum.GetName(handler.Method) == requestMethod)
+                                {
+                                    // Let the handler handler everything, and then use its Response object's values.
+                                    Response handled = handler.HandleRequest(auth, argsFinal);
+
+                                    code = handled.Code;
+                                    codeName = handled.Message;
+                                    payload = handled.Data;
+                                }
+                                else
+                                {
+                                    // Return "405 Method Not Allowed" if not
+                                    code = Code.METHOD_NOT_ALLOWED;
+                                    codeName = Message.METHOD_NOT_ALLOWED;
+                                }
+                                break;
+                            }
+                        }
+
+                        // The default start of the HTTP header, also asking the connection to be closed.
+                        // Also defining the content length
+                        byte[] header = Encoding.UTF8.GetBytes($"HTTP/1.1 {code} {codeName} \r\nConnection: close\r\nContent-Type: application/json\r\nContent-Length: " + payload.Length + "\r\n\r\n");
+
+                        // We need to add the data to the header, so we create a new array with the right length...
+                        byte[] response = new byte[header.Length + payload.Length];
+
+                        // ...then add the header...
+                        for (int i = 0; i < header.Length; i++)
+                            response[i] = header[i];
+
+                        // ...and then finally add the data.
+                        for (int i = 0; i < payload.Length; i++)
+                            response[i + header.Length] = payload[i];
+
+                        // We can then finally send all this as a response.
+                        currentConnection.Send(response);
                     }
-                    for (int i = 0; i < res.Length; i++)
-                    {
-                        result[i + header.Length] = res[i];
-                    }
-                    currentConnection.Send(result);
                 }
 
+                // No matter what happens, we should always end by properly closing the connection/socket.
                 currentConnection.Disconnect(false);
                 currentConnection.Close();
             }
