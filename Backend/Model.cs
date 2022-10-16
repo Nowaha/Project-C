@@ -13,7 +13,7 @@ namespace ChengetaBackend
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(DatabaseLogin.generateConnectionString());
+            optionsBuilder.UseNpgsql(Environment.generateConnectionString());
         }
     }
 
