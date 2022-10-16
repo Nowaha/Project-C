@@ -8,6 +8,7 @@ namespace ChengetaBackend
     public class Program
     {
 
+        public static SessionManager sessionManager = new SessionManager();
         public static MqttFactory mqttFactory = new MqttFactory();
 
         public static void Main(string[] args)
