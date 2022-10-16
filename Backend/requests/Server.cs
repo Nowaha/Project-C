@@ -45,7 +45,7 @@ namespace ChengetaBackend
             listener.Bind(localEndPoint);
             listener.Listen(100);
 
-            Program.log(LOG_TAG, "Restful API started, not waiting for requests...");
+            Program.log(LOG_TAG, "Restful API started, now waiting for requests...");
 
             while (listener.Connected)
             {
