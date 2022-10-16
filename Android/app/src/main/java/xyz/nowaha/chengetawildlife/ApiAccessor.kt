@@ -10,7 +10,7 @@ import java.net.*
 
 object ApiAccessor {
 
-    private const val URL_BASE = "http://192.168.178.175:34100"
+    private const val URL_BASE = "http://173.249.1.107:34100"
 
     suspend fun attemptLogin(username: String, password: String): JsonObject? =
         withContext(Dispatchers.IO) {
