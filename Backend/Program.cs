@@ -14,6 +14,7 @@ namespace ChengetaBackend
 
         public static void Main(string[] args)
         {
+            createTestAdminAccount();
             runTests();
             Run().Wait();
         }
