@@ -42,8 +42,6 @@ object ApiAccessor {
                             setRequestProperty("Authorization", Session.key ?: "NO_SESSION")
                             setRequestProperty("Accept", "*")
 
-                            println("Sent 'GET' request to URL : $url; Response Code : $responseCode")
-
                             connection!!.inputStream.bufferedReader().use {
                                 it.readText()
                             }
