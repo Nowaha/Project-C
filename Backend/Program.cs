@@ -15,7 +15,6 @@ namespace ChengetaBackend
         public static void Main(string[] args)
         {
             runTests();
-            Server.Run();
             Run().Wait();
         }
 
@@ -46,7 +45,7 @@ namespace ChengetaBackend
         public static async Task Run()
         {
             ChengetaBackend.MQTTClient client = new MQTTClient(mqttFactory);
-            await client.Connect();
+            Parallel.Invoke(() => Server.Run(), () => client.Connect());
         }
 
         private static void runTests()
