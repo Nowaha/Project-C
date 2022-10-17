@@ -21,6 +21,7 @@ namespace ChengetaBackend
         {
             requestHandlers.Clear();
             requestHandlers.Add("/user/login", new LoginRequestHandler());
+            requestHandlers.Add("/events/latest", new LatestEventsRequestHandler());
         }
 
         public static async Task Run()
