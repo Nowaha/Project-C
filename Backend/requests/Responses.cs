@@ -37,6 +37,7 @@ namespace ChengetaBackend
     {
         public static readonly int SUCCESS = 200;
         public static readonly int BAD_REQUEST = 400;
+        public static readonly int UNAUTHORIZED = 401;
         public static readonly int FORBIDDEN = 403;
         public static readonly int NOT_FOUND = 404;
         public static readonly int METHOD_NOT_ALLOWED = 405;
@@ -46,6 +47,7 @@ namespace ChengetaBackend
     {
         public static readonly string SUCCESS = "OK";
         public static readonly string BAD_REQUEST = "BAD REQUEST";
+        public static readonly string UNAUTHORIZED = "UNAUTHORIZED";
         public static readonly string FORBIDDEN = "FORBIDDEN";
         public static readonly string NOT_FOUND = "NOT FOUND";
         public static readonly string METHOD_NOT_ALLOWED = "METHOD NOT";
