@@ -31,50 +31,7 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
         this.adapter = RecentEventsListAdapter(requireActivity().applicationContext, data)
         recyclerView.adapter = this.adapter
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            Session.key = ApiAccessor.attemptLogin("admin", "Pass123")!!.getString("sessionKey")
-            loadNewData(100)
-
-            while (true) {
-                delay(2000)
-                loadNewData(5)
-            }
-        }
-    }
-
-    var highestIdLoaded = -1
-    suspend fun loadNewData(amount: Int) {
-        var data = ApiAccessor.getLatestEvents(amount)
-        if (data != null) {
-            if (data.getBoolean("success")!!) {
-                println(data.getString("message"))
-
-                var format = SimpleDateFormat("HH:mm:ss")
-                var dataArray = data["data"]?.jsonArray!!
-                for (valueRaw in dataArray.reversed()) {
-                    var asObject = valueRaw.jsonObject!!
-                    var id = asObject["Id"]!!.jsonPrimitive.int
-
-                    if (id > highestIdLoaded) {
-                        highestIdLoaded = id
-                    } else {
-                        break
-                    }
-
-                    withContext(Dispatchers.Main) {
-                        var date = Date(asObject["Date"]!!.jsonPrimitive.long)
-                        var label = asObject.getString("SoundLabel")!!
-                        label = label[0].uppercase() + label.substring(1)
-
-                        addTableRow(RecentEventsListViewModel(
-                            format.format(date),
-                            label,
-                            asObject["Probability"]!!.jsonPrimitive.int.toString() + "%"
-                        ))
-                    }
-                }
-            }
-        }
+        useTestData()
     }
 
     fun useTestData() {
