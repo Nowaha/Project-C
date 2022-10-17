@@ -6,14 +6,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.serialization.json.*
+import xyz.nowaha.chengetawildlife.ApiAccessor
 import xyz.nowaha.chengetawildlife.R
+import xyz.nowaha.chengetawildlife.Session
+import xyz.nowaha.chengetawildlife.extensions.getBoolean
+import xyz.nowaha.chengetawildlife.extensions.getString
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 class TestTableFragment : Fragment(R.layout.fragment_test_table) {
 
@@ -29,7 +31,6 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
         this.adapter = RecentEventsListAdapter(requireActivity().applicationContext, data)
         recyclerView.adapter = this.adapter
 
-        // Remove when actual data can be inserted
         useTestData()
     }
 
