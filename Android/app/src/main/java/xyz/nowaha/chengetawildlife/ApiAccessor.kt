@@ -5,7 +5,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import xyz.nowaha.chengetawildlife.data.Event
+import xyz.nowaha.chengetawildlife.extensions.*
 import java.net.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 object ApiAccessor {
 
@@ -20,23 +24,46 @@ object ApiAccessor {
             )
         }
 
-    suspend fun getLatestEvents() =
+    suspend fun getLatestEvents(): ArrayList<Event> =
         withContext(Dispatchers.IO) {
             return@withContext getLatestEvents(rows = null, offset = null)
         }
 
-    suspend fun getLatestEvents(rows: Int?) =
+    suspend fun getLatestEvents(rows: Int?): ArrayList<Event> =
         withContext(Dispatchers.IO) {
             return@withContext getLatestEvents(rows, offset = null)
         }
 
-    suspend fun getLatestEvents(rows: Int?, offset: Int?) =
+    suspend fun getLatestEvents(rows: Int?, offset: Int?): ArrayList<Event> =
         withContext(Dispatchers.IO) {
             var args = ArrayList<Pair<String, String>>()
             if (rows != null) args.add("rows" to rows.toString())
             if (offset != null) args.add("offset" to offset.toString())
 
-            return@withContext sendGet("/events/latest", *args.toTypedArray())
+            var result = ArrayList<Event>()
+            var responseObject: JsonObject =
+                sendGet("/events/latest", *args.toTypedArray()) ?: return@withContext result
+
+            if (!responseObject.getBoolean("success", false)) return@withContext result
+
+            val data = responseObject.getJsonArray("data")
+            for (entry in data) {
+                val entryObject = entry as JsonObject
+                result.add(
+                    Event(
+                        id = entryObject.getInt("Id", -1),
+                        nodeId = entryObject.getInt("NodeId", -1),
+                        date = Date(entryObject.getLong("Date", -1)),
+                        latitude = entryObject.getFloat("Latitude", 0f),
+                        longitude = entryObject.getFloat("Longitude", 0f),
+                        soundLabel = entryObject.getString("SoundLabel", "ERROR"),
+                        probability = entryObject.getInt("Probability", -1),
+                        soundUrl = entryObject.getString("SoundURL", "ERROR")
+                    )
+                )
+            }
+
+            return@withContext result
         }
 
     suspend fun sendGet(path: String, vararg args: Pair<String, String>): JsonObject? =
@@ -67,11 +94,11 @@ object ApiAccessor {
                     }.onSuccess {
                         return@withContext Json.decodeFromString(it)
                     }.onFailure {
-                        if (connection == null || (connection as HttpURLConnection).responseCode == 404) {
+                        if (connection == null || (connection as HttpURLConnection).responseCode == 404 || (connection as HttpURLConnection).errorStream == null) {
                             return@withContext null;
                         }
 
-                        connection!!.errorStream.bufferedReader().use {
+                        (connection as HttpURLConnection).errorStream.bufferedReader().use {
                             return@withContext Json.decodeFromString(it.readText())
                         }
                     }
