@@ -6,14 +6,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.serialization.json.*
+import xyz.nowaha.chengetawildlife.ApiAccessor
 import xyz.nowaha.chengetawildlife.R
+import xyz.nowaha.chengetawildlife.Session
+import xyz.nowaha.chengetawildlife.extensions.getBoolean
+import xyz.nowaha.chengetawildlife.extensions.getString
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 class TestTableFragment : Fragment(R.layout.fragment_test_table) {
 
@@ -29,8 +31,50 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
         this.adapter = RecentEventsListAdapter(requireActivity().applicationContext, data)
         recyclerView.adapter = this.adapter
 
-        // Remove when actual data can be inserted
-        useTestData()
+        lifecycleScope.launch(Dispatchers.IO) {
+            Session.key = ApiAccessor.attemptLogin("admin", "Pass123")!!.getString("sessionKey")
+            loadNewData(100)
+
+            while (true) {
+                delay(2000)
+                loadNewData(5)
+            }
+        }
+    }
+
+    var highestIdLoaded = -1
+    suspend fun loadNewData(amount: Int) {
+        var data = ApiAccessor.getLatestEvents(amount)
+        if (data != null) {
+            if (data.getBoolean("success")!!) {
+                println(data.getString("message"))
+
+                var format = SimpleDateFormat("HH:mm:ss")
+                var dataArray = data["data"]?.jsonArray!!
+                for (valueRaw in dataArray.reversed()) {
+                    var asObject = valueRaw.jsonObject!!
+                    var id = asObject["Id"]!!.jsonPrimitive.int
+
+                    if (id > highestIdLoaded) {
+                        highestIdLoaded = id
+                    } else {
+                        break
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        var date = Date(asObject["Date"]!!.jsonPrimitive.long)
+                        var label = asObject.getString("SoundLabel")!!
+                        label = label[0].uppercase() + label.substring(1)
+
+                        addTableRow(RecentEventsListViewModel(
+                            format.format(date),
+                            label,
+                            asObject["Probability"]!!.jsonPrimitive.int.toString() + "%"
+                        ))
+                    }
+                }
+            }
+        }
     }
 
     fun useTestData() {
