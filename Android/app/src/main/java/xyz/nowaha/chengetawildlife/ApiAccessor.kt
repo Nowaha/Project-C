@@ -21,6 +21,29 @@ object ApiAccessor {
             )
         }
 
+    suspend fun getLatest() =
+        withContext(Dispatchers.IO) {
+            return@withContext getLatest(count = null, offset = null)
+        }
+
+    suspend fun getLatest(count: Int?) =
+        withContext(Dispatchers.IO) {
+            return@withContext getLatest(count, offset = null)
+        }
+
+    suspend fun getLatest(count: Int?, offset: Int?) =
+        withContext(Dispatchers.IO) {
+            var args = ArrayList<Pair<String, String>>()
+            if (count != null) args.add("count" to count.toString())
+            if (offset != null) args.add("offset" to offset.toString())
+
+            return@withContext sendGet(
+                "/events/latest",
+                "count" to count.toString(),
+                "offset" to offset.toString()
+            )
+        }
+
     suspend fun sendGet(path: String, vararg args: Pair<String, String>): JsonObject? =
         withContext(Dispatchers.IO) {
             var connection: HttpURLConnection? = null
