@@ -18,8 +18,8 @@ namespace ChengetaBackend
                 using (var db = new ChengetaContext())
                 {
                     var account = db.accounts.Where(acc => acc.Username.ToLower() == username.ToLower()).FirstOrDefault();
-                    if (account == null) return new AuthResult(ResultCode.INVALID_USERNAME);
-                    if (Utils.HashPassword(password, account.Salt) != account.Password) return new AuthResult(ResultCode.INCORRECT_PASSWORD);
+                    if (account == null) return new AuthResult(ResultCode.INVALID_CREDENTIALS);
+                    if (Utils.HashPassword(password, account.Salt) != account.Password) return new AuthResult(ResultCode.INVALID_CREDENTIALS);
 
                     // Username & password are correct, create new session
                     var session = Utils.GenerateSecureRandomString(SESSION_LENGTH_IN_BYTES);
@@ -52,8 +52,7 @@ namespace ChengetaBackend
 
         public enum ResultCode
         {
-            INVALID_USERNAME,
-            INCORRECT_PASSWORD,
+            INVALID_CREDENTIALS,
             ERROR,
             SUCCESS
         }
