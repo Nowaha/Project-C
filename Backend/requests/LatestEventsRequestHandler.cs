@@ -21,7 +21,7 @@ namespace ChengetaBackend
 
         public Response HandleRequest(string session, Dictionary<string, string> args)
         {
-            //if (!Program.sessionManager.SessionDictionary.ContainsKey(session)) return Response.generateBasicError(Code.UNAUTHORIZED, Message.UNAUTHORIZED, "Invalid session");
+            if (!Program.sessionManager.SessionDictionary.ContainsKey(session)) return Response.generateBasicError(Code.UNAUTHORIZED, Message.UNAUTHORIZED, "Invalid session");
             
             int rows = defaultRowCount;
             int offset = defaultOffset;
