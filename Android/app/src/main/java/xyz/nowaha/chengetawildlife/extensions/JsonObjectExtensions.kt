@@ -35,6 +35,14 @@ fun JsonObject.getLong(key: String, default: Long): Long {
     return this.getLong(key) ?: default
 }
 
+fun JsonObject.getFloat(key: String): Float? {
+    return this[key]?.jsonPrimitive?.floatOrNull
+}
+
+fun JsonObject.getFloat(key: String, default: Float): Float {
+    return this.getFloat(key) ?: default
+}
+
 fun JsonObject.getJsonArray(key: String) : JsonArray {
     return this[key]?.jsonArray ?: JsonArray(listOf())
 }
