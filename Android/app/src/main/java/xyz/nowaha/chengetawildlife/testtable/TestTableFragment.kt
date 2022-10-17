@@ -31,7 +31,18 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
         this.adapter = RecentEventsListAdapter(requireActivity().applicationContext, data)
         recyclerView.adapter = this.adapter
 
-        useTestData()
+        lifecycleScope.launch (Dispatchers.IO) {
+            //Session.key = ApiAccessor.attemptLogin("admin","Pass123")?.getString("sessionKey")
+            delay(100)
+            var format = SimpleDateFormat("HH:mm:ss")
+            var events = ApiAccessor.getLatestEvents(100)
+            withContext(Dispatchers.Main){
+                for(event in events.reversed()){
+                    addTableRow(RecentEventsListViewModel( format.format(event.date), event.soundLabel,event.probability.toString()+"%"))
+                }
+            }
+        }
+
     }
 
     fun useTestData() {
