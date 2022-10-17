@@ -5,7 +5,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
-import java.io.BufferedInputStream
 import java.net.*
 
 object ApiAccessor {
@@ -21,27 +20,23 @@ object ApiAccessor {
             )
         }
 
-    suspend fun getLatest() =
+    suspend fun getLatestEvents() =
         withContext(Dispatchers.IO) {
-            return@withContext getLatest(count = null, offset = null)
+            return@withContext getLatestEvents(rows = null, offset = null)
         }
 
-    suspend fun getLatest(count: Int?) =
+    suspend fun getLatestEvents(rows: Int?) =
         withContext(Dispatchers.IO) {
-            return@withContext getLatest(count, offset = null)
+            return@withContext getLatestEvents(rows, offset = null)
         }
 
-    suspend fun getLatest(count: Int?, offset: Int?) =
+    suspend fun getLatestEvents(rows: Int?, offset: Int?) =
         withContext(Dispatchers.IO) {
             var args = ArrayList<Pair<String, String>>()
-            if (count != null) args.add("count" to count.toString())
+            if (rows != null) args.add("rows" to rows.toString())
             if (offset != null) args.add("offset" to offset.toString())
 
-            return@withContext sendGet(
-                "/events/latest",
-                "count" to count.toString(),
-                "offset" to offset.toString()
-            )
+            return@withContext sendGet("/events/latest", *args.toTypedArray())
         }
 
     suspend fun sendGet(path: String, vararg args: Pair<String, String>): JsonObject? =
