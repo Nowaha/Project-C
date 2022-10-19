@@ -596,3 +596,5 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,kotlin,gradle,androidstudio
 Android/.idea/.name
+Android/.idea/gradle.xml
+Android/.idea/misc.xml
