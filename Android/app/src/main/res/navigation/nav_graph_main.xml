@@ -9,5 +9,14 @@
         android:id="@+id/loginFragmentNav"
         android:name="xyz.nowaha.chengetawildlife.LoginFragment"
         android:label="LoginFragment"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragmentNav_to_testTableFragment"
+            app:destination="@id/testTableFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/testTableFragment"
+        android:name="xyz.nowaha.chengetawildlife.testtable.TestTableFragment"
+        android:label="TestTableFragment"
+        tools:layout="@layout/fragment_test_table"/>
 </navigation>
