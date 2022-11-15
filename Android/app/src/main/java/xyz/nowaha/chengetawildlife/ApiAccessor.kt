@@ -5,7 +5,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
-import xyz.nowaha.chengetawildlife.data.Event
+import xyz.nowaha.chengetawildlife.pojo.Event
 import xyz.nowaha.chengetawildlife.extensions.*
 import java.net.*
 import java.util.*
@@ -53,7 +53,7 @@ object ApiAccessor {
                     Event(
                         id = entryObject.getInt("Id", -1),
                         nodeId = entryObject.getInt("NodeId", -1),
-                        date = Date(entryObject.getLong("Date", -1)),
+                        date = entryObject.getLong("Date", -1),
                         latitude = entryObject.getFloat("Latitude", 0f),
                         longitude = entryObject.getFloat("Longitude", 0f),
                         soundLabel = entryObject.getString("SoundLabel", "ERROR"),

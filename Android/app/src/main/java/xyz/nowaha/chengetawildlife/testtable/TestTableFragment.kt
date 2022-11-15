@@ -13,6 +13,7 @@ import xyz.nowaha.chengetawildlife.R
 import xyz.nowaha.chengetawildlife.Session
 import xyz.nowaha.chengetawildlife.extensions.getBoolean
 import xyz.nowaha.chengetawildlife.extensions.getString
+import xyz.nowaha.chengetawildlife.http.APIClient
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -34,11 +35,13 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
         lifecycleScope.launch (Dispatchers.IO) {
             //Session.key = ApiAccessor.attemptLogin("admin","Pass123")?.getString("sessionKey")
             delay(100)
-            var format = SimpleDateFormat("HH:mm:ss")
-            var events = ApiAccessor.getLatestEvents(100)
-            withContext(Dispatchers.Main){
-                for(event in events.reversed()){
-                    addTableRow(RecentEventsListViewModel( format.format(event.date), event.soundLabel,event.probability.toString()+"%"))
+            val format = SimpleDateFormat("HH:mm:ss")
+            val events = APIClient.getAPIInterface().getLatestEvents(100).execute()
+            if (events.isSuccessful && events.body() != null && events.body()!!.data != null) {
+                withContext(Dispatchers.Main){
+                    for(event in events.body()!!.data!!.reversed()){
+                        addTableRow(RecentEventsListViewModel(format.format(event.date), event.soundLabel,event.probability.toString()+"%"))
+                    }
                 }
             }
         }

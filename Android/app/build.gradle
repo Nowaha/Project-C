@@ -41,6 +41,16 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0'
     implementation 'org.apache.commons:commons-text:1.10.0'
 
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation ('com.squareup.retrofit2:retrofit:2.9.0') {
+        exclude module: 'okhttp'
+    }
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.5.0'
+    // Interceptor for debugging
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.5.0'
+
     // Navigation Graph
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
