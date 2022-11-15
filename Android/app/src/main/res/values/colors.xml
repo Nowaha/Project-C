@@ -15,4 +15,6 @@
     <color name="chengeta_secondary">#ff7f59</color>
 
     <color name="alt_table_row">#11000000</color>
+
+    <color name="handle_color">#30000000</color>
 </resources>
