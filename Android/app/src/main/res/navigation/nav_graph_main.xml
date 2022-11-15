@@ -13,10 +13,20 @@
         <action
             android:id="@+id/action_loginFragmentNav_to_testTableFragment"
             app:destination="@id/testTableFragment" />
+        <action
+            android:id="@+id/action_loginFragmentNav_to_eventMapFragment"
+            app:destination="@id/eventMapFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/loginFragmentNav"/>
     </fragment>
     <fragment
         android:id="@+id/testTableFragment"
         android:name="xyz.nowaha.chengetawildlife.testtable.TestTableFragment"
         android:label="TestTableFragment"
         tools:layout="@layout/fragment_test_table"/>
+    <fragment
+        android:id="@+id/eventMapFragment"
+        android:name="xyz.nowaha.chengetawildlife.EventMapFragment"
+        android:label="fragment_event_map"
+        tools:layout="@layout/fragment_event_map" />
 </navigation>
