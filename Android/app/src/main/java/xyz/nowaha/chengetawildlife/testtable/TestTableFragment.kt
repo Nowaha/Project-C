@@ -1,21 +1,22 @@
 package xyz.nowaha.chengetawildlife.testtable
 
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.*
-import kotlinx.serialization.json.*
-import xyz.nowaha.chengetawildlife.ApiAccessor
+import retrofit2.Response
 import xyz.nowaha.chengetawildlife.R
-import xyz.nowaha.chengetawildlife.Session
-import xyz.nowaha.chengetawildlife.extensions.getBoolean
-import xyz.nowaha.chengetawildlife.extensions.getString
 import xyz.nowaha.chengetawildlife.http.APIClient
+import xyz.nowaha.chengetawildlife.pojo.EventListResponse
+import java.net.ConnectException
+import java.net.ProtocolException
+import java.net.SocketTimeoutException
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class TestTableFragment : Fragment(R.layout.fragment_test_table) {
@@ -32,40 +33,52 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
         this.adapter = RecentEventsListAdapter(requireActivity().applicationContext, data)
         recyclerView.adapter = this.adapter
 
-        lifecycleScope.launch (Dispatchers.IO) {
-            //Session.key = ApiAccessor.attemptLogin("admin","Pass123")?.getString("sessionKey")
-            delay(100)
-            val format = SimpleDateFormat("HH:mm:ss")
-            val events = APIClient.getAPIInterface().getLatestEvents(100).execute()
-            if (events.isSuccessful && events.body() != null && events.body()!!.data != null) {
-                withContext(Dispatchers.Main){
-                    for(event in events.body()!!.data!!.reversed()){
-                        addTableRow(RecentEventsListViewModel(format.format(event.date), event.soundLabel,event.probability.toString()+"%"))
-                    }
-                }
-            }
-        }
-
+        loadNewData()
     }
 
-    fun useTestData() {
-        data.clear()
+    fun loadNewData() {
+        view?.findViewById<ProgressBar>(R.id.loadingCircle)?.visibility = View.VISIBLE
 
-        var format = SimpleDateFormat("HH:mm:ss")
-
-        // Add a new row every 1000ms
-        lifecycleScope.launch {
-            while (true) {
-                val date = Date(System.currentTimeMillis())
-                val str = format.format(date)
-                addTableRow(RecentEventsListViewModel(str, "Value test", "Value test2"))
-                delay(1000)
+        lifecycleScope.launch(Dispatchers.IO) {
+            delay(100)
+            val format = SimpleDateFormat("HH:mm:ss", Locale.GERMAN)
+            val events: Response<EventListResponse>
+            try {
+                events = APIClient.getAPIInterface().getLatestEvents(100).execute()
+            } catch (ex: ProtocolException) {
+                loadNewData()
+                ex.printStackTrace()
+                return@launch
+            } catch (ex: SocketTimeoutException) {
+                loadNewData()
+                ex.printStackTrace()
+                return@launch
             }
+
+            if (events.isSuccessful && events.body() != null && events.body()!!.data != null) {
+                withContext(Dispatchers.Main) {
+                    addTableRows(events.body()!!.data!!.map {
+                        RecentEventsListViewModel(
+                            format.format(it.date),
+                            it.soundLabel,
+                            it.probability.toString() + "%"
+                        )
+                    })
+                }
+            }
+
+            view?.findViewById<ProgressBar>(R.id.loadingCircle)?.visibility = View.GONE
         }
     }
 
     fun addTableRow(viewModel: RecentEventsListViewModel) {
         adapter.data.add(0, viewModel)
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun addTableRows(viewModels: List<RecentEventsListViewModel>) {
+        for (viewModel in viewModels.reversed())
+            adapter.data.add(0, viewModel)
         adapter.notifyDataSetChanged()
     }
 
