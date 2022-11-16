@@ -17,8 +17,8 @@
 
     <ProgressBar
         android:id="@+id/loadingCircle"
-        android:layout_width="21dp"
-        android:layout_height="21dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:indeterminate="true"
         android:indeterminateTint="?attr/colorOnPrimary"
         android:translationZ="100dp"
