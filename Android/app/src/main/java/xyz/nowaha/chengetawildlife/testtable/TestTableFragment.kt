@@ -3,6 +3,7 @@ package xyz.nowaha.chengetawildlife.testtable
 import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +26,11 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
     lateinit var adapter: RecentEventsListAdapter
     var data: ArrayList<RecentEventsListViewModel> = ArrayList()
 
+    private var latestAdded: Long = 0
+
+    lateinit var loadingCircle: ProgressBar
+    lateinit var refreshButton: ImageButton
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById<RecyclerView>(R.id.tableRecyclerView)
@@ -33,11 +39,20 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
         this.adapter = RecentEventsListAdapter(requireActivity().applicationContext, data)
         recyclerView.adapter = this.adapter
 
+        loadingCircle = view.findViewById(R.id.loadingCircle)
+        refreshButton = view.findViewById(R.id.refreshButton)
+
+        refreshButton.setOnClickListener {
+            if (loadingCircle.visibility != View.GONE) return@setOnClickListener
+            loadNewData()
+        }
+
         loadNewData()
     }
 
     fun loadNewData() {
-        view?.findViewById<ProgressBar>(R.id.loadingCircle)?.visibility = View.VISIBLE
+        loadingCircle.visibility = View.VISIBLE
+        refreshButton.imageAlpha = 0
 
         lifecycleScope.launch(Dispatchers.IO) {
             delay(100)
@@ -61,24 +76,31 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
                         RecentEventsListViewModel(
                             format.format(it.date),
                             it.soundLabel,
-                            it.probability.toString() + "%"
+                            it.probability.toString() + "%",
+                            it.date
                         )
                     })
                 }
             }
 
-            view?.findViewById<ProgressBar>(R.id.loadingCircle)?.visibility = View.GONE
+            loadingCircle.visibility = View.GONE
+            refreshButton.imageAlpha = 255
         }
     }
 
     fun addTableRow(viewModel: RecentEventsListViewModel) {
+        if (latestAdded >= viewModel.date) return
+        latestAdded = viewModel.date
         adapter.data.add(0, viewModel)
         adapter.notifyDataSetChanged()
     }
 
     private fun addTableRows(viewModels: List<RecentEventsListViewModel>) {
-        for (viewModel in viewModels.reversed())
+        for (viewModel in viewModels.reversed()) {
+            if (latestAdded >= viewModel.date) continue
+            latestAdded = viewModel.date
             adapter.data.add(0, viewModel)
+        }
         adapter.notifyDataSetChanged()
     }
 
