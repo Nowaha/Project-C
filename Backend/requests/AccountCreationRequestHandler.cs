@@ -23,25 +23,27 @@ namespace ChengetaBackend
             if ((!args.ContainsKey("username") || args["username"] == null)) return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Missing \"username\" field.");
             if ((!args.ContainsKey("password") || args["password"] == null)) return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Missing \"password\" field.");
 
-            Account.AccountType accountType;
-
+            
             //Checks if the role is correctly filled in
 
+            int roleId = -1;
             try
             {
-                accountType = (Account.AccountType)int.Parse(args["role"]);
+                roleId = int.Parse(args["role"]);
             }
-            catch (Exception ex)
-            {
-                return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Missing or invalid role.");
-            }
+            catch (Exception) { }
+
+            if (!Enum.IsDefined(typeof(Account.AccountType), roleId))
+                return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Missing or invalid \"role\" field.");
+
+            Account.AccountType accountType = (Account.AccountType) roleId;
+
             string userName = args["username"];
             string password = args["password"];
 
-
             //Hashes the entered password and generates a salt for the hashed password
 
-            using(var db = new ChengetaContext())
+            using (var db = new ChengetaContext())
             {
                 var newPassDetails = Utils.HashNewPassword(password);
                 var userPassHash = newPassDetails.hashed;
@@ -73,11 +75,11 @@ namespace ChengetaBackend
                 {
                     success = true,
                     message = $"Account {userName} created succesfully",
-                    accountId = db.accounts.Where(user => user.Username == userName && user.Password == password).Select(user => user.Id)
+                    accountId = db.accounts.Where(user => user.Username == userName && user.Password == userPassHash).Select(user => user.Id).FirstOrDefault()
                 })));
             }
             //Dit moeilijk maar ik doe mn best
-         
+
 
 
         }
