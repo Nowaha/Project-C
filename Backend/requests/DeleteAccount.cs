@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace ChengetaBackend
 {
-    class AccountDeletionRequestHandler : RequestHandler
+    class AccountDeleteHandler : RequestHandler
     {
         //Path for the server so it knows where to go to call this
 
@@ -14,14 +14,8 @@ namespace ChengetaBackend
 
         public Method Method => Method.POST;
 
-        public Response HandleRequest(
-            string session,
-            Dictionary<string, string> args,
-            string bodyRaw
-        )
+        public Response HandleRequest(string session, Dictionary<string, string> args, string bodyRaw)
         {
-            //Checks if the Username and password field are filled in correctly
-
             AccountCreationRequest request;
 
             try
@@ -46,16 +40,14 @@ namespace ChengetaBackend
                     "Missing or invalid \"role\" field."
                 );
 
-            Account.AccountType accountType = (Account.AccountType)request.role;
 
             string userName = request.username;
             string password = request.password;
 
-            //Hashes the entered password and generates a salt for the hashed password
 
             using (var db = new ChengetaContext())
             {
-                //Checks whether the entered username is already in use or not
+                //Checks if the account already exist or not
 
                 if (db.accounts.Where(user => user.Username == userName).FirstOrDefault() == null)
                 {
@@ -65,7 +57,7 @@ namespace ChengetaBackend
                         "Username is doesn't exist."
                     );
                 }
-                dep = db.Departments.Where(d => d.username == userName).First();
+                var dep = db.accounts.Where(d => d.Username == userName).First();
                 db.accounts.Remove(dep);
                 db.SaveChanges();
 
@@ -82,7 +74,6 @@ namespace ChengetaBackend
                                     .Where(
                                         user =>
                                             user.Username == userName
-                                            && user.Password == userPassHash
                                     )
                                     .Select(user => user.Id)
                                     .FirstOrDefault()
