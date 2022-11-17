@@ -22,8 +22,8 @@ namespace ChengetaBackend
             requestHandlers.Clear();
             requestHandlers.Add("/user/login", new LoginRequestHandler());
             requestHandlers.Add("/events/latest", new LatestEventsRequestHandler());
+            requestHandlers.Add("/accounts/create", new AccountCreationRequestHandler());
         }
-
         public static async Task Run()
         {
             Program.log(LOG_TAG, "Server is starting...");
