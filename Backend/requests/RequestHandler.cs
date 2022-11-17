@@ -8,7 +8,7 @@ namespace ChengetaBackend
         public string Path { get; }
         public Method Method { get; }
 
-        public Response HandleRequest(string session, Dictionary<string, string> args);
+        public Response HandleRequest(string session, Dictionary<string, string> args, string bodyRaw);
 
     }
 }

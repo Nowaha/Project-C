@@ -15,31 +15,29 @@ namespace ChengetaBackend
 
         public Method Method => Method.POST;
 
-        public Response HandleRequest(string session, Dictionary<string, string> args)
+        public Response HandleRequest(string session, Dictionary<string, string> args, string bodyRaw)
         {
             //Checks if the Username and password field are filled in correctly
 
-            if (!Program.sessionManager.SessionDictionary.ContainsKey(session)) return Response.generateBasicError(Code.UNAUTHORIZED, Message.UNAUTHORIZED, "Invalid session");
-            if ((!args.ContainsKey("username") || args["username"] == null)) return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Missing \"username\" field.");
-            if ((!args.ContainsKey("password") || args["password"] == null)) return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Missing \"password\" field.");
-
+            //if (!Program.sessionManager.SessionDictionary.ContainsKey(session)) return Response.generateBasicError(Code.UNAUTHORIZED, Message.UNAUTHORIZED, "Invalid session");
+            
+            AccountCreationRequest request;
+            
+            try {
+                request = JsonSerializer.Deserialize<AccountCreationRequest>(bodyRaw);
+            } catch (Exception ex) {
+                return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Invalid request structure.");
+            }
             
             //Checks if the role is correctly filled in
 
-            int roleId = -1;
-            try
-            {
-                roleId = int.Parse(args["role"]);
-            }
-            catch (Exception) { }
-
-            if (!Enum.IsDefined(typeof(Account.AccountType), roleId))
+            if (!Enum.IsDefined(typeof(Account.AccountType), request.role))
                 return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Missing or invalid \"role\" field.");
 
-            Account.AccountType accountType = (Account.AccountType) roleId;
+            Account.AccountType accountType = (Account.AccountType) request.role;
 
-            string userName = args["username"];
-            string password = args["password"];
+            string userName = request.username;
+            string password = request.password;
 
             //Hashes the entered password and generates a salt for the hashed password
 

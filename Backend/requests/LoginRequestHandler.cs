@@ -10,7 +10,7 @@ namespace ChengetaBackend
         public string Path => "/user/login";
         public Method Method => Method.GET;
 
-        public Response HandleRequest(string session, Dictionary<string, string> args)
+        public Response HandleRequest(string session, Dictionary<string, string> args, string bodyRaw)
         {
             if ((!args.ContainsKey("username") || args["username"] == null)) return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Missing \"username\" field.");
             if ((!args.ContainsKey("password") || args["password"] == null)) return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Missing \"password\" field.");

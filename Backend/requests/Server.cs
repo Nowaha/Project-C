@@ -30,7 +30,7 @@ namespace ChengetaBackend
 
             // Register all of the handlers
             setupHandlers();
-    
+
             await Start();
         }
 
@@ -38,10 +38,11 @@ namespace ChengetaBackend
 
         private static Socket listener;
 
-        public static void Stop() {
+        public static void Stop()
+        {
             run = false;
             var w = new byte[0];
-            
+
             Console.ForegroundColor = ConsoleColor.Red;
             Program.log(LOG_TAG, "Shutting down socket...");
             Console.ResetColor();
@@ -68,25 +69,26 @@ namespace ChengetaBackend
             while (run)
             {
                 Socket currentConnection = listener.Accept();
+                currentConnection.Blocking = true;
+                currentConnection.ReceiveTimeout = 2000;
 
                 Program.log(LOG_TAG, "New request, reading...");
 
-                string data = "";
+                string data;
 
                 // A loop to read any and all incoming data until there is no more left to read (.Available)
-                int loop = 0;
-                do
+                try
                 {
-                    var buffer = new byte[1024];
+                    var buffer = new byte[5012];
                     int receivedData = currentConnection.Receive(buffer);
-                    data += Encoding.ASCII.GetString(buffer, 0, receivedData);
+                    data = Encoding.ASCII.GetString(buffer, 0, receivedData);
+                } catch (Exception ex) {
+                    currentConnection.Disconnect(false);
+                    currentConnection.Close();
+                    continue;
+                }
 
-                    loop++;
-                    if (loop > DATA_READ_TIMEOUT)
-                    {
-                        Program.log(LOG_TAG, "Terminated early!");
-                    }
-                } while (currentConnection.Available > 0);
+System.Console.WriteLine(data);
 
                 // If there is no data, we can not do anything with it, so we close it here.
                 if (data.Length == 0 || data.Trim().Length == 0)
@@ -146,6 +148,8 @@ namespace ChengetaBackend
                             auth = data.Split("Authorization: ")[1].Split("\n")[0].Replace("\r", "").Trim();
                         }
 
+                        var body = data.Split("\r\n\r\n")[1];
+
                         int code = Code.NOT_FOUND;
                         string codeName = Message.NOT_FOUND;
                         byte[] payload = new byte[0];
@@ -162,7 +166,7 @@ namespace ChengetaBackend
                                 if (Enum.GetName(handler.Method) == requestMethod)
                                 {
                                     // Let the handler handler everything, and then use its Response object's values.
-                                    Response handled = handler.HandleRequest(auth, argsFinal);
+                                    Response handled = handler.HandleRequest(auth, argsFinal, body);
 
                                     code = handled.Code;
                                     codeName = handled.Message;
@@ -180,7 +184,7 @@ namespace ChengetaBackend
 
                         // The default start of the HTTP header, also asking the connection to be closed.
                         // Also defining the content length
-                        byte[] header = Encoding.UTF8.GetBytes($"HTTP/1.1 {code} {codeName} \r\nConnection: close\r\nContent-Type: application/json\r\nContent-Length: " + payload.Length + "\r\n\r\n");
+                        byte[] header = Encoding.UTF8.GetBytes($"HTTP/1.1 {code} {codeName}\r\nConnection: close\r\nContent-Type: application/json\r\nContent-Length: {payload.Length}\r\n\r\n");
 
                         // We need to add the data to the header, so we create a new array with the right length...
                         byte[] response = new byte[header.Length + payload.Length];
@@ -194,7 +198,7 @@ namespace ChengetaBackend
                             response[i + header.Length] = payload[i];
 
                         // We can then finally send all this as a response.
-                        currentConnection.Send(response);
+                        await currentConnection.SendAsync(response, SocketFlags.None);
                     }
                 }
 
