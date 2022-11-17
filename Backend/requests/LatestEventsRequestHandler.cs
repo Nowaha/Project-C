@@ -20,7 +20,7 @@ namespace ChengetaBackend
         private static int defaultOffset = 0;
         private static int maximumOffset = int.MaxValue;
 
-        public Response HandleRequest(string session, Dictionary<string, string> args)
+        public Response HandleRequest(string session, Dictionary<string, string> args, string bodyRaw)
         {
             if (!Program.sessionManager.SessionDictionary.ContainsKey(session)) return Response.generateBasicError(Code.UNAUTHORIZED, Message.UNAUTHORIZED, "Invalid session");
 
