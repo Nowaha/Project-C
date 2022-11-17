@@ -12,13 +12,5 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            APIClient.getAPIInterface().createAccount(
-                AccountCreationRequest(
-                    "testAccount184", "pass", 0
-                )
-            ).execute()
-        }
     }
 }
