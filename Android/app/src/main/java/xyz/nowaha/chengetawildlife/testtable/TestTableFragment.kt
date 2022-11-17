@@ -60,11 +60,7 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
             val events: Response<EventListResponse>
             try {
                 events = APIClient.getAPIInterface().getLatestEvents(100).execute()
-            } catch (ex: ProtocolException) {
-                loadNewData()
-                ex.printStackTrace()
-                return@launch
-            } catch (ex: SocketTimeoutException) {
+            } catch (ex: Exception) {
                 loadNewData()
                 ex.printStackTrace()
                 return@launch
@@ -83,8 +79,10 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
                 }
             }
 
-            loadingCircle.visibility = View.GONE
-            refreshButton.imageAlpha = 255
+            lifecycleScope.launch(Dispatchers.Main) {
+                loadingCircle.visibility = View.GONE
+                refreshButton.imageAlpha = 255
+            }
         }
     }
 

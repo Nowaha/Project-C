@@ -69,7 +69,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback {
         lifecycleScope.launch {
             while (true) {
                 delay(100)
-                updateMarkers()
+                //updateMarkers()
             }
         }
 
@@ -117,6 +117,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback {
             markers[it] = googleMap.addMarker(marker)!!
             last = position
         }
+
+        updateMarkers()
 
         if (last == null) return
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(last!!, 5f))
