@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="28dp"
-            android:text="Log In"
+            android:text="@string/logInText"
             android:textSize="28sp"
             app:layout_constraintBottom_toTopOf="@id/usernameTextInputLayout"
             app:layout_constraintLeft_toLeftOf="@id/usernameTextInputLayout"
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:hint="Username"
+            android:hint="@string/userNameText"
             app:errorEnabled="true"
             app:layout_constraintBottom_toTopOf="@id/passwordTextInputLayout"
             app:layout_constraintTop_toBottomOf="@id/loginTitleTextView"
@@ -50,7 +50,7 @@
             android:id="@+id/passwordTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="@string/passWordText"
             app:errorEnabled="true"
             android:layout_marginBottom="12dp"
             app:layout_constraintBottom_toTopOf="@id/loginButtonLayout"
@@ -95,7 +95,7 @@
                 android:id="@+id/loginButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Log In" />
+                android:text="@string/logInText" />
 
         </RelativeLayout>
 
@@ -105,7 +105,7 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Back"
+            android:text="@string/goBackText"
             app:layout_constraintBottom_toBottomOf="@id/loginButtonLayout"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintLeft_toLeftOf="@id/passwordTextInputLayout"
