@@ -16,13 +16,13 @@ namespace ChengetaBackend
 
         public Response HandleRequest(string session, Dictionary<string, string> args, string bodyRaw)
         {
-            AccountCreationRequest request;
+            AccountDeletionRequest request;
 
             try
             {
-                request = JsonSerializer.Deserialize<AccountCreationRequest>(bodyRaw);
+                request = JsonSerializer.Deserialize<AccountDeletionRequest>(bodyRaw);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Response.generateBasicError(
                     Code.BAD_REQUEST,
@@ -30,26 +30,12 @@ namespace ChengetaBackend
                     "Invalid request structure."
                 );
             }
-
-            //Checks if the role is correctly filled in
-
-            if (!Enum.IsDefined(typeof(Account.AccountType), request.role))
-                return Response.generateBasicError(
-                    Code.BAD_REQUEST,
-                    Message.BAD_REQUEST,
-                    "Missing or invalid \"role\" field."
-                );
-
-
             string userName = request.username;
-            string password = request.password;
-
-
             using (var db = new ChengetaContext())
             {
                 //Checks if the account already exist or not
-
-                if (db.accounts.Where(user => user.Username == userName).FirstOrDefault() == null)
+                var dep = db.accounts.Where(user => user.Username == userName).FirstOrDefault();
+                if (dep == null)
                 {
                     return Response.generateBasicError(
                         Code.BAD_REQUEST,
@@ -57,7 +43,6 @@ namespace ChengetaBackend
                         "Username is doesn't exist."
                     );
                 }
-                var dep = db.accounts.Where(d => d.Username == userName).First();
                 db.accounts.Remove(dep);
                 db.SaveChanges();
 
@@ -69,14 +54,7 @@ namespace ChengetaBackend
                             new
                             {
                                 success = true,
-                                message = $"Account {userName} deleted succesfully",
-                                accountId = db.accounts
-                                    .Where(
-                                        user =>
-                                            user.Username == userName
-                                    )
-                                    .Select(user => user.Id)
-                                    .FirstOrDefault()
+                                message = $"Account {userName} deleted succesfully"
                             }
                         )
                     )

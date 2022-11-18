@@ -23,7 +23,7 @@ namespace ChengetaBackend
             requestHandlers.Add("/user/login", new LoginRequestHandler());
             requestHandlers.Add("/events/latest", new LatestEventsRequestHandler());
             requestHandlers.Add("/accounts/create", new AccountCreationRequestHandler());
-            requestHandlers.Add("/accounts/delete", new AccountCreationRequestHandler());
+            requestHandlers.Add("/accounts/delete", new AccountDeleteHandler());
         }
         public static async Task Run()
         {
