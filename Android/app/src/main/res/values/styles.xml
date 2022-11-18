@@ -13,5 +13,10 @@
         <item name="cornerSizeTopLeft">14dp</item>
         <item name="cornerSizeTopRight">14dp</item>
     </style>
+    <style name="createAccountText">
+        <item name="android:textSize">28sp</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+
 
 </resources>
