@@ -2,21 +2,18 @@ package xyz.nowaha.chengetawildlife
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnKeyListener
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -37,17 +34,16 @@ import xyz.nowaha.chengetawildlife.pojo.Event
 import xyz.nowaha.chengetawildlife.testtable.TestTableFragment
 import kotlin.math.floor
 
-class EventMapFragment : Fragment(), OnMapReadyCallback {
+
+class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var googleMap: GoogleMap
-    private val permissionDenied = false
+    private val markers = HashMap<Event, Marker>()
 
     val viewModel: EventsMapViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_event_map, container, false)
     }
@@ -63,7 +59,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback {
         }
 
         viewModel.mapEvents.observe(viewLifecycleOwner) { eventList ->
-           redrawMap(eventList)
+            redrawMap(eventList)
         }
 
         lifecycleScope.launch {
@@ -80,7 +76,6 @@ class EventMapFragment : Fragment(), OnMapReadyCallback {
         bottomSheet.requestFocus()
         bottomSheet.setOnKeyListener(OnKeyListener { _, keyCode, _ ->
             if (keyCode == KeyEvent.KEYCODE_BACK) {
-                println("owo")
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                     return@OnKeyListener true
@@ -96,7 +91,6 @@ class EventMapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private val markers = HashMap<Event, Marker>()
     private fun redrawMap(eventList: List<Event>) {
         if (!::googleMap.isInitialized) return
 
@@ -141,7 +135,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback {
             if (minutes > 0) {
                 timeString = "${minutes}m " + timeString
             }
-            marker.title = "${event.soundLabel.uppercase()[0]}${event.soundLabel.substring(1)} ($timeString)"
+            marker.title =
+                "${event.soundLabel.uppercase()[0]}${event.soundLabel.substring(1)} ($timeString)"
         }
     }
 
@@ -151,11 +146,15 @@ class EventMapFragment : Fragment(), OnMapReadyCallback {
     ) { permissions ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             when {
-                permissions.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                permissions.getOrDefault(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION, false
+                ) -> {
                     // Precise location access granted.
                     googleMap.isMyLocationEnabled = true;
                 }
-                permissions.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                permissions.getOrDefault(
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION, false
+                ) -> {
                     // Only approximate location access granted.
                     googleMap.isMyLocationEnabled = true;
                 }
@@ -168,15 +167,22 @@ class EventMapFragment : Fragment(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission")
     fun requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED
-            || ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             googleMap.isMyLocationEnabled = true;
             return;
         }
 
-        locationPermissionRequest.launch(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION))
+        locationPermissionRequest.launch(
+            arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
     }
 
     @SuppressLint("MissingPermission")
@@ -195,27 +201,31 @@ class EventMapFragment : Fragment(), OnMapReadyCallback {
                 return null
             }
 
-            override fun getInfoWindow(marker: Marker): View? {
-                val info = LinearLayout(requireContext())
-                info.orientation = LinearLayout.VERTICAL
-                info.setBackgroundColor(Color.WHITE)
-                info.setPadding(24)
+            override fun getInfoWindow(marker: Marker): View {
+                val inflated = layoutInflater.inflate(R.layout.layout_marker_info_window, requireView() as ViewGroup, false)
 
-                val title = TextView(requireContext())
-                title.setTextColor(Color.BLACK)
-                title.setTypeface(null, Typeface.BOLD)
-                title.text = marker.title
+                val typedValue = TypedValue()
+                requireContext().theme.resolveAttribute(android.R.attr.colorBackground, typedValue, true)
 
-                val snippet = TextView(requireContext())
-                snippet.setTextColor(Color.BLACK)
-                snippet.text = marker.snippet
+                with(inflated) {
+                    setBackgroundColor(typedValue.data)
+                    findViewById<TextView>(R.id.title).text = marker.title
+                    findViewById<TextView>(R.id.snippet).text = marker.snippet
+                }
 
-                info.addView(title)
-                info.addView(snippet)
-
-                return info
+                return inflated
             }
         })
+
+        googleMap.setOnMarkerClickListener(this)
     }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        val event = markers.filter { it.value == marker }.map { it.key }.firstOrNull() ?: return false
+
+        // Return false to keep the default behavior (moving to the marker & showing info window)
+        return false
+    }
+
 
 }
