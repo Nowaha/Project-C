@@ -40,7 +40,7 @@ namespace ChengetaBackend
                     return Response.generateBasicError(
                         Code.BAD_REQUEST,
                         Message.BAD_REQUEST,
-                        "Username is doesn't exist."
+                        "Username doesn't exist."
                     );
                 }
                 db.accounts.Remove(dep);
