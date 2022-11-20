@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace ChengetaBackend
 {
-    class AccountDeleteHandler : RequestHandler
+    class AccountDeleteRequestHandler : RequestHandler
     {
         //Path for the server so it knows where to go to call this
 
