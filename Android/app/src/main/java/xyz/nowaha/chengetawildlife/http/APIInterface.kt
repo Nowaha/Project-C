@@ -20,4 +20,7 @@ interface APIInterface {
     @POST("/accounts/create")
     fun createAccount(@Body request: AccountCreationRequest) : Call<AccountCreationResponse>
 
+    @POST("/accounts/delete")
+    fun deleteAccount(@Body request: AccountDeleteRequest) : Call<AccountDeleteResponse>
+
 }
