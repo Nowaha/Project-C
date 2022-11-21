@@ -218,6 +218,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         })
 
         googleMap.setOnMarkerClickListener(this)
+
+        this.googleMap.setPadding(0, 0, 0, 300)
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
