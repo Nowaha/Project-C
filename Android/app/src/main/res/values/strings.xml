@@ -9,4 +9,16 @@
     <string name="event_data_coordinates_label">Event Coordinates</string>
     <string name="event_data_coordinates_longitude_value">Longitude: %1$f</string>
     <string name="event_data_coordinates_latitude_value">Latitude: %1$f</string>
+    <string name="create_account_title">Create Account</string>
+    <string name="create_account_hint_username">Please enter desired username.</string>
+    <string name="create_account_hint_password">Please enter desired password.</string>
+    <string name="role_select_text">Admin Account</string>
+    <string name="create_account_submit">Create</string>
+    <string name="goBackText">Back</string>
+    <string name="logInText">Log In</string>
+    <string name="userNameText">Username</string>
+    <string name="passWordText">Password</string>
+    <string name="timeText">Time</string>
+    <string name="soundText">Sound</string>
+    <string name="percentageText">Percentage</string>
 </resources>
