@@ -22,5 +22,4 @@ interface APIInterface {
 
     @POST("/accounts/delete")
     fun deleteAccount(@Body request: AccountDeleteRequest) : Call<AccountDeleteResponse>
-
 }
