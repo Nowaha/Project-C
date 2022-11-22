@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import org.apache.commons.lang3.mutable.Mutable
 import retrofit2.Response
 import xyz.nowaha.chengetawildlife.http.APIClient
+import xyz.nowaha.chengetawildlife.pojo.AccountCreationRequest
 import xyz.nowaha.chengetawildlife.pojo.AccountCreationResponse
 
 class CreateAccountViewModel : ViewModel()
@@ -26,7 +27,9 @@ class CreateAccountViewModel : ViewModel()
 
         var createAccountResponse : Response<AccountCreationResponse>? = null
         try {
-            //createAccountResponse = APIClient.getAPIInterface().attemptCreateAccount().execute()
+            createAccountResponse = APIClient.getAPIInterface()
+                .attemptCreateAccount(AccountCreationRequest(userNameInput.toString(),passwordInput.toString(),0)
+            ).execute()
         }
         catch(Exception : Exception)
         {
