@@ -15,7 +15,7 @@ object APIClient {
 
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client = OkHttpClient.Builder().addInterceptor(interceptor).addInterceptor(BearerAuthInterceptor()).build()
+        val client = OkHttpClient.Builder().addInterceptor(interceptor).addInterceptor(BearerAuthInterceptor()).retryOnConnectionFailure(true).build()
         retrofit = Retrofit.Builder()
             .baseUrl("http://173.249.1.107:34100")
             .addConverterFactory(GsonConverterFactory.create())
