@@ -14,17 +14,20 @@ class EventsMapViewModel : ViewModel() {
 
     val mapEvents = MutableLiveData<List<Event>>(arrayListOf())
 
-    suspend fun loadEvents() = withContext(Dispatchers.IO) {
+    suspend fun loadEvents(): Boolean = withContext(Dispatchers.IO) {
         val data: Response<EventListResponse>
         try {
             data = APIClient.getAPIInterface().getLatestEvents(16).execute()
         } catch (_: Exception) {
-            return@withContext
+            return@withContext false
         }
 
         if (data.body() != null && data.body()!!.data != null) {
             mapEvents.postValue(data.body()!!.data!!)
+            return@withContext true
         }
+
+        return@withContext false
     }
 
 }
