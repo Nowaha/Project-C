@@ -4,15 +4,20 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnKeyListener
+import android.view.View.*
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -26,12 +31,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import xyz.nowaha.chengetawildlife.extensions.dp
 import xyz.nowaha.chengetawildlife.extensions.iconBasedOnType
 import xyz.nowaha.chengetawildlife.pojo.Event
 import xyz.nowaha.chengetawildlife.testtable.TestTableFragment
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.floor
 
 
@@ -39,6 +46,12 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
     private lateinit var googleMap: GoogleMap
     private val markers = HashMap<Event, Marker>()
+
+    private lateinit var bottomSheet: RelativeLayout
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<RelativeLayout>
+    private var defaultBottomSheetPeekHeight: Int = 0
+
+    private var markerCoroutine: Job? = null
 
     val viewModel: EventsMapViewModel by viewModels()
 
@@ -69,8 +82,9 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             }
         }
 
-        val bottomSheet = view.findViewById<RelativeLayout>(R.id.bottom_sheet_map)
-        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheet = view.findViewById(R.id.bottom_sheet_map)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        defaultBottomSheetPeekHeight = bottomSheetBehavior.peekHeight
 
         bottomSheet.isFocusableInTouchMode = true
         bottomSheet.requestFocus()
@@ -112,32 +126,25 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             last = position
         }
 
-        updateMarkers()
-
         if (last == null) return
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(last!!, 5f))
     }
 
-    fun updateMarkers() {
-        if (!::googleMap.isInitialized) return
+    private fun getRelativeTimeString(date1: Long, date2: Long): String {
+        val timeDifference = ((date2 - date1) / 1000.0)
+        val hours = floor(timeDifference / 3600.0).toInt()
+        val minutes = floor((timeDifference - (hours * 3600.0)) / 60.0).toInt()
+        val seconds = timeDifference - (hours * 3600) - (minutes * 60)
 
-        val now = System.currentTimeMillis()
-
-        markers.forEach {
-            val event = it.key
-            val marker = it.value
-
-            val timeDifference = ((now - event.date) / 1000.0)
-            val minutes = floor(timeDifference / 60.0).toInt()
-            val seconds = timeDifference - (minutes * 60)
-
-            var timeString = "${seconds.toInt()}s ago"
-            if (minutes > 0) {
-                timeString = "${minutes}m " + timeString
-            }
-            marker.title =
-                "${event.soundLabel.uppercase()[0]}${event.soundLabel.substring(1)} ($timeString)"
+        var timeString = "${seconds.toInt()}s ago"
+        if (minutes > 0 || hours > 0) {
+            timeString = "${minutes}m " + timeString
         }
+        if (hours > 0) {
+            timeString = "${hours}h " + timeString
+        }
+
+        return timeString
     }
 
     @SuppressLint("MissingPermission")
@@ -189,7 +196,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
         lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.loadEvents()
+            while(!viewModel.loadEvents()) { delay(1000) }
         }
 
         requestLocationPermission()
@@ -197,36 +204,98 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         redrawMap(viewModel.mapEvents.value ?: arrayListOf())
 
         googleMap.setInfoWindowAdapter(object : InfoWindowAdapter {
-            override fun getInfoContents(p0: Marker): View? {
+            override fun getInfoContents(marker: Marker): View? {
                 return null
             }
 
-            override fun getInfoWindow(marker: Marker): View {
-                val inflated = layoutInflater.inflate(R.layout.layout_marker_info_window, requireView() as ViewGroup, false)
-
-                val typedValue = TypedValue()
-                requireContext().theme.resolveAttribute(android.R.attr.colorBackground, typedValue, true)
-
-                with(inflated) {
-                    setBackgroundColor(typedValue.data)
-                    findViewById<TextView>(R.id.title).text = marker.title
-                    findViewById<TextView>(R.id.snippet).text = marker.snippet
-                }
-
-                return inflated
+            override fun getInfoWindow(marker: Marker): View? {
+                return layoutInflater.inflate(
+                    R.layout.layout_marker_info_window, requireView() as ViewGroup, false
+                )
             }
         })
 
+        googleMap.setOnMapClickListener { eventDeselected() }
         googleMap.setOnMarkerClickListener(this)
 
-        this.googleMap.setPadding(0, 0, 0, 300)
+        this.googleMap.setPadding(0, 0, 0, defaultBottomSheetPeekHeight)
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        val event = markers.filter { it.value == marker }.map { it.key }.firstOrNull() ?: return false
+        markerCoroutine?.cancel()
+        markerCoroutine = null
+
+        val event =
+            markers.filter { it.value == marker }.map { it.key }.firstOrNull() ?: return false
+
+        eventSelected(event)
 
         // Return false to keep the default behavior (moving to the marker & showing info window)
         return false
+    }
+
+    private fun eventSelected(event: Event) {
+        markers.forEach { it.value.alpha = 0.7f }
+        markers[event]?.alpha = 1f
+
+        with(requireView()) {
+            findViewById<FrameLayout>(R.id.tableHolder).visibility = GONE
+            with(findViewById<View>(R.id.eventInfoLayout)) {
+                val soundName = event.soundLabel[0].uppercase() + event.soundLabel.substring(1)
+
+                if (visibility == GONE) {
+                    visibility = VISIBLE
+                    TransitionManager.beginDelayedTransition(bottomSheet)
+                    bottomSheetBehavior.peekHeight = dp(262)
+                    googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
+                }
+
+                findViewById<ImageButton>(R.id.targetButton).setOnClickListener {
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers[event]!!.position, 7.5f), 500, null)
+                }
+
+                findViewById<TextView>(R.id.dateValue).text = getString(
+                    R.string.event_data_title,
+                    SimpleDateFormat("dd/MM/yyyy, HH:mm:ss", Locale.GERMAN).format(event.date)
+                )
+                findViewById<TextView>(R.id.soundValue).text = soundName
+                findViewById<TextView>(R.id.certaintyValue).text =
+                    getString(R.string.event_data_certainty_value, event.probability)
+                findViewById<TextView>(R.id.longitude).text =
+                    getString(R.string.event_data_coordinates_longitude_value, event.longitude)
+                findViewById<TextView>(R.id.latitude).text =
+                    getString(R.string.event_data_coordinates_latitude_value, event.latitude)
+
+                markerCoroutine = lifecycleScope.launch {
+                    while (true) {
+                        requireView().findViewById<TextView>(R.id.eventDetailsTitle).text =
+                            "$soundName (${
+                                getRelativeTimeString(
+                                    event.date, System.currentTimeMillis()
+                                )
+                            })"
+                        delay(500)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun eventDeselected() {
+        markerCoroutine?.cancel()
+        markerCoroutine = null
+
+        markers.forEach { it.value.alpha = 1f }
+
+        with(requireView()) {
+            findViewById<View>(R.id.eventInfoLayout).visibility = GONE
+            findViewById<FrameLayout>(R.id.tableHolder).visibility = VISIBLE
+
+            TransitionManager.beginDelayedTransition(bottomSheet)
+            bottomSheetBehavior.peekHeight = defaultBottomSheetPeekHeight
+
+            googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
+        }
     }
 
 

@@ -34,9 +34,20 @@
             app:tint="@color/handle_color" />
 
         <FrameLayout
-            android:id="@+id/placeholder_bottom_sheet_map"
+            android:id="@+id/tableHolder"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/placeholder_bottom_sheet_map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+
+        <include
+            android:id="@+id/eventInfoLayout"
+            layout="@layout/layout_event_data"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
