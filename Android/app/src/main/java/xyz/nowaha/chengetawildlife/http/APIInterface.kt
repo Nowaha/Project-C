@@ -18,6 +18,6 @@ interface APIInterface {
     fun attemptLogin(@Query("username") username: String, @Query("password") password: String) : Call<LoginResponse>
 
     @POST("/accounts/create")
-    fun createAccount(@Body request: AccountCreationRequest) : Call<AccountCreationResponse>
+    fun attemptCreateAccount(@Body request: AccountCreationRequest) : Call<AccountCreationResponse>
 
 }
