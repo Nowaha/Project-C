@@ -22,15 +22,4 @@
         <item name="android:textColor">@color/chengeta_primary</item>
     </style>
 
-    <style name="passInputField">
-        <item name="android:layout_marginBottom">10dp</item>
-    </style>
-
-    <style name="userNameInputField">
-
-    </style>
-
-
-
-
 </resources>

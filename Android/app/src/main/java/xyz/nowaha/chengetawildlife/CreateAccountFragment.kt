@@ -17,10 +17,9 @@ import kotlinx.coroutines.launch
 
 class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
 
-val viewModel: CreateAccountViewModel by viewModels()
+    val viewModel: CreateAccountViewModel by viewModels()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
-    {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val usernameInput = view.findViewById<TextInputEditText>(R.id.usernameTextInputEditText)
@@ -28,7 +27,6 @@ val viewModel: CreateAccountViewModel by viewModels()
         val passwordInput = view.findViewById<TextInputEditText>(R.id.passwordTextInputEditText)
         val passwordInputLayout = view.findViewById<TextInputLayout>(R.id.passwordTextInputLayout)
         val roleInput = view.findViewById<SwitchMaterial>(R.id.roleSelect)
-
 
         usernameInput.setText(viewModel.usernameInput.value)
         usernameInput.addTextChangedListener {
@@ -41,17 +39,16 @@ val viewModel: CreateAccountViewModel by viewModels()
             viewModel.passwordInput.postValue(it.toString())
         }
 
-        roleInput.setText(viewModel.roleInput.value ?: 0)
-        roleInput.addTextChangedListener {
-            viewModel.roleInput.postValue(viewModel.roleInput.value)
+        roleInput.isChecked = viewModel.roleInput.value == 1
+        roleInput.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.roleInput.postValue(if (isChecked) 1 else 0)
         }
 
         val createAccountButton = view.findViewById<Button>(R.id.createAccountButton)
 
         passwordInput.setOnEditorActionListener { _, v, _ ->
-            if(v == EditorInfo.IME_ACTION_GO)
-            {
-                if(!createAccountButton.isEnabled) return@setOnEditorActionListener true
+            if (v == EditorInfo.IME_ACTION_GO) {
+                if (!createAccountButton.isEnabled) return@setOnEditorActionListener true
                 createAccountButton.performClick()
                 return@setOnEditorActionListener true
             }
@@ -63,38 +60,30 @@ val viewModel: CreateAccountViewModel by viewModels()
 
             var validAccountDetails = true
 
-            if(usernameInput.text.toString().isBlank())
-                {
-                    usernameInput.error = "Please enter your username."
-                    validAccountDetails = false
-                }
-            if(passwordInput.text.toString().isBlank())
-            {
-                passwordInput.error = "Please enter your password."
+            if (usernameInput.text.toString().isBlank()) {
+                usernameInputLayout.error = "Please enter a username."
+                validAccountDetails = false
+            }
+            if (passwordInput.text.toString().isBlank()) {
+                passwordInputLayout.error = "Please enter a password."
                 validAccountDetails = false
             }
 
             if (!validAccountDetails) return@setOnClickListener
 
-            lifecycleScope.launch(Dispatchers.IO)
-            {
+            lifecycleScope.launch(Dispatchers.IO) {
                 viewModel.attemptCreateAccount()
-                Toast.makeText(requireContext(),"Account $usernameInput Successfully created", Toast.LENGTH_SHORT).show()
-
             }
 
-
-
-
-
-
-
-
+            // TODO: Move this outside of the onClickListener, and out there, observe the state!
+            // Look at line 91 in [LoginFragment] for an example.
+            Toast.makeText(
+                requireContext(),
+                "Account ${viewModel.usernameInput.value} successfully created",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
-
-
-
 
 
 }

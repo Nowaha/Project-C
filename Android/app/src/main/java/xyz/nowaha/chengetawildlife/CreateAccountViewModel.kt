@@ -10,62 +10,54 @@ import xyz.nowaha.chengetawildlife.http.APIClient
 import xyz.nowaha.chengetawildlife.pojo.AccountCreationRequest
 import xyz.nowaha.chengetawildlife.pojo.AccountCreationResponse
 
-class CreateAccountViewModel : ViewModel()
-{
+class CreateAccountViewModel : ViewModel() {
     val usernameInput = MutableLiveData("")
     val passwordInput = MutableLiveData("")
     val roleInput = MutableLiveData(0)
 
-    val createAccountState = MutableLiveData<CreateAccountState>(CreateAccountState.WaitingForUserInput(null))
+    val createAccountState =
+        MutableLiveData<CreateAccountState>(CreateAccountState.WaitingForUserInput(null))
 
-    suspend fun attemptCreateAccount() = withContext(Dispatchers.IO)
-    {
-        if(createAccountState.value !is CreateAccountState.WaitingForUserInput) return@withContext
+    suspend fun attemptCreateAccount() = withContext(Dispatchers.IO) {
+        if (createAccountState.value !is CreateAccountState.WaitingForUserInput) return@withContext
         createAccountState.postValue(CreateAccountState.Loading)
 
         delay(500)
 
-        var createAccountResponse : Response<AccountCreationResponse>? = null
+        var createAccountResponse: Response<AccountCreationResponse>? = null
         try {
-            createAccountResponse = APIClient.getAPIInterface()
-                .attemptCreateAccount(AccountCreationRequest(usernameInput.toString(),passwordInput.toString(), roleInput.value ?: 0 )
+            createAccountResponse = APIClient.getAPIInterface().attemptCreateAccount(
+                AccountCreationRequest(
+                    usernameInput.value.toString(),
+                    passwordInput.value.toString(),
+                    roleInput.value ?: 0
+                )
             ).execute()
-        }
-        catch(Exception : Exception)
-        {
+        } catch (_: Exception) {
 
         }
 
-        if (createAccountResponse?.body() == null && createAccountResponse?.errorBody() == null)
-        {
+        if (createAccountResponse?.body() == null && createAccountResponse?.errorBody() == null) {
             createAccountState.postValue(CreateAccountState.WaitingForUserInput(CreateAccountState.CreateAccountErrorType.CONNECTION_FAILURE))
             return@withContext
         }
-        if (createAccountResponse.errorBody() == null)
-        {
+
+        if (createAccountResponse.errorBody() != null) {
             createAccountState.postValue(CreateAccountState.WaitingForUserInput(CreateAccountState.CreateAccountErrorType.USERNAME_IN_USE))
             return@withContext
         }
-        createAccountState.postValue(CreateAccountState.accountCreated)
+
+        createAccountState.postValue(CreateAccountState.AccountCreated)
     }
 
-    sealed class CreateAccountState
-    {
+    sealed class CreateAccountState {
         data class WaitingForUserInput(val error: CreateAccountErrorType?) : CreateAccountState()
         object Loading : CreateAccountState()
-        object accountCreated : CreateAccountState()
+        object AccountCreated : CreateAccountState()
 
-        enum class CreateAccountErrorType
-        {
-            CONNECTION_FAILURE,USERNAME_IN_USE
+        enum class CreateAccountErrorType {
+            CONNECTION_FAILURE, USERNAME_IN_USE
         }
-
-
-
     }
-
-
-
-
 
 }
