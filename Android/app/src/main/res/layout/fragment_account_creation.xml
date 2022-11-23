@@ -42,8 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:hint="@string/create_account_hint_password"
-        app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="@id/roleSelect"
+        app:layout_constraintBottom_toTopOf="@id/passwordConfirmTextInputLayout"
         app:layout_constraintTop_toBottomOf="@id/usernameTextInputLayout"
         app:passwordToggleEnabled="true"
         app:startIconDrawable="@drawable/ic_password">
@@ -56,6 +55,29 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordConfirmTextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:hint="@string/edit_account_hint_password_confirm"
+        app:errorEnabled="true"
+        app:layout_constraintBottom_toTopOf="@id/roleSelect"
+        app:layout_constraintTop_toBottomOf="@id/passwordTextInputLayout"
+        app:passwordToggleEnabled="true"
+        app:startIconDrawable="@drawable/ic_password">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/passwordConfirmTextInputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/roleSelect"
         android:layout_width="wrap_content"
@@ -65,7 +87,7 @@
         android:text="@string/role_select_text"
         app:layout_constraintBottom_toTopOf="@id/createAccountButton"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/passwordTextInputLayout" />
+        app:layout_constraintTop_toBottomOf="@id/passwordConfirmTextInputLayout" />
 
     <Button
         android:id="@+id/createAccountButton"
