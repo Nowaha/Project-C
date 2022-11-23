@@ -37,13 +37,17 @@ class CreateAccountViewModel : ViewModel() {
 
         }
 
-        if (createAccountResponse?.body() == null && createAccountResponse?.errorBody() == null) {
+        if (createAccountResponse?.body() == null && (createAccountResponse?.errorBody() == null || createAccountResponse.code() == 404)) {
             createAccountState.postValue(CreateAccountState.WaitingForUserInput(CreateAccountState.CreateAccountErrorType.CONNECTION_FAILURE))
             return@withContext
         }
 
         if (createAccountResponse.errorBody() != null) {
-            createAccountState.postValue(CreateAccountState.WaitingForUserInput(CreateAccountState.CreateAccountErrorType.USERNAME_IN_USE))
+            if (createAccountResponse.code() == 400)
+                createAccountState.postValue(CreateAccountState.WaitingForUserInput(CreateAccountState.CreateAccountErrorType.USERNAME_IN_USE))
+            else
+                createAccountState.postValue(CreateAccountState.WaitingForUserInput(CreateAccountState.CreateAccountErrorType.UNKNOWN_ERROR))
+
             return@withContext
         }
 
@@ -56,7 +60,7 @@ class CreateAccountViewModel : ViewModel() {
         object AccountCreated : CreateAccountState()
 
         enum class CreateAccountErrorType {
-            CONNECTION_FAILURE, USERNAME_IN_USE
+            CONNECTION_FAILURE, USERNAME_IN_USE, UNKNOWN_ERROR
         }
     }
 

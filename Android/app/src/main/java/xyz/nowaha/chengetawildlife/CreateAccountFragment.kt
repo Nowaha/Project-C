@@ -77,11 +77,39 @@ class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
 
             // TODO: Move this outside of the onClickListener, and out there, observe the state!
             // Look at line 91 in [LoginFragment] for an example.
-            Toast.makeText(
-                requireContext(),
-                "Account ${viewModel.usernameInput.value} successfully created",
-                Toast.LENGTH_SHORT
-            ).show()
+            viewModel.createAccountState.observe(viewLifecycleOwner)
+            {
+                when(it)
+                {
+                  is CreateAccountViewModel.CreateAccountState.WaitingForUserInput ->
+                  {
+                      if(it.error != null)
+                      {
+                          usernameInputLayout.error = when (it.error)
+                          {
+                              CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.CONNECTION_FAILURE -> "Connection Failed"
+                              CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.UNKNOWN_ERROR -> "Something went wrong"
+                              CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.USERNAME_IN_USE -> "Account ${viewModel.usernameInput.value} already exists"
+                          }
+                      }
+                  }
+                    is CreateAccountViewModel.CreateAccountState.Loading ->
+                    {
+
+                    }
+
+                    is CreateAccountViewModel.CreateAccountState.AccountCreated ->
+                    {
+                        Toast.makeText(
+                            requireContext(),
+                            "Account ${viewModel.usernameInput.value} successfully created",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                }
+            }
+
         }
     }
 
