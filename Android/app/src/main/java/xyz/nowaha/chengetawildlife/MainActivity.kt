@@ -1,12 +1,7 @@
 package xyz.nowaha.chengetawildlife
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import xyz.nowaha.chengetawildlife.http.APIClient
-import xyz.nowaha.chengetawildlife.pojo.AccountCreationRequest
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,3 +9,4 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 }
+

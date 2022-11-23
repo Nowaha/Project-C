@@ -9,7 +9,7 @@
         android:id="@+id/loginFragmentNav"
         android:name="xyz.nowaha.chengetawildlife.LoginFragment"
         android:label="LoginFragment"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragmentNav_to_testTableFragment"
             app:destination="@id/testTableFragment" />
@@ -23,10 +23,15 @@
         android:id="@+id/testTableFragment"
         android:name="xyz.nowaha.chengetawildlife.testtable.TestTableFragment"
         android:label="TestTableFragment"
-        tools:layout="@layout/fragment_test_table"/>
+        tools:layout="@layout/fragment_test_table" />
     <fragment
         android:id="@+id/eventMapFragment"
         android:name="xyz.nowaha.chengetawildlife.EventMapFragment"
         android:label="fragment_event_map"
         tools:layout="@layout/fragment_event_map" />
+    <fragment
+        android:id="@+id/createAccountFragment2"
+        android:name="xyz.nowaha.chengetawildlife.CreateAccountFragment"
+        android:label="CreateAccountFragment"
+        tools:layout="@layout/fragment_account_creation" />
 </navigation>

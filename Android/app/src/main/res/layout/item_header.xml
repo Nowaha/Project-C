@@ -9,20 +9,20 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Time" />
+        android:text="@string/timeText" />
 
     <TextView
         style="@style/Table.TextView.Header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Sound" />
+        android:text="@string/soundText" />
 
     <TextView
         style="@style/Table.TextView.Header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Percentage" />
+        android:text="@string/percentageText" />
 
 </LinearLayout>
