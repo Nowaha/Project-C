@@ -26,6 +26,8 @@ class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
         val usernameInputLayout = view.findViewById<TextInputLayout>(R.id.usernameTextInputLayout)
         val passwordInput = view.findViewById<TextInputEditText>(R.id.passwordTextInputEditText)
         val passwordInputLayout = view.findViewById<TextInputLayout>(R.id.passwordTextInputLayout)
+        val passwordConfirmInput = view.findViewById<TextInputEditText>(R.id.passwordConfirmTextInputEditText)
+        val passwordConfirmInputLayout = view.findViewById<TextInputLayout>(R.id.passwordConfirmTextInputLayout)
         val roleInput = view.findViewById<SwitchMaterial>(R.id.roleSelect)
 
         usernameInput.setText(viewModel.usernameInput.value)
@@ -33,10 +35,17 @@ class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
             usernameInputLayout.error = null
             viewModel.usernameInput.postValue(it.toString())
         }
-        passwordInput.setText(viewModel.usernameInput.value)
+        passwordInput.setText(viewModel.passwordInput.value)
         passwordInput.addTextChangedListener {
             passwordInputLayout.error = null
+            passwordConfirmInputLayout.error = null
             viewModel.passwordInput.postValue(it.toString())
+        }
+        passwordConfirmInput.setText(viewModel.passwordConfirmInput.value)
+        passwordConfirmInput.addTextChangedListener {
+            passwordInputLayout.error = null
+            passwordConfirmInputLayout.error = null
+            viewModel.passwordConfirmInput.postValue(it.toString())
         }
 
         roleInput.isChecked = viewModel.roleInput.value == 1
@@ -46,26 +55,30 @@ class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
 
         val createAccountButton = view.findViewById<Button>(R.id.createAccountButton)
 
-        passwordInput.setOnEditorActionListener { _, v, _ ->
-            if (v == EditorInfo.IME_ACTION_GO) {
-                if (!createAccountButton.isEnabled) return@setOnEditorActionListener true
-                createAccountButton.performClick()
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
-        }
-
         createAccountButton.setOnClickListener {
             if (viewModel.createAccountState.value !is CreateAccountViewModel.CreateAccountState.WaitingForUserInput) return@setOnClickListener
 
+            usernameInputLayout.error = null
+            passwordInputLayout.error = null
+            passwordConfirmInputLayout.error = null
+
             var validAccountDetails = true
 
-            if (usernameInput.text.toString().isBlank()) {
-                usernameInputLayout.error = "Please enter a username."
-                validAccountDetails = false
-            }
             if (passwordInput.text.toString().isBlank()) {
                 passwordInputLayout.error = "Please enter a password."
+                validAccountDetails = false
+            }
+            if (passwordConfirmInput.text.toString().isBlank()) {
+                passwordConfirmInputLayout.error = "Please confirm your password."
+                validAccountDetails = false
+            }
+            if (validAccountDetails && passwordInput.text.toString() != passwordConfirmInput.text.toString()) {
+                passwordInputLayout.error = "Passwords must match."
+                passwordConfirmInputLayout.error = "Passwords must match."
+                validAccountDetails = false
+            }
+            if (usernameInput.text.toString().isBlank()) {
+                usernameInputLayout.error = "Please enter a username."
                 validAccountDetails = false
             }
 
@@ -74,36 +87,31 @@ class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
             lifecycleScope.launch(Dispatchers.IO) {
                 viewModel.attemptCreateAccount()
             }
+        }
 
-            // TODO: Move this outside of the onClickListener, and out there, observe the state!
-            // Look at line 91 in [LoginFragment] for an example.
-            viewModel.createAccountState.observe(viewLifecycleOwner)
-            {
-                when (it) {
-                    is CreateAccountViewModel.CreateAccountState.WaitingForUserInput -> {
-                        if (it.error != null) {
-                            usernameInputLayout.error = when (it.error) {
-                                CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.CONNECTION_FAILURE -> "Connection Failed"
-                                CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.UNKNOWN_ERROR -> "Something went wrong"
-                                CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.USERNAME_IN_USE -> "Account ${viewModel.usernameInput.value} already exists"
-                            }
+        viewModel.createAccountState.observe(viewLifecycleOwner) {
+            when (it) {
+                is CreateAccountViewModel.CreateAccountState.WaitingForUserInput -> {
+                    if (it.error != null) {
+                        usernameInputLayout.error = when (it.error) {
+                            CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.CONNECTION_FAILURE -> "Connection Failed"
+                            CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.UNKNOWN_ERROR -> "Something went wrong"
+                            CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.USERNAME_IN_USE -> "Account ${viewModel.usernameInput.value} already exists"
                         }
                     }
-                    is CreateAccountViewModel.CreateAccountState.Loading -> {
-
-                    }
-
-                    is CreateAccountViewModel.CreateAccountState.AccountCreated -> {
-                        Toast.makeText(
-                            requireContext(),
-                            "Account ${viewModel.usernameInput.value} successfully created",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                }
+                is CreateAccountViewModel.CreateAccountState.Loading -> {
 
                 }
-            }
 
+                is CreateAccountViewModel.CreateAccountState.AccountCreated -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Account ${viewModel.usernameInput.value} successfully created",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
     }
 

@@ -13,7 +13,9 @@ import xyz.nowaha.chengetawildlife.pojo.AccountCreationResponse
 class CreateAccountViewModel : ViewModel() {
     val usernameInput = MutableLiveData("")
     val passwordInput = MutableLiveData("")
+    val passwordConfirmInput = MutableLiveData("")
     val roleInput = MutableLiveData(0)
+
 
     val createAccountState =
         MutableLiveData<CreateAccountState>(CreateAccountState.WaitingForUserInput(null))

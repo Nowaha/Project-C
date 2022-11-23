@@ -6,12 +6,12 @@
     android:padding="24dp">
 
     <TextView
-        android:id="@+id/accCreateTitle"
+        android:id="@+id/accEditTitle"
         style="@style/createAccountText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="@string/create_account_title"
+        android:text="@string/edit_account_title"
         app:layout_constraintBottom_toTopOf="@id/usernameTextInputLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,10 +22,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:hint="@string/create_account_hint_username"
+        android:hint="@string/edit_account_hint_username"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/passwordTextInputLayout"
-        app:layout_constraintTop_toBottomOf="@id/accCreateTitle"
+        app:layout_constraintTop_toBottomOf="@id/accEditTitle"
         app:startIconDrawable="@drawable/ic_user">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
-        android:hint="@string/create_account_hint_password"
+        android:hint="@string/edit_account_hint_password"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/passwordConfirmTextInputLayout"
         app:layout_constraintTop_toBottomOf="@id/usernameTextInputLayout"
@@ -60,10 +60,10 @@
         android:id="@+id/passwordConfirmTextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="32dp"
         android:hint="@string/edit_account_hint_password_confirm"
         app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="@id/roleSelect"
+        app:layout_constraintBottom_toTopOf="@id/editAccountButton"
         app:layout_constraintTop_toBottomOf="@id/passwordTextInputLayout"
         app:passwordToggleEnabled="true"
         app:startIconDrawable="@drawable/ic_password">
@@ -76,28 +76,14 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
-
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/roleSelect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:checked="true"
-        android:text="@string/role_select_text"
-        app:layout_constraintBottom_toTopOf="@id/createAccountButton"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/passwordConfirmTextInputLayout" />
-
     <Button
-        android:id="@+id/createAccountButton"
+        android:id="@+id/editAccountButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/create_account_submit"
+        android:text="@string/edit_account_submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/roleSelect" />
+        app:layout_constraintTop_toBottomOf="@id/passwordConfirmTextInputLayout" />
 
     <Button
         android:id="@+id/backButton"
@@ -105,9 +91,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/goBackText"
-        app:layout_constraintBottom_toBottomOf="@id/createAccountButton"
+        app:layout_constraintBottom_toBottomOf="@id/editAccountButton"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@id/createAccountButton" />
+        app:layout_constraintTop_toTopOf="@id/editAccountButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
