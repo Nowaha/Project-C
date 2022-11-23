@@ -40,8 +40,9 @@
         android:id="@+id/passwordTextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="4dp"
         android:hint="@string/edit_account_hint_password"
+        app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/passwordConfirmTextInputLayout"
         app:layout_constraintTop_toBottomOf="@id/usernameTextInputLayout"
         app:passwordToggleEnabled="true"
@@ -54,6 +55,7 @@
             android:imeOptions="actionDone"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/passwordConfirmTextInputLayout"
         android:layout_width="match_parent"
