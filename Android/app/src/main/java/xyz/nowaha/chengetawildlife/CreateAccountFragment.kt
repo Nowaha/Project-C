@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
 
-    val viewModel: CreateAccountViewModel by viewModels()
+    private val viewModel: CreateAccountViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
