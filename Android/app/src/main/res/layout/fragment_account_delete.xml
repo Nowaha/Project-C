@@ -54,7 +54,7 @@
             android:hint="@string/delete_account_hint_id"
             app:errorEnabled="true"
             android:layout_marginBottom="12dp"
-            app:layout_constraintBottom_toTopOf="@id/loginButtonLayout"
+            app:layout_constraintBottom_toTopOf="@id/deleteButtonLayout"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/usernameDeleteTextInputLayout"
@@ -68,22 +68,22 @@
                 android:imeOptions="actionGo"
                 android:inputType="textPassword" />
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/roleSelect"
+                android:id="@+id/roleSelectAccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
                 android:checked="true"
                 android:text="@string/role_select_text"
-                app:layout_constraintBottom_toTopOf="@id/createAccountButton"
+                app:layout_constraintBottom_toTopOf="@id/TextInputEditText"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/passwordConfirmTextInputLayout" />
+                app:layout_constraintTop_toBottomOf="@id/TextInputEditText" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
 
 
         <RelativeLayout
-            android:id="@+id/loginButtonLayout"
+            android:id="@+id/deleteButtonLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="64dp"
@@ -118,11 +118,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/goBackText"
-            app:layout_constraintBottom_toBottomOf="@id/loginButtonLayout"
+            app:layout_constraintBottom_toBottomOf="@id/deleteButtonLayout"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintLeft_toLeftOf="@id/idDeleteTextInputLayout"
-            app:layout_constraintRight_toLeftOf="@id/loginButtonLayout"
-            app:layout_constraintTop_toTopOf="@id/loginButtonLayout" />
+            app:layout_constraintRight_toLeftOf="@id/deleteButtonLayout"
+            app:layout_constraintTop_toTopOf="@id/deleteButtonLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
