@@ -1,99 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/delete_account_Fragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/accDeleteTitle"
-        style="@style/deleteAccountText"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="192dp"
-        android:text="@string/delete_account_title"
-        app:layout_constraintBottom_toTopOf="@+id/deleteAccountButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.128"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.117" />
+        android:padding="32dp">
 
-    <Button
-        android:id="@+id/deleteAccountButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/delete_account_submit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.759"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.666" />
+        <TextView
+            android:id="@+id/deleteAccountTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="28dp"
+            android:text="@string/delete_account_title"
+            android:textSize="28sp"
+            app:layout_constraintBottom_toTopOf="@id/usernameDeleteTextInputLayout"
+            app:layout_constraintLeft_toLeftOf="@id/usernameDeleteTextInputLayout"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
-    <Button
-        android:id="@+id/backButton"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="64dp"
-        android:text="@string/goBackText"
-        app:layout_constraintBottom_toBottomOf="@id/deleteAccountButton"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@id/deleteAccountButton"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Switch
-        android:id="@+id/switch1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="208dp"
-        android:layout_marginBottom="24dp"
-        android:text="Admin Account"
-        app:layout_constraintBottom_toTopOf="@+id/backButton"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/UserNameInput"
-        android:layout_width="355dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="103dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="131dp"
-        app:startIconDrawable="@drawable/ic_user"
-        app:layout_constraintBottom_toTopOf="@+id/switch1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accDeleteTitle">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/usernameInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/usernameDeleteTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Delete a account with Username" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginBottom="12dp"
+            android:hint="@string/delete_account_hint_username"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toTopOf="@id/idDeleteTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/deleteAccountTitleTextView"
+            app:startIconDrawable="@drawable/ic_user">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="357dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        app:startIconDrawable="@drawable/ic_user"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/UserNameInput">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/Idinput"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/usernameDeleteTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/idDeleteTextInputLayout"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            app:startIconDrawable="@drawable/ic_user"
-            android:hint="Delete a account with User ID" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:hint="@string/delete_account_hint_id"
+            app:errorEnabled="true"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toTopOf="@id/loginButtonLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/usernameDeleteTextInputLayout"
+            app:passwordToggleEnabled="true"
+            app:startIconDrawable="@drawable/ic_user">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/TextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionGo"
+                android:inputType="textPassword" />
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/roleSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:checked="true"
+                android:text="@string/role_select_text"
+                app:layout_constraintBottom_toTopOf="@id/createAccountButton"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/passwordConfirmTextInputLayout" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+        <RelativeLayout
+            android:id="@+id/loginButtonLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="64dp"
+            android:animateLayoutChanges="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/backButton"
+            app:layout_constraintRight_toRightOf="@id/idDeleteTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/idDeleteTextInputLayout">
+
+            <ProgressBar
+                android:id="@+id/loadingCircle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerInParent="true"
+                android:indeterminate="true"
+                android:indeterminateTint="?attr/colorOnPrimary"
+                android:translationZ="100dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete_account_submit" />
+
+        </RelativeLayout>
+
+
+        <Button
+            android:id="@+id/backButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/goBackText"
+            app:layout_constraintBottom_toBottomOf="@id/loginButtonLayout"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintLeft_toLeftOf="@id/idDeleteTextInputLayout"
+            app:layout_constraintRight_toLeftOf="@id/loginButtonLayout"
+            app:layout_constraintTop_toTopOf="@id/loginButtonLayout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
