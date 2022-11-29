@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "xyz.nowaha.chengetawildlife"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -58,9 +58,6 @@ dependencies {
 
     // Google Maps
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
-
-    // ExoPlayer for audio streaming & playback
-    implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
