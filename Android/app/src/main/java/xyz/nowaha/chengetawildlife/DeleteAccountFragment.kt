@@ -33,7 +33,7 @@ class DeleteAccountFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
