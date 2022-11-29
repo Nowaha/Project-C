@@ -24,5 +24,5 @@ interface APIInterface {
     fun deleteAccount(@Body request: AccountDeleteRequest) : Call<AccountDeleteResponse>
 
     @POST("/accounts/edit")
-    fun editAccount(@Body request: AccountEditRequest) : Call<AccountEditResponse>
+    fun attemptEditAccount(@Body request: AccountEditRequest) : Call<AccountEditResponse>
 }
