@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/accCreateTitle"
-        style="@style/createAccountText"
+        style="@style/fragment_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -75,8 +75,6 @@
             android:imeOptions="actionDone"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
-
-
 
 
     <com.google.android.material.switchmaterial.SwitchMaterial

@@ -14,11 +14,11 @@
 
         <TextView
             android:id="@+id/deleteAccountTitleTextView"
+            style="@style/fragment_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="32dp"
             android:text="@string/delete_account_title"
-            android:textSize="28sp"
             app:layout_constraintBottom_toTopOf="@id/usernameDeleteTextInputLayout"
             app:layout_constraintLeft_toLeftOf="@id/usernameDeleteTextInputLayout"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,7 +28,7 @@
             android:id="@+id/usernameDeleteTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="32dp"
             android:hint="@string/delete_account_hint_username"
             app:errorEnabled="true"
             app:layout_constraintBottom_toTopOf="@id/deleteButtonLayout"
