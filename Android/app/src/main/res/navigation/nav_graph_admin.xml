@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_admin"
+    app:startDestination="@id/adminHomeFragment">
+
+    <fragment
+        android:id="@+id/createAccountFragment2"
+        android:name="xyz.nowaha.chengetawildlife.CreateAccountFragment"
+        android:label="CreateAccountFragment"
+        tools:layout="@layout/fragment_account_creation" />
+    <fragment
+        android:id="@+id/editAccountFragment"
+        android:name="xyz.nowaha.chengetawildlife.EditAccountFragment"
+        android:label="EditAccountFragment"
+        tools:layout="@layout/fragment_account_editing" />
+    <fragment
+        android:id="@+id/deleteAccountFragment"
+        android:name="xyz.nowaha.chengetawildlife.DeleteAccountFragment"
+        android:label="DeleteAccountFragment"
+        tools:layout="@layout/fragment_account_delete" />
+    <fragment
+        android:id="@+id/adminHomeFragment"
+        android:name="xyz.nowaha.chengetawildlife.AdminHomeFragment"
+        android:label="AdminHomeFragment"
+        tools:layout="@layout/fragment_admin_home">
+        <action
+            android:id="@+id/action_adminHomeFragment_to_createAccountFragment2"
+            app:destination="@id/createAccountFragment2" />
+        <action
+            android:id="@+id/action_adminHomeFragment_to_editAccountFragment"
+            app:destination="@id/editAccountFragment" />
+        <action
+            android:id="@+id/action_adminHomeFragment_to_deleteAccountFragment"
+            app:destination="@id/deleteAccountFragment" />
+    </fragment>
+
+</navigation>
