@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/admin_home_title"
+        style="@style/fragment_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Admin Home"
+        android:textColor="?android:attr/textColorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/admin_home_description"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/admin_home_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="The various admin features. This page is still work in progress and is currently here for demonstration purposes."
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/createAccountButton"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/admin_home_title" />
+
+    <Button
+        android:id="@+id/createAccountButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:paddingVertical="12dp"
+        android:paddingLeft="8dp"
+        android:text="Create Account"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_baseline_add_24"
+        app:iconPadding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/editAccountButton"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/admin_home_description" />
+
+    <Button
+        android:id="@+id/editAccountButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="12dp"
+        android:paddingLeft="8dp"
+        android:text="Edit Account"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_baseline_edit_24"
+        app:iconPadding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/deleteAccountButton"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/createAccountButton" />
+
+    <Button
+        android:id="@+id/deleteAccountButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="12dp"
+        android:paddingLeft="8dp"
+        android:text="Delete Account"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_baseline_delete_24"
+        app:iconPadding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editAccountButton" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

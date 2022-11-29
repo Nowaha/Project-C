@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/delete_account_Fragment"
+    android:id="@+id/accountDeleteScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,11 +14,11 @@
 
         <TextView
             android:id="@+id/deleteAccountTitleTextView"
+            style="@style/fragment_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="32dp"
             android:text="@string/delete_account_title"
-            android:textSize="28sp"
             app:layout_constraintBottom_toTopOf="@id/usernameDeleteTextInputLayout"
             app:layout_constraintLeft_toLeftOf="@id/usernameDeleteTextInputLayout"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,19 +28,18 @@
             android:id="@+id/usernameDeleteTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="32dp"
             android:hint="@string/delete_account_hint_username"
             app:errorEnabled="true"
             app:layout_constraintBottom_toTopOf="@id/deleteButtonLayout"
             app:layout_constraintTop_toBottomOf="@id/deleteAccountTitleTextView"
             app:startIconDrawable="@drawable/ic_user">
 
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/usernameDeleteTextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
+                android:imeOptions="actionDone"
                 android:inputType="textEmailAddress" />
 
         </com.google.android.material.textfield.TextInputLayout>

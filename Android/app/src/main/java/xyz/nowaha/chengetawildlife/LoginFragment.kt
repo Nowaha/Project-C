@@ -21,7 +21,7 @@ import xyz.nowaha.chengetawildlife.util.SoftInputUtils.hideSoftInput
 
 // Should contain the code for the logging in process.
 // After logging in, Session.key should be set to the session key retrieved.
-class LoginFragment : Fragment(R.layout.fragment_login) {
+class LoginFragment : Fragment() {
 
     val viewModel: LoginViewModel by viewModels()
     lateinit var loadingCircle: ProgressBar
@@ -115,7 +115,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
                 is LoginViewModel.LoginState.LoggedIn -> {
                     requireActivity().hideSoftInput(passwordInputEditText)
-                    findNavController().navigate(R.id.action_loginFragmentNav_to_eventMapFragment)
+
+                    // TODO: Move this, this is just temporary!
+                    if (usernameInputEditText.text.toString() == "admin") {
+                        findNavController().navigate(R.id.action_loginFragmentNav_to_nav_graph_admin)
+                    } else {
+                        findNavController().navigate(R.id.action_loginFragmentNav_to_eventMapFragment)
+                    }
                 }
             }
         }
