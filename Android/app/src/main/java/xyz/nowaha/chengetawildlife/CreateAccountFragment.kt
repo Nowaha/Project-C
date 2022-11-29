@@ -89,7 +89,7 @@ class CreateAccountFragment : Fragment() {
                     validAccountDetails = false
                 }
                 if (usernameTextInputEditText.text.toString().isBlank()) {
-                    passwordTextInputLayout.error = "Please enter a username."
+                    usernameTextInputLayout.error = "Please enter a username."
                     validAccountDetails = false
                 }
             }
