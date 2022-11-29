@@ -1,99 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/accountDeleteScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp">
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
-    <TextView
-        android:id="@+id/accEditTitle"
-        style="@style/fragment_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="@string/edit_account_title"
-        app:layout_constraintBottom_toTopOf="@id/usernameTextInputLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/usernameTextInputLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:hint="@string/edit_account_hint_username"
-        app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="@id/passwordTextInputLayout"
-        app:layout_constraintTop_toBottomOf="@id/accEditTitle"
-        app:startIconDrawable="@drawable/ic_user">
+        android:padding="24dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/usernameTextInputEditText"
+        <TextView
+            android:id="@+id/accEditTitle"
+            style="@style/fragment_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="@string/edit_account_title"
+            app:layout_constraintBottom_toTopOf="@id/usernameTextInputLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/usernameTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginBottom="12dp"
+            android:hint="@string/edit_account_hint_username"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toTopOf="@id/passwordTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/accEditTitle"
+            app:startIconDrawable="@drawable/ic_user">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/passwordTextInputLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:hint="@string/edit_account_hint_password"
-        app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="@id/passwordConfirmTextInputLayout"
-        app:layout_constraintTop_toBottomOf="@id/usernameTextInputLayout"
-        app:passwordToggleEnabled="true"
-        app:startIconDrawable="@drawable/ic_password">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/usernameTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/passwordTextInputEditText"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passwordTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:inputType="textPassword" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginBottom="4dp"
+            android:hint="@string/edit_account_hint_password"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toTopOf="@id/passwordConfirmTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/usernameTextInputLayout"
+            app:passwordToggleEnabled="true"
+            app:startIconDrawable="@drawable/ic_password">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/passwordConfirmTextInputLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:hint="@string/edit_account_hint_password_confirm"
-        app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="@id/editAccountButton"
-        app:layout_constraintTop_toBottomOf="@id/passwordTextInputLayout"
-        app:passwordToggleEnabled="true"
-        app:startIconDrawable="@drawable/ic_password">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/passwordConfirmTextInputEditText"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passwordConfirmTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:inputType="textPassword" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginBottom="32dp"
+            android:hint="@string/edit_account_hint_password_confirm"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toTopOf="@id/editAccountButton"
+            app:layout_constraintTop_toBottomOf="@id/passwordTextInputLayout"
+            app:passwordToggleEnabled="true"
+            app:startIconDrawable="@drawable/ic_password">
 
-    <Button
-        android:id="@+id/editAccountButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/edit_account_submit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/passwordConfirmTextInputLayout" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordConfirmTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/backButton"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/goBackText"
-        app:layout_constraintBottom_toBottomOf="@id/editAccountButton"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@id/editAccountButton" />
+        <Button
+            android:id="@+id/editAccountButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_account_submit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/passwordConfirmTextInputLayout" />
+
+        <Button
+            android:id="@+id/backButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/goBackText"
+            app:layout_constraintBottom_toBottomOf="@id/editAccountButton"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/editAccountButton" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/delete_account_Fragment"
+    android:id="@+id/accountDeleteScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -35,12 +35,11 @@
             app:layout_constraintTop_toBottomOf="@id/deleteAccountTitleTextView"
             app:startIconDrawable="@drawable/ic_user">
 
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/usernameDeleteTextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
+                android:imeOptions="actionDone"
                 android:inputType="textEmailAddress" />
 
         </com.google.android.material.textfield.TextInputLayout>
