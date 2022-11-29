@@ -10,6 +10,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import xyz.nowaha.chengetawildlife.databinding.FragmentAccountCreationBinding
@@ -58,6 +59,8 @@ class CreateAccountFragment : Fragment() {
             roleSelect.setOnCheckedChangeListener { _, isChecked ->
                 viewModel.roleInput.postValue(if (isChecked) 1 else 0)
             }
+
+            backButton.setOnClickListener { findNavController().navigateUp() }
         }
 
         val createAccountButton = view.findViewById<Button>(R.id.createAccountButton)

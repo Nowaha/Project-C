@@ -10,6 +10,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import xyz.nowaha.chengetawildlife.databinding.FragmentAccountEditingBinding
@@ -51,6 +52,8 @@ class EditAccountFragment : Fragment() {
                 passwordConfirmTextInputLayout.error = null
                 viewModel.passwordConfirmInput.postValue(it.toString())
             }
+
+            backButton.setOnClickListener { findNavController().navigateUp() }
         }
 
         val editAccountButton = view.findViewById<Button>(R.id.editAccountButton)
