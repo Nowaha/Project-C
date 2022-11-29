@@ -69,10 +69,9 @@
                 android:id="@+id/loginButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/delete_account_submit" />
+                android:text="@string/delete_account_delete" />
 
         </RelativeLayout>
-
 
         <Button
             android:id="@+id/backButton"

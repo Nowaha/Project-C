@@ -17,8 +17,7 @@
     <string name="create_account_submit">Create</string>
     <string name="delete_account_title">Delete User</string>
     <string name="delete_account_hint_username">Username to delete</string>
-    <string name="delete_account_hint_password_confirm">Confirm password</string>
-    <string name="delete_account_submit">Delete</string>
+    <string name="delete_account_delete">Delete</string>
     <string name="edit_account_title">Edit Account</string>
     <string name="edit_account_hint_username">Account username</string>
     <string name="edit_account_hint_password">New password</string>
