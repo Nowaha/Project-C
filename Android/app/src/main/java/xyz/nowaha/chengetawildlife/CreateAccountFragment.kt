@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import xyz.nowaha.chengetawildlife.databinding.FragmentAccountCreationBinding
 
-class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
+class CreateAccountFragment : Fragment() {
 
     private val viewModel: CreateAccountViewModel by viewModels()
 

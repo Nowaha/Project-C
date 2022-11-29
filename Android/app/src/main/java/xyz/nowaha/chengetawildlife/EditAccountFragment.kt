@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import xyz.nowaha.chengetawildlife.databinding.FragmentAccountEditingBinding
 
-class EditAccountFragment : Fragment(R.layout.fragment_account_editing) {
+class EditAccountFragment : Fragment() {
 
     private val viewModel: EditAccountViewModel by viewModels()
 
