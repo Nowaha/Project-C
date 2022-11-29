@@ -22,4 +22,10 @@
         <item name="android:textColor">@color/chengeta_primary</item>
     </style>
 
+    <style name="deleteAccountText">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/chengeta_primary</item>
+    </style>
+
 </resources>
