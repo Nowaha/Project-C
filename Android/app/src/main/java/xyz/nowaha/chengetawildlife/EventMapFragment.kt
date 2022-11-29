@@ -2,22 +2,18 @@ package xyz.nowaha.chengetawildlife
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionManager
-import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageButton
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -31,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.*
 import xyz.nowaha.chengetawildlife.extensions.dp
 import xyz.nowaha.chengetawildlife.extensions.iconBasedOnType
@@ -38,7 +35,6 @@ import xyz.nowaha.chengetawildlife.pojo.Event
 import xyz.nowaha.chengetawildlife.testtable.TestTableFragment
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.floor
 
 
@@ -51,9 +47,16 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<RelativeLayout>
     private var defaultBottomSheetPeekHeight: Int = 0
 
+    private lateinit var soundLoadingCircle: ProgressBar
+    private lateinit var soundPlayButton: MaterialButton
+
     private var markerCoroutine: Job? = null
 
     val viewModel: EventsMapViewModel by viewModels()
+
+    private var mediaPlayer: MediaPlayer? = null
+    private var mediaLoading = false
+    private var lastLoadedSound: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -61,8 +64,19 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         return inflater.inflate(R.layout.fragment_event_map, container, false)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mediaPlayer = MediaPlayer()
+        mediaPlayer?.setAudioAttributes(
+            AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
+                .setUsage(AudioAttributes.USAGE_MEDIA).build()
+        )
+
+        soundLoadingCircle = view.findViewById(R.id.soundLoadingCircle)
+        soundPlayButton = view.findViewById(R.id.soundPlayButton)
+
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
@@ -196,7 +210,9 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
         lifecycleScope.launch(Dispatchers.IO) {
-            while(!viewModel.loadEvents()) { delay(1000) }
+            while (!viewModel.loadEvents()) {
+                delay(1000)
+            }
         }
 
         requestLocationPermission()
@@ -238,6 +254,14 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         markers.forEach { it.value.alpha = 0.7f }
         markers[event]?.alpha = 1f
 
+        mediaLoading = false
+        lastLoadedSound = null
+        mediaPlayer?.apply {
+            stop()
+            reset()
+        }
+        resetSoundButton()
+
         with(requireView()) {
             findViewById<FrameLayout>(R.id.tableHolder).visibility = GONE
             with(findViewById<View>(R.id.eventInfoLayout)) {
@@ -251,7 +275,11 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                 }
 
                 findViewById<ImageButton>(R.id.targetButton).setOnClickListener {
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers[event]!!.position, 7.5f), 500, null)
+                    googleMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            markers[event]!!.position, 7.5f
+                        ), 500, null
+                    )
                 }
 
                 findViewById<TextView>(R.id.dateValue).text = getString(
@@ -266,6 +294,26 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                 findViewById<TextView>(R.id.latitude).text =
                     getString(R.string.event_data_coordinates_latitude_value, event.latitude)
 
+                soundPlayButton.setOnClickListener {
+                    if (mediaLoading || mediaPlayer?.isPlaying == true) return@setOnClickListener
+                    mediaLoading = true
+                    soundLoadingCircle.visibility = VISIBLE
+                    soundPlayButton.setIconResource(R.drawable.ic_invisible_24)
+
+                    mediaPlayer?.apply {
+                        if (lastLoadedSound != event.soundUrl) {
+                            setDataSource(event.soundUrl)
+                            prepareAsync()
+                            lastLoadedSound = event.soundUrl
+                        } else {
+                            seekTo(0)
+                            playSound()
+                        }
+                        setOnPreparedListener { playSound() }
+                        setOnCompletionListener { resetSoundButton() }
+                    }
+                }
+
                 markerCoroutine = lifecycleScope.launch {
                     while (true) {
                         requireView().findViewById<TextView>(R.id.eventDetailsTitle).text =
@@ -279,6 +327,18 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                 }
             }
         }
+    }
+
+    private fun playSound() {
+        mediaPlayer?.start()
+        soundPlayButton.setIconResource(R.drawable.drawable_pause_button)
+        soundLoadingCircle.visibility = INVISIBLE
+        mediaLoading = false
+    }
+
+    private fun resetSoundButton() {
+        soundLoadingCircle.visibility = INVISIBLE
+        soundPlayButton.setIconResource(R.drawable.drawable_play_arrow)
     }
 
     private fun eventDeselected() {
@@ -298,5 +358,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         }
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.release()
+    }
 }
