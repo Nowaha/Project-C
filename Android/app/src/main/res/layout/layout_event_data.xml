@@ -115,4 +115,19 @@
         app:layout_constraintTop_toBottomOf="@id/longitude"
         tools:text="Latitude: 0.000000" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/soundPLayButton"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/drawable_play_arrow"
+        app:iconSize="20dp"
+        android:paddingHorizontal="4dp"
+        app:iconTint="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/latitude"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="@string/soundPlayButton"
+        android:textColor="@color/black"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
