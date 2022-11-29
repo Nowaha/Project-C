@@ -25,8 +25,6 @@ class AdminHomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.backButton.setOnClickListener { findNavController().navigateUp() }
-
         binding.createAccountButton.setOnClickListener {
             findNavController().navigate(R.id.action_adminHomeFragment_to_createAccountFragment2)
         }
