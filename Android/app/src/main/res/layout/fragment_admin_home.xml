@@ -69,19 +69,8 @@
         android:textAllCaps="false"
         app:icon="@drawable/ic_baseline_delete_24"
         app:iconPadding="8dp"
-        app:layout_constraintBottom_toTopOf="@id/backButton"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editAccountButton" />
-
-    <Button
-        android:id="@+id/backButton"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/deleteAccountButton" />
+        app:layout_constraintTop_toBottomOf="@id/editAccountButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
