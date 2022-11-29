@@ -21,7 +21,7 @@ import xyz.nowaha.chengetawildlife.util.SoftInputUtils.hideSoftInput
 
 // Should contain the code for the logging in process.
 // After logging in, Session.key should be set to the session key retrieved.
-class LoginFragment : Fragment(R.layout.fragment_login) {
+class LoginFragment : Fragment() {
 
     val viewModel: LoginViewModel by viewModels()
     lateinit var loadingCircle: ProgressBar
