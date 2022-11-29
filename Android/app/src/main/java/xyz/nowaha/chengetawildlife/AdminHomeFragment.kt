@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import xyz.nowaha.chengetawildlife.databinding.FragmentAdminHomeBinding
 
 class AdminHomeFragment : Fragment() {
@@ -19,6 +20,24 @@ class AdminHomeFragment : Fragment() {
     ): View {
         _binding = FragmentAdminHomeBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+
+        binding.createAccountButton.setOnClickListener {
+            findNavController().navigate(R.id.action_adminHomeFragment_to_createAccountFragment2)
+        }
+
+        binding.editAccountButton.setOnClickListener {
+            findNavController().navigate(R.id.action_adminHomeFragment_to_editAccountFragment)
+        }
+
+        binding.deleteAccountButton.setOnClickListener {
+            findNavController().navigate(R.id.action_adminHomeFragment_to_deleteAccountFragment)
+        }
     }
 
     override fun onDestroyView() {
