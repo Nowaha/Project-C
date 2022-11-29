@@ -7,6 +7,7 @@
     <string name="event_data_certainty_label">Certainty</string>
     <string name="event_data_certainty_value">%1$d%% certain</string>
     <string name="event_data_coordinates_label">Event Coordinates</string>
+    <string name="event_data_listen_label">Listen to sound</string>
     <string name="event_data_coordinates_longitude_value">Longitude: %1$f</string>
     <string name="event_data_coordinates_latitude_value">Latitude: %1$f</string>
     <string name="create_account_title">Create Account</string>
@@ -27,4 +28,5 @@
     <string name="timeText">Time</string>
     <string name="soundText">Sound</string>
     <string name="percentageText">Percentage</string>
+    <string name="soundPlayButton">Play Sound</string>
 </resources>
