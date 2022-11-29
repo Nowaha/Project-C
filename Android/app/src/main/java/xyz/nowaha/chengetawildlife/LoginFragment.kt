@@ -1,12 +1,12 @@
 package xyz.nowaha.chengetawildlife
 
-import android.opengl.Visibility
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,10 +16,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Response
-import xyz.nowaha.chengetawildlife.http.APIClient
-import xyz.nowaha.chengetawildlife.pojo.LoginResponse
+import xyz.nowaha.chengetawildlife.databinding.FragmentLoginBinding
 import xyz.nowaha.chengetawildlife.util.SoftInputUtils.hideSoftInput
 
 // Should contain the code for the logging in process.
@@ -28,6 +25,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     val viewModel: LoginViewModel by viewModels()
     lateinit var loadingCircle: ProgressBar
+
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -111,5 +120,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }
 
