@@ -1,56 +1,63 @@
 package xyz.nowaha.chengetawildlife
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.EditorInfo
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import xyz.nowaha.chengetawildlife.databinding.FragmentAccountCreationBinding
 
 class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
 
     private val viewModel: CreateAccountViewModel by viewModels()
 
+    private var _binding: FragmentAccountCreationBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAccountCreationBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val usernameInput = view.findViewById<TextInputEditText>(R.id.usernameTextInputEditText)
-        val usernameInputLayout = view.findViewById<TextInputLayout>(R.id.usernameTextInputLayout)
-        val passwordInput = view.findViewById<TextInputEditText>(R.id.passwordTextInputEditText)
-        val passwordInputLayout = view.findViewById<TextInputLayout>(R.id.passwordTextInputLayout)
-        val passwordConfirmInput = view.findViewById<TextInputEditText>(R.id.passwordConfirmTextInputEditText)
-        val passwordConfirmInputLayout = view.findViewById<TextInputLayout>(R.id.passwordConfirmTextInputLayout)
-        val roleInput = view.findViewById<SwitchMaterial>(R.id.roleSelect)
+        with(binding) {
+            usernameTextInputEditText.setText(viewModel.usernameInput.value)
+            usernameTextInputEditText.addTextChangedListener {
+                usernameTextInputLayout.error = null
+                viewModel.usernameInput.postValue(it.toString())
+            }
 
-        usernameInput.setText(viewModel.usernameInput.value)
-        usernameInput.addTextChangedListener {
-            usernameInputLayout.error = null
-            viewModel.usernameInput.postValue(it.toString())
-        }
-        passwordInput.setText(viewModel.passwordInput.value)
-        passwordInput.addTextChangedListener {
-            passwordInputLayout.error = null
-            passwordConfirmInputLayout.error = null
-            viewModel.passwordInput.postValue(it.toString())
-        }
-        passwordConfirmInput.setText(viewModel.passwordConfirmInput.value)
-        passwordConfirmInput.addTextChangedListener {
-            passwordInputLayout.error = null
-            passwordConfirmInputLayout.error = null
-            viewModel.passwordConfirmInput.postValue(it.toString())
-        }
+            passwordTextInputEditText.setText(viewModel.passwordInput.value)
+            passwordTextInputEditText.addTextChangedListener {
+                passwordTextInputLayout.error = null
+                passwordConfirmTextInputLayout.error = null
+                viewModel.passwordInput.postValue(it.toString())
+            }
 
-        roleInput.isChecked = viewModel.roleInput.value == 1
-        roleInput.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.roleInput.postValue(if (isChecked) 1 else 0)
+            passwordConfirmTextInputEditText.setText(viewModel.passwordConfirmInput.value)
+            passwordConfirmTextInputEditText.addTextChangedListener {
+                passwordTextInputLayout.error = null
+                passwordConfirmTextInputLayout.error = null
+                viewModel.passwordConfirmInput.postValue(it.toString())
+            }
+
+            roleSelect.isChecked = viewModel.roleInput.value == 1
+            roleSelect.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.roleInput.postValue(if (isChecked) 1 else 0)
+            }
         }
 
         val createAccountButton = view.findViewById<Button>(R.id.createAccountButton)
@@ -58,28 +65,30 @@ class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
         createAccountButton.setOnClickListener {
             if (viewModel.createAccountState.value !is CreateAccountViewModel.CreateAccountState.WaitingForUserInput) return@setOnClickListener
 
-            usernameInputLayout.error = null
-            passwordInputLayout.error = null
-            passwordConfirmInputLayout.error = null
-
             var validAccountDetails = true
 
-            if (passwordInput.text.toString().isBlank()) {
-                passwordInputLayout.error = "Please enter a password."
-                validAccountDetails = false
-            }
-            if (passwordConfirmInput.text.toString().isBlank()) {
-                passwordConfirmInputLayout.error = "Please confirm your password."
-                validAccountDetails = false
-            }
-            if (validAccountDetails && passwordInput.text.toString() != passwordConfirmInput.text.toString()) {
-                passwordInputLayout.error = "Passwords must match."
-                passwordConfirmInputLayout.error = "Passwords must match."
-                validAccountDetails = false
-            }
-            if (usernameInput.text.toString().isBlank()) {
-                usernameInputLayout.error = "Please enter a username."
-                validAccountDetails = false
+            with(binding) {
+                usernameTextInputLayout.error = null
+                passwordTextInputLayout.error = null
+                passwordConfirmTextInputLayout.error = null
+
+                if (passwordTextInputEditText.text.toString().isBlank()) {
+                    passwordTextInputLayout.error = "Please enter a password."
+                    validAccountDetails = false
+                }
+                if (passwordConfirmTextInputEditText.text.toString().isBlank()) {
+                    passwordConfirmTextInputLayout.error = "Please confirm your password."
+                    validAccountDetails = false
+                }
+                if (validAccountDetails && passwordTextInputEditText.text.toString() != passwordConfirmTextInputEditText.text.toString()) {
+                    passwordTextInputLayout.error = "Passwords must match."
+                    passwordConfirmTextInputLayout.error = "Passwords must match."
+                    validAccountDetails = false
+                }
+                if (usernameTextInputEditText.text.toString().isBlank()) {
+                    passwordTextInputLayout.error = "Please enter a username."
+                    validAccountDetails = false
+                }
             }
 
             if (!validAccountDetails) return@setOnClickListener
@@ -93,7 +102,7 @@ class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
             when (it) {
                 is CreateAccountViewModel.CreateAccountState.WaitingForUserInput -> {
                     if (it.error != null) {
-                        usernameInputLayout.error = when (it.error) {
+                        binding.usernameTextInputLayout.error = when (it.error) {
                             CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.CONNECTION_FAILURE -> "Connection Failed"
                             CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.UNKNOWN_ERROR -> "Something went wrong"
                             CreateAccountViewModel.CreateAccountState.CreateAccountErrorType.USERNAME_IN_USE -> "Account ${viewModel.usernameInput.value} already exists"
@@ -115,5 +124,9 @@ class CreateAccountFragment : Fragment(R.layout.fragment_account_creation) {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 }
