@@ -27,4 +27,5 @@
     <string name="timeText">Time</string>
     <string name="soundText">Sound</string>
     <string name="percentageText">Percentage</string>
+    <string name="soundPlayButton">Play Sound</string>
 </resources>
