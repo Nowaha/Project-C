@@ -28,11 +28,6 @@ class DeleteAccountFragment : Fragment() {
         _binding = FragmentAccountDeleteBinding.inflate(inflater, container, false)
         return binding.root
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -85,6 +80,11 @@ class DeleteAccountFragment : Fragment() {
                 }
             }
         }
-
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }
