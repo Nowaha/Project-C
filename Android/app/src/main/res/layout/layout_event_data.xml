@@ -123,11 +123,11 @@
         app:icon="@drawable/drawable_play_arrow"
         app:iconSize="20dp"
         android:paddingHorizontal="4dp"
-        app:iconTint="@color/black"
+        app:iconTint="?android:attr/textColorPrimary"
         app:layout_constraintTop_toBottomOf="@id/latitude"
         app:layout_constraintLeft_toLeftOf="parent"
         android:text="@string/soundPlayButton"
-        android:textColor="@color/black"/>
+        android:textColor="?android:attr/textColorPrimary"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
