@@ -131,15 +131,27 @@
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:icon="@drawable/drawable_play_arrow"
-        app:iconSize="20dp"
         android:paddingLeft="8dp"
         android:paddingRight="14dp"
+        android:text="@string/soundPlayButton"
         android:textColor="?android:attr/textColorSecondary"
+        app:icon="@drawable/drawable_play_arrow"
+        app:iconSize="20dp"
         app:iconTint="?android:attr/textColorSecondary"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:text="@string/soundPlayButton"
         app:layout_constraintTop_toBottomOf="@id/listenLabel" />
+
+    <ProgressBar
+        android:id="@+id/soundLoadingCircle"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginLeft="8dp"
+        android:indeterminate="true"
+        android:indeterminateTint="?android:attr/textColorSecondary"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/soundPlayButton"
+        app:layout_constraintLeft_toLeftOf="@id/soundPlayButton"
+        app:layout_constraintTop_toTopOf="@id/soundPlayButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
