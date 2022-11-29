@@ -115,6 +115,7 @@ class EditAccountFragment : Fragment() {
                         "Account ${viewModel.usernameInput.value} successfully edited",
                         Toast.LENGTH_SHORT
                     ).show()
+                    findNavController().navigateUp()
                 }
             }
         }

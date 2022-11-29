@@ -81,6 +81,7 @@ class DeleteAccountFragment : Fragment() {
                         "Account ${viewModel.usernameInput.value} successfully deleted",
                         Toast.LENGTH_SHORT
                     ).show()
+                    findNavController().navigateUp()
                 }
             }
         }
