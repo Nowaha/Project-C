@@ -2,8 +2,6 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-
     android:id="@+id/delete_account_Fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,7 +31,7 @@
             android:layout_marginBottom="12dp"
             android:hint="@string/delete_account_hint_username"
             app:errorEnabled="true"
-            app:layout_constraintBottom_toTopOf="@id/idDeleteTextInputLayout"
+            app:layout_constraintBottom_toTopOf="@id/deleteButtonLayout"
             app:layout_constraintTop_toBottomOf="@id/deleteAccountTitleTextView"
             app:startIconDrawable="@drawable/ic_user">
 
@@ -47,41 +45,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/idDeleteTextInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/delete_account_hint_id"
-            app:errorEnabled="true"
-            android:layout_marginBottom="12dp"
-            app:layout_constraintBottom_toTopOf="@id/deleteButtonLayout"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/usernameDeleteTextInputLayout"
-            app:passwordToggleEnabled="true"
-            app:startIconDrawable="@drawable/ic_user">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/TextInputEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionGo"
-                android:inputType="textPassword" />
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/roleSelectAccount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:checked="true"
-                android:text="@string/role_select_text"
-                app:layout_constraintBottom_toTopOf="@id/TextInputEditText"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/TextInputEditText" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-
         <RelativeLayout
             android:id="@+id/deleteButtonLayout"
             android:layout_width="wrap_content"
@@ -89,9 +52,8 @@
             android:layout_marginLeft="64dp"
             android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/backButton"
-            app:layout_constraintRight_toRightOf="@id/idDeleteTextInputLayout"
-            app:layout_constraintTop_toBottomOf="@id/idDeleteTextInputLayout">
+            app:layout_constraintRight_toRightOf="@id/usernameDeleteTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@+id/usernameDeleteTextInputLayout">
 
             <ProgressBar
                 android:id="@+id/loadingCircle"
@@ -120,8 +82,7 @@
             android:text="@string/goBackText"
             app:layout_constraintBottom_toBottomOf="@id/deleteButtonLayout"
             app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintLeft_toLeftOf="@id/idDeleteTextInputLayout"
-            app:layout_constraintRight_toLeftOf="@id/deleteButtonLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@id/deleteButtonLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
