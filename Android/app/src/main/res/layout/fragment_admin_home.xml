@@ -7,11 +7,11 @@
 
     <TextView
         android:id="@+id/admin_home_title"
+        style="@style/fragment_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Admin Home"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="24dp"
         app:layout_constraintBottom_toTopOf="@id/admin_home_description"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="The various admin features. This page is still work in progress and is currently here for demonstration purposes."
-        android:textSize="16dp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/createAccountButton"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/admin_home_title" />
