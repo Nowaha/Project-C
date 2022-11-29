@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.*
+import xyz.nowaha.chengetawildlife.databinding.FragmentEventMapBinding
 import xyz.nowaha.chengetawildlife.extensions.dp
 import xyz.nowaha.chengetawildlife.extensions.iconBasedOnType
 import xyz.nowaha.chengetawildlife.pojo.Event
@@ -43,7 +44,6 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     private lateinit var googleMap: GoogleMap
     private val markers = HashMap<Event, Marker>()
 
-    private lateinit var bottomSheet: RelativeLayout
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<RelativeLayout>
     private var defaultBottomSheetPeekHeight: Int = 0
 
@@ -58,12 +58,17 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     private var mediaLoading = false
     private var lastLoadedSound: String? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_event_map, container, false)
-    }
+    private var _binding: FragmentEventMapBinding? = null
+    private val binding get() = _binding!!
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentEventMapBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -96,13 +101,12 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             }
         }
 
-        bottomSheet = view.findViewById(R.id.bottom_sheet_map)
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMap)
         defaultBottomSheetPeekHeight = bottomSheetBehavior.peekHeight
 
-        bottomSheet.isFocusableInTouchMode = true
-        bottomSheet.requestFocus()
-        bottomSheet.setOnKeyListener(OnKeyListener { _, keyCode, _ ->
+        binding.bottomSheetMap.isFocusableInTouchMode = true
+        binding.bottomSheetMap.requestFocus()
+        binding.bottomSheetMap.setOnKeyListener(OnKeyListener { _, keyCode, _ ->
             if (keyCode == KeyEvent.KEYCODE_BACK) {
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -112,7 +116,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
             false
         })
-        bottomSheet.setOnClickListener {
+
+        binding.bottomSheetMap.setOnClickListener {
             if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
@@ -171,13 +176,13 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                     android.Manifest.permission.ACCESS_FINE_LOCATION, false
                 ) -> {
                     // Precise location access granted.
-                    googleMap.isMyLocationEnabled = true;
+                    googleMap.isMyLocationEnabled = true
                 }
                 permissions.getOrDefault(
                     android.Manifest.permission.ACCESS_COARSE_LOCATION, false
                 ) -> {
                     // Only approximate location access granted.
-                    googleMap.isMyLocationEnabled = true;
+                    googleMap.isMyLocationEnabled = true
                 }
                 else -> {
                     // No location access granted.
@@ -194,8 +199,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                 requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            googleMap.isMyLocationEnabled = true;
-            return;
+            googleMap.isMyLocationEnabled = true
+            return
         }
 
         locationPermissionRequest.launch(
@@ -269,7 +274,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
                 if (visibility == GONE) {
                     visibility = VISIBLE
-                    TransitionManager.beginDelayedTransition(bottomSheet)
+                    TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
                     bottomSheetBehavior.peekHeight = dp(262)
                     googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
                 }
@@ -351,15 +356,17 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             findViewById<View>(R.id.eventInfoLayout).visibility = GONE
             findViewById<FrameLayout>(R.id.tableHolder).visibility = VISIBLE
 
-            TransitionManager.beginDelayedTransition(bottomSheet)
+            TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
             bottomSheetBehavior.peekHeight = defaultBottomSheetPeekHeight
 
             googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         mediaPlayer?.release()
+        _binding = null
     }
+
 }
