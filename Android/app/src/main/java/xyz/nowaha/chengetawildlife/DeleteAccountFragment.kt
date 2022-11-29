@@ -1,69 +1,86 @@
 package xyz.nowaha.chengetawildlife
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.Button
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import xyz.nowaha.chengetawildlife.databinding.FragmentAccountDeleteBinding
 
 class DeleteAccountFragment : Fragment() {
-    private val viewModel: DeleteAccountViewModel by viewModels();
+    val viewModel: DeleteAccountViewModel by viewModels()
+
+    private var _binding: FragmentAccountDeleteBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAccountDeleteBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val usernameInput = view.findViewById<TextInputEditText>(R.id.usernameDeleteTextInputEditText)
-        val usernameInputLayout = view.findViewById<TextInputLayout>(R.id.usernameDeleteTextInputLayout)
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
 
-        usernameInput.setText(viewModel.usernameInput.value)
-        usernameInput.addTextChangedListener {
-            usernameInputLayout.error = null
+        binding.usernameDeleteTextInputEditText.setText(viewModel.usernameInput.value)
+        binding.usernameDeleteTextInputEditText.addTextChangedListener {
+            binding.usernameDeleteTextInputLayout.error = null
             viewModel.usernameInput.postValue(it.toString())
         }
-        val deleteAccountButton = view.findViewById<Button>(R.id.delete_account_Button)
-        deleteAccountButton.setOnClickListener {
+
+        binding.deleteAccountButton.setOnClickListener {
             if (viewModel.deleteAccountState.value !is DeleteAccountViewModel.DeleteAccountState.WaitingForUserInput) return@setOnClickListener
-            usernameInputLayout.error = null
+
+            binding.usernameDeleteTextInputLayout.error = null
+
             var validAccountDetails = true
-            if (usernameInput.text.toString().isBlank()) {
-                usernameInputLayout.error = "Please enter a username."
+            if (binding.usernameDeleteTextInputEditText.text.toString().isBlank()) {
+                binding.usernameDeleteTextInputLayout.error = "Please enter a username."
                 validAccountDetails = false
             }
             if (!validAccountDetails) return@setOnClickListener
             lifecycleScope.launch(Dispatchers.IO) {
                 viewModel.deleteAccount()
             }
-            viewModel.deleteAccountState.observe(viewLifecycleOwner) {
-                when (it) {
-                    is DeleteAccountViewModel.DeleteAccountState.WaitingForUserInput -> {
-                        if (it.error != null) {
-                            usernameInputLayout.error = when (it.error) {
-                                DeleteAccountViewModel.DeleteAccountState.DeleteAccountErrorType.CONNECTION_FAILURE -> "Connection Failed"
-                                DeleteAccountViewModel.DeleteAccountState.DeleteAccountErrorType.UNKNOWN_ERROR -> "Something went wrong"
-                                DeleteAccountViewModel.DeleteAccountState.DeleteAccountErrorType.USERNAME_IN_USE -> "Account ${viewModel.usernameInput.value} doesn't exists"
-                            }
+        }
+
+        viewModel.deleteAccountState.observe(viewLifecycleOwner) {
+            when (it) {
+                is DeleteAccountViewModel.DeleteAccountState.WaitingForUserInput -> {
+                    if (it.error != null) {
+                        binding.usernameDeleteTextInputLayout.error = when (it.error) {
+                            DeleteAccountViewModel.DeleteAccountState.DeleteAccountErrorType.CONNECTION_FAILURE -> "Connection Failed"
+                            DeleteAccountViewModel.DeleteAccountState.DeleteAccountErrorType.UNKNOWN_ERROR -> "Something went wrong"
+                            DeleteAccountViewModel.DeleteAccountState.DeleteAccountErrorType.USERNAME_NOT_FOUND -> "Account ${viewModel.usernameInput.value} doesn't exists"
                         }
                     }
-                    is DeleteAccountViewModel.DeleteAccountState.Loading -> {
+                }
+                is DeleteAccountViewModel.DeleteAccountState.Loading -> {
 
-                    }
-
-                    is DeleteAccountViewModel.DeleteAccountState.AccountDeleted -> {
-                        Toast.makeText(
-                            requireContext(),
-                            "Account ${viewModel.usernameInput.value} successfully deleted",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                }
+                is DeleteAccountViewModel.DeleteAccountState.AccountDeleted -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Account ${viewModel.usernameInput.value} successfully deleted",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
