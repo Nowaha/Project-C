@@ -16,8 +16,8 @@
         <action
             android:id="@+id/action_loginFragmentNav_to_eventMapFragment"
             app:destination="@id/eventMapFragment"
-            app:popUpToInclusive="true"
-            app:popUpTo="@id/loginFragmentNav"/>
+            app:popUpTo="@id/loginFragmentNav"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/testTableFragment"
@@ -34,4 +34,15 @@
         android:name="xyz.nowaha.chengetawildlife.CreateAccountFragment"
         android:label="CreateAccountFragment"
         tools:layout="@layout/fragment_account_creation" />
+    <fragment
+        android:id="@+id/editAccountFragment"
+        android:name="xyz.nowaha.chengetawildlife.EditAccountFragment"
+        android:label="EditAccountFragment"
+        tools:layout="@layout/fragment_account_editing" />
+    <fragment
+        android:id="@+id/deleteAccountFragment"
+        android:name="xyz.nowaha.chengetawildlife.DeleteAccountFragment"
+        android:label="DeleteAccountFragment"
+        tools:layout="@layout/fragment_account_delete" />
+
 </navigation>
