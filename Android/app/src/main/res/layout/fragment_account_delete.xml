@@ -65,7 +65,7 @@
                 android:visibility="gone" />
 
             <Button
-                android:id="@+id/loginButton"
+                android:id="@+id/delete_account_Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/delete_account_delete" />

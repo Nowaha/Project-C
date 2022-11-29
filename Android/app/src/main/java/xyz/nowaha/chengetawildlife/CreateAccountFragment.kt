@@ -122,6 +122,7 @@ class CreateAccountFragment : Fragment() {
                         "Account ${viewModel.usernameInput.value} successfully created",
                         Toast.LENGTH_SHORT
                     ).show()
+                    findNavController().navigateUp()
                 }
             }
         }
