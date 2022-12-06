@@ -19,7 +19,27 @@ namespace ChengetaBackend
         {
             //Checks if the Username and password field are filled in correctly
 
-            //if (!Program.sessionManager.SessionDictionary.ContainsKey(session)) return Response.generateBasicError(Code.UNAUTHORIZED, Message.UNAUTHORIZED, "Invalid session");
+            if (!Program.sessionManager.SessionDictionary.ContainsKey(session)) 
+            {
+                return Response.generateBasicError(Code.UNAUTHORIZED, Message.UNAUTHORIZED, "Server could not find session");
+            }
+            
+           var logInName = Program.sessionManager.SessionDictionary[session];
+
+            using (var db = new ChengetaContext())
+            {
+                var loggedInAccount = db.accounts.Where(user=> user.Username == logInName).Select(currentUser => currentUser).FirstOrDefault();
+                 
+                if(loggedInAccount.Username == null)
+                {
+                    return Response.generateBasicError(Code.SERVER_ERROR, Message.SERVER_ERROR, "Server Error.");
+                }
+                
+                if(loggedInAccount.Role != Account.AccountType.ADMIN) 
+                    {
+                        return Response.generateBasicError(Code.FORBIDDEN, Message.FORBIDDEN, "You do not have the right.");
+                    }
+            };
             
             AccountCreationRequest request;
             
