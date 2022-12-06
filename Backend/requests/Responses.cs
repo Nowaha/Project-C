@@ -41,6 +41,8 @@ namespace ChengetaBackend
         public static readonly int FORBIDDEN = 403;
         public static readonly int NOT_FOUND = 404;
         public static readonly int METHOD_NOT_ALLOWED = 405;
+
+        public static readonly int SERVER_ERROR = 500;
     }
 
     public static class Message
@@ -50,7 +52,8 @@ namespace ChengetaBackend
         public static readonly string UNAUTHORIZED = "UNAUTHORIZED";
         public static readonly string FORBIDDEN = "FORBIDDEN";
         public static readonly string NOT_FOUND = "NOT FOUND";
-        public static readonly string METHOD_NOT_ALLOWED = "METHOD NOT";
+        public static readonly string METHOD_NOT_ALLOWED = "METHOD NOT ALLOWED";
+        public static readonly string SERVER_ERROR = "SERVER ERROR";
     }
 
 }
