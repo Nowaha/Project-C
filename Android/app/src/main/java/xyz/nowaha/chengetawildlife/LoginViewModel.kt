@@ -29,6 +29,7 @@ class LoginViewModel : ViewModel() {
             loginResponse = APIClient.getAPIInterface().attemptLogin(usernameEntry.value ?: "", passwordEntry.value ?: "").execute()
         } catch (_: Exception) { }
 
+
         if (loginResponse?.body() == null && loginResponse?.errorBody() == null) {
             loginState.postValue(LoginState.WaitingForUserInput(LoginState.LoginErrorType.CONNECTION_FAILURE))
             return@withContext
@@ -39,6 +40,7 @@ class LoginViewModel : ViewModel() {
         }
 
         Session.key = loginResponse.body()!!.sessionKey
+        Session.isAdmin = loginResponse.body()!!.isAdmin
         loginState.postValue(LoginState.LoggedIn)
     }
 
