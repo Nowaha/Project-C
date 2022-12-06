@@ -53,7 +53,7 @@ namespace ChengetaBackend
         public static readonly string FORBIDDEN = "FORBIDDEN";
         public static readonly string NOT_FOUND = "NOT FOUND";
         public static readonly string METHOD_NOT_ALLOWED = "METHOD NOT ALLOWED";
-        public static readonly string SERVER_ERROR = "SERVER_ERROR";
+        public static readonly string SERVER_ERROR = "SERVER ERROR";
     }
 
 }
