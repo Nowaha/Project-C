@@ -1,4 +1,5 @@
 plugins {
+    id "org.jetbrains.kotlin.kapt"
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
@@ -38,6 +39,7 @@ android {
 
 dependencies {
     def nav_version = "2.5.3"
+    def room_version = "2.4.3"
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
@@ -62,6 +64,11 @@ dependencies {
 
     // Google Maps
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+
+    // Room
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
