@@ -41,6 +41,11 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (Session.key != null) {
+            findNavController().navigate(R.id.action_loginFragmentNav_to_eventMapFragment)
+            return
+        }
+
         val usernameInputEditText =
             view.findViewById<TextInputEditText>(R.id.usernameTextInputEditText)
         val usernameInputLayout = view.findViewById<TextInputLayout>(R.id.usernameTextInputLayout)
