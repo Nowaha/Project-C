@@ -249,6 +249,15 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                 while (!viewModel.loadEvents()) {
                     delay(1000)
                 }
+                markers.entries.firstOrNull()?.let {
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it.value.position, 5f))
+                }
+            }
+        } else {
+            if (viewModel.selectedEvent != null) {
+                markers.entries.firstOrNull { it.key.id == viewModel.selectedEvent }?.let {
+                    eventSelected(it.key, noAnimation = true)
+                }
             }
         }
 
@@ -266,8 +275,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             }
         })
 
-        googleMap.setOnMapClickListener { eventDeselected() }
         googleMap.setOnMarkerClickListener(this)
+        googleMap.setOnMapClickListener { eventDeselected() }
 
         this.googleMap.setPadding(0, 0, 0, defaultBottomSheetPeekHeight)
     }
@@ -285,7 +294,9 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         return false
     }
 
-    private fun eventSelected(event: Event) {
+    private fun eventSelected(event: Event, noAnimation: Boolean = false) {
+        viewModel.selectedEvent = event.id
+
         markers.forEach { it.value.alpha = 0.7f }
         markers[event]?.alpha = 1f
 
@@ -304,12 +315,13 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
                 if (visibility == GONE) {
                     visibility = VISIBLE
-                    TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
+                    if (!noAnimation) TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
                     bottomSheetBehavior.peekHeight = dp(262)
                     googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
                 }
 
                 findViewById<ImageButton>(R.id.targetButton).setOnClickListener {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                     googleMap.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(
                             markers[event]!!.position, 7.5f
@@ -379,6 +391,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     private fun eventDeselected() {
         markerCoroutine?.cancel()
         markerCoroutine = null
+
+        viewModel.selectedEvent = null
 
         markers.forEach { it.value.alpha = 1f }
 
