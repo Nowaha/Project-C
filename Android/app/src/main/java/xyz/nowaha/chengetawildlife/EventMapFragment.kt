@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.*
 import xyz.nowaha.chengetawildlife.databinding.FragmentEventMapBinding
 import xyz.nowaha.chengetawildlife.extensions.dp
@@ -51,7 +52,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
     private var markerCoroutine: Job? = null
 
-    val viewModel: EventsMapViewModel by viewModels()
+    val viewModel: EventMapViewModel by viewModels()
 
     private var mediaPlayer: MediaPlayer? = null
     private var mediaLoading = false
@@ -107,13 +108,6 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             redrawMap(eventList)
         }
 
-        lifecycleScope.launch {
-            while (true) {
-                delay(100)
-                //updateMarkers()
-            }
-        }
-
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMap)
         defaultBottomSheetPeekHeight = bottomSheetBehavior.peekHeight
 
@@ -145,7 +139,6 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
         if (eventList.isEmpty()) return
 
-        var last: LatLng? = null
         eventList.forEach {
             val position = LatLng(it.latitude.toDouble(), it.longitude.toDouble())
             val marker = MarkerOptions()
@@ -155,11 +148,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             marker.title("Loading...")
 
             markers[it] = googleMap.addMarker(marker)!!
-            last = position
         }
-
-        if (last == null) return
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(last!!, 5f))
     }
 
     private fun getRelativeTimeString(date1: Long, date2: Long): String {
@@ -182,12 +171,11 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.logoutMenuItem -> {
-                lifecycleScope.launch {
-                    SessionManager.logOut()
-                }
+                logOutClick()
                 true
             }
             R.id.adminMenuItem -> {
+                runBlocking { markerCoroutine?.cancelAndJoin() }
                 findNavController().navigate(R.id.action_eventMapFragment_to_nav_graph_admin)
                 true
             }
@@ -195,6 +183,16 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                 super.onOptionsItemSelected(item)
             }
         }
+    }
+
+    private fun logOutClick() {
+        MaterialAlertDialogBuilder(requireContext()).setTitle("Confirm logging out")
+            .setMessage("You will have to log in with a username and password again to use the app.")
+            .setPositiveButton("Log out") { _, _ ->
+                lifecycleScope.launch {
+                    SessionManager.logOut()
+                }
+            }.setNegativeButton("Cancel") { _, _ -> }.show()
     }
 
     @SuppressLint("MissingPermission")
@@ -245,15 +243,16 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
-        lifecycleScope.launch(Dispatchers.IO) {
-            while (!viewModel.loadEvents()) {
-                delay(1000)
+
+        if (viewModel.mapEvents.value == null || viewModel.mapEvents.value!!.isEmpty()) {
+            lifecycleScope.launch {
+                while (!viewModel.loadEvents()) {
+                    delay(1000)
+                }
             }
         }
 
         requestLocationPermission()
-
-        redrawMap(viewModel.mapEvents.value ?: arrayListOf())
 
         googleMap.setInfoWindowAdapter(object : InfoWindowAdapter {
             override fun getInfoContents(marker: Marker): View? {
@@ -352,7 +351,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
                 markerCoroutine = lifecycleScope.launch {
                     while (true) {
-                        requireView().findViewById<TextView>(R.id.eventDetailsTitle).text =
+                        requireView().findViewById<TextView>(R.id.eventDetailsTitle)?.text =
                             "$soundName (${
                                 getRelativeTimeString(
                                     event.date, System.currentTimeMillis()
