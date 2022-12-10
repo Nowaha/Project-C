@@ -38,41 +38,46 @@ namespace ChengetaBackend
 
             string username = args["username"];
             string password = args["password"];
+            Account.AccountType type = Account.AccountType.RANGER;
+
             using (var db = new ChengetaContext())
             {
-                Account.AccountType type = (db.accounts
+                Account.AccountType? res = db.accounts
                     .Where(x => x.Username == username)
-                    .Select(x => x.Role)).FirstOrDefault();
-                SessionManager.AuthResult authResult = Program.sessionManager.Authenticate(
-                    username,
-                    password
-                );
-                if (authResult.resultCode == SessionManager.ResultCode.SUCCESS)
+                    .Select(x => x.Role).FirstOrDefault();
+
+                if (res.HasValue)
                 {
-                    return new Response(
-                        Code.SUCCESS,
-                        Message.SUCCESS,
-                        Encoding.UTF8.GetBytes(
-                            JsonSerializer.Serialize(
-                                new
-                                {
-                                    success = true,
-                                    message = "Logged in successfully",
-                                    sessionKey = authResult.sessionKey,
-                                    isAdmin = type == Account.AccountType.ADMIN? true : false
-                                }
-                            )
+                    type = res.Value;
+                }
+            }
+
+            SessionManager.AuthResult authResult = Program.sessionManager.Authenticate(username, password);
+            if (authResult.resultCode == SessionManager.ResultCode.SUCCESS)
+            {
+                return new Response(
+                    Code.SUCCESS,
+                    Message.SUCCESS,
+                    Encoding.UTF8.GetBytes(
+                        JsonSerializer.Serialize(
+                            new
+                            {
+                                success = true,
+                                message = "Logged in successfully",
+                                sessionKey = authResult.sessionKey,
+                                isAdmin = type == Account.AccountType.ADMIN ? true : false
+                            }
                         )
-                    );
-                }
-                else
-                {
-                    return Response.generateBasicError(
-                        Code.BAD_REQUEST,
-                        Message.BAD_REQUEST,
-                        "Error: " + Enum.GetName(authResult.resultCode)
-                    );
-                }
+                    )
+                );
+            }
+            else
+            {
+                return Response.generateBasicError(
+                    Code.BAD_REQUEST,
+                    Message.BAD_REQUEST,
+                    "Error: " + Enum.GetName(authResult.resultCode)
+                );
             }
         }
     }
