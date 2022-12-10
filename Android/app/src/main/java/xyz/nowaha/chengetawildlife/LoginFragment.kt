@@ -11,13 +11,11 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import xyz.nowaha.chengetawildlife.databinding.FragmentLoginBinding
-import xyz.nowaha.chengetawildlife.util.SoftInputUtils.hideSoftInput
 
 // Should contain the code for the logging in process.
 // After logging in, Session.key should be set to the session key retrieved.
@@ -113,10 +111,7 @@ class LoginFragment : Fragment() {
                     loadingCircle.visibility = View.VISIBLE
                     loginButton.textScaleX = 0f
                 }
-                is LoginViewModel.LoginState.LoggedIn -> {
-                    requireActivity().hideSoftInput(passwordInputEditText)
-                    findNavController().navigate(R.id.action_loginFragmentNav_to_eventMapFragment)
-                }
+                is LoginViewModel.LoginState.LoggedIn -> {}
             }
         }
     }

@@ -73,10 +73,8 @@
             android:id="@+id/loginButtonLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="64dp"
             android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/backButton"
             app:layout_constraintRight_toRightOf="@id/passwordTextInputLayout"
             app:layout_constraintTop_toBottomOf="@id/passwordTextInputLayout">
 
@@ -98,18 +96,6 @@
 
         </RelativeLayout>
 
-
-        <Button
-            android:id="@+id/backButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/goBackText"
-            app:layout_constraintBottom_toBottomOf="@id/loginButtonLayout"
-            app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintLeft_toLeftOf="@id/passwordTextInputLayout"
-            app:layout_constraintRight_toLeftOf="@id/loginButtonLayout"
-            app:layout_constraintTop_toTopOf="@id/loginButtonLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

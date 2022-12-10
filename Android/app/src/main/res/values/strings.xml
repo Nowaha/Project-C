@@ -32,4 +32,5 @@
     <string name="soundText">Sound</string>
     <string name="percentageText">Percentage</string>
     <string name="soundPlayButton">Play Sound</string>
+    <string name="log_out">Log out</string>
 </resources>

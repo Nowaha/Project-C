@@ -23,13 +23,12 @@
         android:layout_height="40dp"
         android:adjustViewBounds="false"
         android:background="@drawable/drawable_circle_outline"
-        android:backgroundTint="?attr/colorOnBackground"
         android:padding="10dp"
         android:scaleType="fitXY"
         android:src="@drawable/ic_baseline_location_searching_24"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="?attr/colorOnBackground" />
+        app:tint="?android:attr/textColorSecondary" />
 
     <TextView
         android:id="@+id/dateLabel"

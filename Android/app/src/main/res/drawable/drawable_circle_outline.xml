@@ -2,9 +2,13 @@
 <ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="?colorControlHighlight">
     <item>
         <shape android:shape="oval">
-            <size android:width="32dp" android:height="32dp" />
-            <solid android:color="@android:color/transparent"/>
-            <stroke android:color="@color/white" android:width="2dp" />
+            <size
+                android:width="32dp"
+                android:height="32dp" />
+            <solid android:color="?android:attr/colorBackground" />
+            <stroke
+                android:width="2dp"
+                android:color="?android:attr/textColorSecondary" />
         </shape>
     </item>
 </ripple>

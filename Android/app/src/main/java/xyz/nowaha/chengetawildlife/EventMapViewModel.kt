@@ -2,7 +2,6 @@ package xyz.nowaha.chengetawildlife
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -10,9 +9,10 @@ import xyz.nowaha.chengetawildlife.http.APIClient
 import xyz.nowaha.chengetawildlife.pojo.Event
 import xyz.nowaha.chengetawildlife.pojo.EventListResponse
 
-class EventsMapViewModel : ViewModel() {
+class EventMapViewModel : ViewModel() {
 
     val mapEvents = MutableLiveData<List<Event>>(arrayListOf())
+    var selectedEvent: Int? = null
 
     suspend fun loadEvents(): Boolean = withContext(Dispatchers.IO) {
         val data: Response<EventListResponse>

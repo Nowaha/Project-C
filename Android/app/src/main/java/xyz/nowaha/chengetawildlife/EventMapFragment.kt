@@ -7,17 +7,15 @@ import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionManager
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.*
-import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
@@ -28,6 +26,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.*
 import xyz.nowaha.chengetawildlife.databinding.FragmentEventMapBinding
 import xyz.nowaha.chengetawildlife.extensions.dp
@@ -39,6 +38,7 @@ import java.util.*
 import kotlin.math.floor
 
 
+@Suppress("DEPRECATION")
 class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var googleMap: GoogleMap
@@ -52,7 +52,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
     private var markerCoroutine: Job? = null
 
-    val viewModel: EventsMapViewModel by viewModels()
+    val viewModel: EventMapViewModel by viewModels()
 
     private var mediaPlayer: MediaPlayer? = null
     private var mediaLoading = false
@@ -61,10 +61,24 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     private var _binding: FragmentEventMapBinding? = null
     private val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        runBlocking {
+            if (SessionManager.getCurrentSession()?.isAdmin == true) {
+                inflater.inflate(R.menu.menu_map_admin, menu)
+            } else {
+                inflater.inflate(R.menu.menu_map, menu)
+            }
+        }
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEventMapBinding.inflate(inflater, container, false)
         return binding.root
@@ -92,13 +106,6 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
         viewModel.mapEvents.observe(viewLifecycleOwner) { eventList ->
             redrawMap(eventList)
-        }
-
-        lifecycleScope.launch {
-            while (true) {
-                delay(100)
-                //updateMarkers()
-            }
         }
 
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMap)
@@ -132,7 +139,6 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
         if (eventList.isEmpty()) return
 
-        var last: LatLng? = null
         eventList.forEach {
             val position = LatLng(it.latitude.toDouble(), it.longitude.toDouble())
             val marker = MarkerOptions()
@@ -142,11 +148,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             marker.title("Loading...")
 
             markers[it] = googleMap.addMarker(marker)!!
-            last = position
         }
-
-        if (last == null) return
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(last!!, 5f))
     }
 
     private fun getRelativeTimeString(date1: Long, date2: Long): String {
@@ -164,6 +166,33 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         }
 
         return timeString
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.logoutMenuItem -> {
+                logOutClick()
+                true
+            }
+            R.id.adminMenuItem -> {
+                runBlocking { markerCoroutine?.cancelAndJoin() }
+                findNavController().navigate(R.id.action_eventMapFragment_to_nav_graph_admin)
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
+    private fun logOutClick() {
+        MaterialAlertDialogBuilder(requireContext()).setTitle("Confirm logging out")
+            .setMessage("You will have to log in with a username and password again to use the app.")
+            .setPositiveButton("Log out") { _, _ ->
+                lifecycleScope.launch {
+                    SessionManager.logOut()
+                }
+            }.setNegativeButton("Cancel") { _, _ -> }.show()
     }
 
     @SuppressLint("MissingPermission")
@@ -214,15 +243,25 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
-        lifecycleScope.launch(Dispatchers.IO) {
-            while (!viewModel.loadEvents()) {
-                delay(1000)
+
+        if (viewModel.mapEvents.value == null || viewModel.mapEvents.value!!.isEmpty()) {
+            lifecycleScope.launch {
+                while (!viewModel.loadEvents()) {
+                    delay(1000)
+                }
+                markers.entries.firstOrNull()?.let {
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it.value.position, 5f))
+                }
+            }
+        } else {
+            if (viewModel.selectedEvent != null) {
+                markers.entries.firstOrNull { it.key.id == viewModel.selectedEvent }?.let {
+                    eventSelected(it.key, noAnimation = true)
+                }
             }
         }
 
         requestLocationPermission()
-
-        redrawMap(viewModel.mapEvents.value ?: arrayListOf())
 
         googleMap.setInfoWindowAdapter(object : InfoWindowAdapter {
             override fun getInfoContents(marker: Marker): View? {
@@ -236,8 +275,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             }
         })
 
-        googleMap.setOnMapClickListener { eventDeselected() }
         googleMap.setOnMarkerClickListener(this)
+        googleMap.setOnMapClickListener { eventDeselected() }
 
         this.googleMap.setPadding(0, 0, 0, defaultBottomSheetPeekHeight)
     }
@@ -255,7 +294,9 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         return false
     }
 
-    private fun eventSelected(event: Event) {
+    private fun eventSelected(event: Event, noAnimation: Boolean = false) {
+        viewModel.selectedEvent = event.id
+
         markers.forEach { it.value.alpha = 0.7f }
         markers[event]?.alpha = 1f
 
@@ -274,12 +315,13 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
                 if (visibility == GONE) {
                     visibility = VISIBLE
-                    TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
+                    if (!noAnimation) TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
                     bottomSheetBehavior.peekHeight = dp(262)
                     googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
                 }
 
                 findViewById<ImageButton>(R.id.targetButton).setOnClickListener {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                     googleMap.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(
                             markers[event]!!.position, 7.5f
@@ -321,7 +363,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
                 markerCoroutine = lifecycleScope.launch {
                     while (true) {
-                        requireView().findViewById<TextView>(R.id.eventDetailsTitle).text =
+                        requireView().findViewById<TextView>(R.id.eventDetailsTitle)?.text =
                             "$soundName (${
                                 getRelativeTimeString(
                                     event.date, System.currentTimeMillis()
@@ -349,6 +391,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     private fun eventDeselected() {
         markerCoroutine?.cancel()
         markerCoroutine = null
+
+        viewModel.selectedEvent = null
 
         markers.forEach { it.value.alpha = 1f }
 
