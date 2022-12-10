@@ -115,8 +115,7 @@ class LoginFragment : Fragment() {
                 }
                 is LoginViewModel.LoginState.LoggedIn -> {
                     requireActivity().hideSoftInput(passwordInputEditText)
-
-
+                    findNavController().navigate(R.id.action_loginFragmentNav_to_eventMapFragment)
                 }
             }
         }
