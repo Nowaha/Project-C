@@ -7,17 +7,15 @@ import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionManager
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.*
-import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
@@ -39,6 +37,7 @@ import java.util.*
 import kotlin.math.floor
 
 
+@Suppress("DEPRECATION")
 class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var googleMap: GoogleMap
@@ -61,10 +60,24 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     private var _binding: FragmentEventMapBinding? = null
     private val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        runBlocking {
+            if (SessionManager.getCurrentSession()?.isAdmin == true) {
+                inflater.inflate(R.menu.menu_map_admin, menu)
+            } else {
+                inflater.inflate(R.menu.menu_map, menu)
+            }
+        }
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEventMapBinding.inflate(inflater, container, false)
         return binding.root
@@ -164,6 +177,24 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         }
 
         return timeString
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.logoutMenuItem -> {
+                lifecycleScope.launch {
+                    SessionManager.logOut()
+                }
+                true
+            }
+            R.id.adminMenuItem -> {
+                findNavController().navigate(R.id.action_eventMapFragment_to_nav_graph_admin)
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
