@@ -115,13 +115,7 @@ class LoginFragment : Fragment() {
                 }
                 is LoginViewModel.LoginState.LoggedIn -> {
                     requireActivity().hideSoftInput(passwordInputEditText)
-
-                    // TODO: Move this, this is just temporary!
-                    if (usernameInputEditText.text.toString() == "admin") {
-                        findNavController().navigate(R.id.action_loginFragmentNav_to_nav_graph_admin)
-                    } else {
-                        findNavController().navigate(R.id.action_loginFragmentNav_to_eventMapFragment)
-                    }
+                    findNavController().navigate(R.id.action_loginFragmentNav_to_eventMapFragment)
                 }
             }
         }
