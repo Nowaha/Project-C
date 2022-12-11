@@ -17,6 +17,20 @@ namespace ChengetaBackend
             string bodyRaw
         )
         {
+            if (!(Program.sessionManager.SessionDictionary.ContainsKey(session)))
+            {
+                return Response.generateBasicError(
+                    Code.SUCCESS,
+                    Message.SUCCESS,
+                    "Session does not exist in database"
+                );
+            }
+            if (Program.sessionManager.SessionDictionary.ContainsKey(session))
+                return Response.generateBasicError(
+                    Code.BAD_REQUEST,
+                    Message.BAD_REQUEST,
+                    "Error: ALREADY_LOGGED_IN"
+                );
             if ((!args.ContainsKey("username") || args["username"] == null))
                 return Response.generateBasicError(
                     Code.BAD_REQUEST,
@@ -44,15 +58,41 @@ namespace ChengetaBackend
             {
                 Account.AccountType? res = db.accounts
                     .Where(x => x.Username == username)
-                    .Select(x => x.Role).FirstOrDefault();
+                    .Select(x => x.Role)
+                    .FirstOrDefault();
 
                 if (res.HasValue)
                 {
                     type = res.Value;
                 }
+                if (type == Account.AccountType.ADMIN)
+                {
+                    return new Response(
+                        Code.SUCCESS,
+                        Message.SUCCESS,
+                        Encoding.UTF8.GetBytes(
+                            JsonSerializer.Serialize(
+                                new
+                                {
+                                    success = true,
+                                    message = "Session is valid",
+                                    isAdmin = (
+                                        from acc in db.accounts
+                                        where args["username"] == acc.Username
+                                        select acc.Role
+                                    ).FirstOrDefault() == Account.AccountType.ADMIN,
+                                    username = Program.sessionManager.SessionDictionary[session]
+                                }
+                            )
+                        )
+                    );
+                }
             }
 
-            SessionManager.AuthResult authResult = Program.sessionManager.Authenticate(username, password);
+            SessionManager.AuthResult authResult = Program.sessionManager.Authenticate(
+                username,
+                password
+            );
             if (authResult.resultCode == SessionManager.ResultCode.SUCCESS)
             {
                 return new Response(
