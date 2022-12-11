@@ -1,9 +1,13 @@
 package xyz.nowaha.chengetawildlife.pojo
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
+@Entity
 data class Event(
+    @PrimaryKey
     @SerializedName("Id")
     var id: Int,
     @SerializedName("NodeID")
@@ -19,5 +23,8 @@ data class Event(
     @SerializedName("Probability")
     var probability: Int,
     @SerializedName("SoundURL")
-    var soundUrl: String
+    var soundUrl: String,
+
+    // Local caching
+    var cacheExpiry: Long?
 )

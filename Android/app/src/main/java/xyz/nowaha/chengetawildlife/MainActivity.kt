@@ -1,17 +1,30 @@
 package xyz.nowaha.chengetawildlife
 
+import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.room.Room
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import xyz.nowaha.chengetawildlife.data.AppDatabase
+import xyz.nowaha.chengetawildlife.data.repos.Repositories.isNetworkAvailable
 import xyz.nowaha.chengetawildlife.databinding.ActivityMainBinding
 import xyz.nowaha.chengetawildlife.util.SoftInputUtils.hideSoftInput
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
+
+    companion object {
+        var appDatabase: AppDatabase? = null
+        fun offlineMode(context: Context) = context.isNetworkAvailable()
+    }
 
     private val navController by lazy {
         val navHostFragment =
@@ -30,7 +43,11 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        SessionManager.initDatabase(applicationContext)
+        if (appDatabase == null) {
+            appDatabase = Room.databaseBuilder(this, AppDatabase::class.java, "chengeta-db")
+                .fallbackToDestructiveMigration().build()
+        }
+
         SessionManager.getCurrentSessionLiveData().observe(this) { session ->
             val graph = navController.navInflater.inflate(R.navigation.nav_graph_main)
 
@@ -47,6 +64,17 @@ class MainActivity : AppCompatActivity() {
             }
 
             navController.graph = graph
+        }
+
+        lifecycleScope.launch {
+            while (true) {
+                delay(2500)
+                if (offlineMode(this@MainActivity)) {
+                    binding.offlineNotice.visibility = View.GONE
+                } else {
+                    binding.offlineNotice.visibility = View.VISIBLE
+                }
+            }
         }
     }
 

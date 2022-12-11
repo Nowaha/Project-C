@@ -1,29 +1,24 @@
 package xyz.nowaha.chengetawildlife
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
-import xyz.nowaha.chengetawildlife.http.APIClient
+import xyz.nowaha.chengetawildlife.data.repos.RepoResponse
+import xyz.nowaha.chengetawildlife.data.repos.Repositories
 import xyz.nowaha.chengetawildlife.pojo.Event
-import xyz.nowaha.chengetawildlife.pojo.EventListResponse
 
 class EventMapViewModel : ViewModel() {
 
     val mapEvents = MutableLiveData<List<Event>>(arrayListOf())
     var selectedEvent: Int? = null
 
-    suspend fun loadEvents(): Boolean = withContext(Dispatchers.IO) {
-        val data: Response<EventListResponse>
-        try {
-            data = APIClient.getAPIInterface().getLatestEvents(16).execute()
-        } catch (_: Exception) {
-            return@withContext false
-        }
+    suspend fun loadEvents(context: Context): Boolean = withContext(Dispatchers.IO) {
+        val response = Repositories.getEvents(context, 16, 0)
 
-        if (data.body() != null && data.body()!!.data != null) {
-            mapEvents.postValue(data.body()!!.data!!)
+        if (response.responseType == RepoResponse.ResponseType.SUCCESS) {
+            mapEvents.postValue(response.result)
             return@withContext true
         }
 
