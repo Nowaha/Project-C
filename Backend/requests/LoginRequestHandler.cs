@@ -19,10 +19,14 @@ namespace ChengetaBackend
         {
             if (!(Program.sessionManager.SessionDictionary.ContainsKey(session)))
             {
-                return Response.generateBasicError(
+                return new Response(
                     Code.SUCCESS,
                     Message.SUCCESS,
-                    "Session does not exist in database"
+                    Encoding.UTF8.GetBytes(
+                        JsonSerializer.Serialize(
+                            new { success = true, message = "Session is invalid" }
+                        )
+                    )
                 );
             }
             if (Program.sessionManager.SessionDictionary.ContainsKey(session))
@@ -75,12 +79,9 @@ namespace ChengetaBackend
                                 new
                                 {
                                     success = true,
+                                    valid = true,
                                     message = "Session is valid",
-                                    isAdmin = (
-                                        from acc in db.accounts
-                                        where args["username"] == acc.Username
-                                        select acc.Role
-                                    ).FirstOrDefault() == Account.AccountType.ADMIN,
+                                    isAdmin = type,
                                     username = Program.sessionManager.SessionDictionary[session]
                                 }
                             )
