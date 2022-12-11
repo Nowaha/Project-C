@@ -1,22 +1,20 @@
 package xyz.nowaha.chengetawildlife.testtable
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.*
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import xyz.nowaha.chengetawildlife.R
-import xyz.nowaha.chengetawildlife.http.APIClient
-import xyz.nowaha.chengetawildlife.pojo.EventListResponse
-import java.net.ConnectException
-import java.net.ProtocolException
-import java.net.SocketTimeoutException
+import xyz.nowaha.chengetawildlife.data.repos.RepoResponse
+import xyz.nowaha.chengetawildlife.data.repos.Repositories
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -50,25 +48,21 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
         loadNewData()
     }
 
-    fun loadNewData() {
+    private fun loadNewData() {
         loadingCircle.visibility = View.VISIBLE
         refreshButton.imageAlpha = 0
 
         lifecycleScope.launch(Dispatchers.IO) {
-            delay(100)
             val format = SimpleDateFormat("HH:mm:ss", Locale.GERMAN)
-            val events: Response<EventListResponse>
-            try {
-                events = APIClient.getAPIInterface().getLatestEvents(100).execute()
-            } catch (ex: Exception) {
-                loadNewData()
-                ex.printStackTrace()
-                return@launch
-            }
-
-            if (events.isSuccessful && events.body() != null && events.body()!!.data != null) {
+            val repoResponse = Repositories.getEvents(requireContext(), 100, 0)
+            if (repoResponse.responseType == RepoResponse.ResponseType.SUCCESS) {
                 withContext(Dispatchers.Main) {
-                    addTableRows(events.body()!!.data!!.map {
+                    Toast.makeText(
+                        requireContext(),
+                        repoResponse.source.toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    addTableRows(repoResponse.result.map {
                         RecentEventsListViewModel(
                             format.format(it.date),
                             it.soundLabel,
@@ -77,9 +71,12 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
                         )
                     })
                 }
+            } else {
+                loadNewData()
+                return@launch
             }
 
-            lifecycleScope.launch(Dispatchers.Main) {
+            withContext(Dispatchers.Main) {
                 loadingCircle.visibility = View.GONE
                 refreshButton.imageAlpha = 255
             }

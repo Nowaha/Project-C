@@ -246,7 +246,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
         if (viewModel.mapEvents.value == null || viewModel.mapEvents.value!!.isEmpty()) {
             lifecycleScope.launch {
-                while (!viewModel.loadEvents()) {
+                while (!viewModel.loadEvents(requireContext())) {
                     delay(1000)
                 }
                 markers.entries.firstOrNull()?.let {
