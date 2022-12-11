@@ -33,4 +33,11 @@
     <string name="percentageText">Percentage</string>
     <string name="soundPlayButton">Play Sound</string>
     <string name="log_out">Log out</string>
+    <string name="userTitle">All Users</string>
+    <string name="userRole">Role</string>
+    <string name="userAction">Moderate</string>
+    <string name="userSearch">Search for User..</string>
+
+
+
 </resources>
