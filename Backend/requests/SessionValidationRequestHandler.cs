@@ -30,11 +30,13 @@ namespace ChengetaBackend
                 );
             }
 
+            var sessionUsername = Program.sessionManager.SessionDictionary[session]
+
             Account.AccountType type = Account.AccountType.RANGER;
             using (var db = new ChengetaContext())
             {
                 Account.AccountType? res = db.accounts
-                    .Where(x => x.Username == args["username"])
+                    .Where(x => x.Username == sessionUsername)
                     .Select(x => x.Role)
                     .FirstOrDefault();
 
@@ -54,7 +56,7 @@ namespace ChengetaBackend
                             message = "Session is valid",
                             isAdmin = type == Account.AccountType.ADMIN ? true : false,
                             valid = true,
-                            username = Program.sessionManager.SessionDictionary[session]
+                            username = sessionUsername
                         }
                     )
                 )
