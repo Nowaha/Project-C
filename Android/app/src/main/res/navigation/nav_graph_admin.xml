@@ -7,22 +7,22 @@
 
     <fragment
         android:id="@+id/createAccountFragment2"
-        android:name="xyz.nowaha.chengetawildlife.CreateAccountFragment"
+        android:name="xyz.nowaha.chengetawildlife.ui.admin.CreateAccountFragment"
         android:label="Create Account"
         tools:layout="@layout/fragment_account_creation" />
     <fragment
         android:id="@+id/editAccountFragment"
-        android:name="xyz.nowaha.chengetawildlife.EditAccountFragment"
+        android:name="xyz.nowaha.chengetawildlife.ui.admin.EditAccountFragment"
         android:label="Edit Account"
         tools:layout="@layout/fragment_account_editing" />
     <fragment
         android:id="@+id/deleteAccountFragment"
-        android:name="xyz.nowaha.chengetawildlife.DeleteAccountFragment"
+        android:name="xyz.nowaha.chengetawildlife.ui.admin.DeleteAccountFragment"
         android:label="Delete Account"
         tools:layout="@layout/fragment_account_delete" />
     <fragment
         android:id="@+id/adminHomeFragment"
-        android:name="xyz.nowaha.chengetawildlife.AdminHomeFragment"
+        android:name="xyz.nowaha.chengetawildlife.ui.admin.AdminHomeFragment"
         android:label="Admin Home"
         tools:layout="@layout/fragment_admin_home">
         <action

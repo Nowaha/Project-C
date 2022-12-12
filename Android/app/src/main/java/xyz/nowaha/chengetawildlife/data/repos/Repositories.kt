@@ -6,7 +6,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import xyz.nowaha.chengetawildlife.pojo.Event
+import xyz.nowaha.chengetawildlife.data.pojo.Event
 
 object Repositories {
 

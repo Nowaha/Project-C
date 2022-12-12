@@ -4,7 +4,7 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import xyz.nowaha.chengetawildlife.MainActivity
-import xyz.nowaha.chengetawildlife.pojo.Event
+import xyz.nowaha.chengetawildlife.data.pojo.Event
 
 class LocalRepository : Repository {
 

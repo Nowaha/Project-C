@@ -1,7 +1,7 @@
 package xyz.nowaha.chengetawildlife.data.repos
 
 import android.content.Context
-import xyz.nowaha.chengetawildlife.pojo.Event
+import xyz.nowaha.chengetawildlife.data.pojo.Event
 
 interface Repository {
 

@@ -1,7 +1,7 @@
 package xyz.nowaha.chengetawildlife.data
 
 import androidx.room.*
-import xyz.nowaha.chengetawildlife.pojo.Event
+import xyz.nowaha.chengetawildlife.data.pojo.Event
 
 @Dao
 interface EventDao {

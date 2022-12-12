@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/loadingFragment"
-        android:name="xyz.nowaha.chengetawildlife.LoadingFragment"
+        android:name="xyz.nowaha.chengetawildlife.ui.LoadingFragment"
         android:label="Loading..."
         tools:layout="@layout/fragment_loading" />
 
     <fragment
         android:id="@+id/loginFragmentNav"
-        android:name="xyz.nowaha.chengetawildlife.LoginFragment"
+        android:name="xyz.nowaha.chengetawildlife.ui.LoginFragment"
         android:label="Log in"
         tools:layout="@layout/fragment_login" />
 
     <fragment
         android:id="@+id/eventMapFragment"
-        android:name="xyz.nowaha.chengetawildlife.EventMapFragment"
+        android:name="xyz.nowaha.chengetawildlife.ui.map.EventMapFragment"
         android:label="Map"
         tools:layout="@layout/fragment_event_map">
 

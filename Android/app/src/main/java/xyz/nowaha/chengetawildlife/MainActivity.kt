@@ -14,6 +14,7 @@ import androidx.room.Room
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import xyz.nowaha.chengetawildlife.data.AppDatabase
+import xyz.nowaha.chengetawildlife.data.SessionManager
 import xyz.nowaha.chengetawildlife.data.repos.Repositories.isNetworkAvailable
 import xyz.nowaha.chengetawildlife.databinding.ActivityMainBinding
 import xyz.nowaha.chengetawildlife.util.SoftInputUtils.hideSoftInput

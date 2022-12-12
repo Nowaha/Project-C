@@ -3,8 +3,8 @@ package xyz.nowaha.chengetawildlife.data.repos
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import xyz.nowaha.chengetawildlife.http.APIClient
-import xyz.nowaha.chengetawildlife.pojo.Event
+import xyz.nowaha.chengetawildlife.data.http.APIClient
+import xyz.nowaha.chengetawildlife.data.pojo.Event
 
 class RemoteRepository : Repository {
 
