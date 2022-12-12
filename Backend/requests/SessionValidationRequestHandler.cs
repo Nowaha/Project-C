@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace ChengetaBackend
 {
-    class ValidateSessions : RequestHandler
+    class SessionValidationRequestHandler : RequestHandler
     {
-        public string Path => "/user/ValidateSession";
+        public string Path => "/accounts/session/validate";
         public Method Method => Method.GET;
 
         public Response HandleRequest(
