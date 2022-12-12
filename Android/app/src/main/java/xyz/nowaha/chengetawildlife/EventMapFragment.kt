@@ -129,6 +129,10 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
+
+        MainActivity.offlineMode.observe(viewLifecycleOwner) {
+            soundPlayButton.isEnabled = !it
+        }
     }
 
     private fun redrawMap(eventList: List<Event>) {
