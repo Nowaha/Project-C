@@ -36,7 +36,7 @@
     <string name="userTitle">All Users</string>
     <string name="userRole">Role</string>
     <string name="userAction">Moderate</string>
-    <string name="userSearch">Search for User..</string>
+    <string name="userSearchHint">Search for User...</string>
 
 
 
