@@ -99,9 +99,12 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        with(childFragmentManager.beginTransaction()) {
-            replace(R.id.placeholder_bottom_sheet_map, TestTableFragment())
-            commit()
+        if (!viewModel.tableFragmentCreated) {
+            viewModel.tableFragmentCreated = true
+            with(childFragmentManager.beginTransaction()) {
+                replace(R.id.placeholder_bottom_sheet_map, TestTableFragment())
+                commit()
+            }
         }
 
         viewModel.mapEvents.observe(viewLifecycleOwner) { eventList ->

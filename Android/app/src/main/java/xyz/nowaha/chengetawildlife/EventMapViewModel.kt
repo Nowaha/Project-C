@@ -13,6 +13,7 @@ class EventMapViewModel : ViewModel() {
 
     val mapEvents = MutableLiveData<List<Event>>(arrayListOf())
     var selectedEvent: Int? = null
+    var tableFragmentCreated = false
 
     suspend fun loadEvents(context: Context): Boolean = withContext(Dispatchers.IO) {
         val response = Repositories.getEvents(context, 16, 0)
