@@ -29,37 +29,35 @@ namespace ChengetaBackend
                     )
                 );
             }
-            else
-            {
-                Account.AccountType type = Account.AccountType.RANGER;
-                using (var db = new ChengetaContext())
-                {
-                    Account.AccountType? res = db.accounts
-                        .Where(x => x.Username == args["username"])
-                        .Select(x => x.Role)
-                        .FirstOrDefault();
 
-                    if (res.HasValue)
-                    {
-                        type = res.Value;
-                    }
+            Account.AccountType type = Account.AccountType.RANGER;
+            using (var db = new ChengetaContext())
+            {
+                Account.AccountType? res = db.accounts
+                    .Where(x => x.Username == args["username"])
+                    .Select(x => x.Role)
+                    .FirstOrDefault();
+
+                if (res.HasValue)
+                {
+                    type = res.Value;
                 }
-                return new Response(
-                    Code.SUCCESS,
-                    Message.SUCCESS,
-                    Encoding.UTF8.GetBytes(
-                        JsonSerializer.Serialize(
-                            new
-                            {
-                                success = true,
-                                message = "Session is valid",
-                                isAdmin = type == Account.AccountType.ADMIN ? true : false,
-                                username = Program.sessionManager.SessionDictionary[session]
-                            }
-                        )
-                    )
-                );
             }
+            return new Response(
+                Code.SUCCESS,
+                Message.SUCCESS,
+                Encoding.UTF8.GetBytes(
+                    JsonSerializer.Serialize(
+                        new
+                        {
+                            success = true,
+                            message = "Session is valid",
+                            isAdmin = type == Account.AccountType.ADMIN ? true : false,
+                            username = Program.sessionManager.SessionDictionary[session]
+                        }
+                    )
+                )
+            );
         }
     }
 }
