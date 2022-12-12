@@ -24,8 +24,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         var appDatabase: AppDatabase? = null
-        val offlineMode = MutableLiveData(false)
-        fun offlineModePrecise(context: Context) = context.isNetworkAvailable()
+        val offlineMode = MutableLiveData(true)
+        fun offlineModePrecise(context: Context) = !context.isNetworkAvailable()
     }
 
     private val navController by lazy {

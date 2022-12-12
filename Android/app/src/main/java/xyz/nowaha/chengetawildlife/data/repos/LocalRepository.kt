@@ -4,7 +4,6 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import xyz.nowaha.chengetawildlife.MainActivity
-import xyz.nowaha.chengetawildlife.data.repos.Repositories.isNetworkAvailable
 import xyz.nowaha.chengetawildlife.pojo.Event
 
 class LocalRepository : Repository {
@@ -21,7 +20,7 @@ class LocalRepository : Repository {
             val events = eventDao?.getLatest(rows, offset)
 
             if (events != null) {
-                if (context.isNetworkAvailable()) {
+                if (MainActivity.offlineMode.value == false) {
                     eventDao.deleteEvents(eventDao.getAll().map { it.id })
 
                     return@withContext RepoResponse(
