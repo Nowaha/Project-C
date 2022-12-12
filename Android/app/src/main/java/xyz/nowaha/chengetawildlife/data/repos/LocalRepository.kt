@@ -20,9 +20,7 @@ class LocalRepository : Repository {
             val events = eventDao?.getLatest(rows, offset)
 
             if (events != null) {
-                if (MainActivity.offlineMode.value == false) {
-                    eventDao.deleteEvents(eventDao.getAll().map { it.id })
-
+                if (!MainActivity.offlineModePrecise(context)) {
                     return@withContext RepoResponse(
                         RepoResponse.ResponseType.EXPIRED, arrayListOf(), responseSource
                     )
@@ -39,7 +37,10 @@ class LocalRepository : Repository {
         }
 
     fun cacheEvents(events: List<Event>, rules: Repositories.CacheRules) {
-        MainActivity.appDatabase?.eventDao()?.insertAll(events)
+        MainActivity.appDatabase?.eventDao()?.let {
+            it.deleteEvents(it.getAll().map { it.id })
+            it.insertAll(events)
+        }
     }
 
 }
