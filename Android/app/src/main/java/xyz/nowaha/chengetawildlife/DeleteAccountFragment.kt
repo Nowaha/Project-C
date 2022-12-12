@@ -80,6 +80,10 @@ class DeleteAccountFragment : Fragment() {
                 }
             }
         }
+
+        MainActivity.offlineMode.observe(viewLifecycleOwner) {
+            binding.deleteAccountButton.isEnabled = !it
+        }
     }
 
     override fun onDestroyView() {

@@ -126,6 +126,10 @@ class CreateAccountFragment : Fragment() {
                 }
             }
         }
+
+        MainActivity.offlineMode.observe(viewLifecycleOwner) {
+            binding.createAccountButton.isEnabled = !it
+        }
     }
 
     override fun onDestroyView() {
