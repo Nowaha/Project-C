@@ -53,6 +53,7 @@ namespace ChengetaBackend
                             success = true,
                             message = "Session is valid",
                             isAdmin = type == Account.AccountType.ADMIN ? true : false,
+                            valid = true,
                             username = Program.sessionManager.SessionDictionary[session]
                         }
                     )
