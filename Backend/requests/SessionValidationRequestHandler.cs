@@ -30,7 +30,7 @@ namespace ChengetaBackend
                 );
             }
 
-            var sessionUsername = Program.sessionManager.SessionDictionary[session]
+            var sessionUsername = Program.sessionManager.SessionDictionary[session];
 
             Account.AccountType type = Account.AccountType.RANGER;
             using (var db = new ChengetaContext())
