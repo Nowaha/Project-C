@@ -26,6 +26,7 @@ namespace ChengetaBackend
             requestHandlers.Add("/accounts/delete", new AccountDeleteRequestHandler());
             requestHandlers.Add("/accounts/edit", new AccountEditRequestHandler());
             requestHandlers.Add("/accounts/view", new AccountSearchRequestHandler());
+            requestHandlers.Add("/accounts/session/validate", new SessionValidationRequestHandler());
         }
         public static async Task Run()
         {
