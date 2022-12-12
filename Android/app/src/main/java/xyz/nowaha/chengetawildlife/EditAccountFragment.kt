@@ -119,6 +119,10 @@ class EditAccountFragment : Fragment() {
                 }
             }
         }
+
+        MainActivity.offlineMode.observe(viewLifecycleOwner) {
+            binding.editAccountButton.isEnabled = !it
+        }
     }
 
     override fun onDestroyView() {
