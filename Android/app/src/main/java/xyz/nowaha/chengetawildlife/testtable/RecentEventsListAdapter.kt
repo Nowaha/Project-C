@@ -1,16 +1,19 @@
 package xyz.nowaha.chengetawildlife.testtable
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import xyz.nowaha.chengetawildlife.R
 
-class RecentEventsListAdapter(private val context: Context, var data: ArrayList<RecentEventsListViewModel>) : Adapter<RecentEventsListViewHolder>() {
+class RecentEventsListAdapter(
+    private val context: Context,
+    var data: ArrayList<RecentEventsListDataModel>
+) : Adapter<RecentEventsListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentEventsListViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.template_table_row, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.template_table_row, parent, false)
         return RecentEventsListViewHolder(view)
     }
 

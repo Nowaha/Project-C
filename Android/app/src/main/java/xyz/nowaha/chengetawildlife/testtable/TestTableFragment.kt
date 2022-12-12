@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import xyz.nowaha.chengetawildlife.MainActivity
 import xyz.nowaha.chengetawildlife.R
 import xyz.nowaha.chengetawildlife.data.repos.RepoResponse
 import xyz.nowaha.chengetawildlife.data.repos.Repositories
@@ -21,7 +22,7 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
 
     lateinit var recyclerView: RecyclerView
     lateinit var adapter: RecentEventsListAdapter
-    var data: ArrayList<RecentEventsListViewModel> = ArrayList()
+    var data: ArrayList<RecentEventsListDataModel> = ArrayList()
 
     private var latestAdded: Long = 0
 
@@ -30,7 +31,7 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = view.findViewById<RecyclerView>(R.id.tableRecyclerView)
+        recyclerView = view.findViewById(R.id.tableRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         this.adapter = RecentEventsListAdapter(requireActivity().applicationContext, data)
@@ -42,6 +43,10 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
         refreshButton.setOnClickListener {
             if (loadingCircle.visibility != View.GONE) return@setOnClickListener
             loadNewData()
+        }
+
+        MainActivity.offlineMode.observe(viewLifecycleOwner) {
+            refreshButton.isEnabled = !it
         }
 
         loadNewData()
@@ -57,7 +62,7 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
             if (repoResponse.responseType == RepoResponse.ResponseType.SUCCESS) {
                 withContext(Dispatchers.Main) {
                     addTableRows(repoResponse.result.map {
-                        RecentEventsListViewModel(
+                        RecentEventsListDataModel(
                             format.format(it.date),
                             it.soundLabel,
                             it.probability.toString() + "%",
@@ -77,14 +82,14 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
         }
     }
 
-    fun addTableRow(viewModel: RecentEventsListViewModel) {
+    fun addTableRow(viewModel: RecentEventsListDataModel) {
         if (latestAdded >= viewModel.date) return
         latestAdded = viewModel.date
         adapter.data.add(0, viewModel)
         adapter.notifyDataSetChanged()
     }
 
-    private fun addTableRows(viewModels: List<RecentEventsListViewModel>) {
+    private fun addTableRows(viewModels: List<RecentEventsListDataModel>) {
         for (viewModel in viewModels.reversed()) {
             if (latestAdded >= viewModel.date) continue
             latestAdded = viewModel.date
