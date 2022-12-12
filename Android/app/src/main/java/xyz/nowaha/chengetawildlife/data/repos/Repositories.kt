@@ -1,5 +1,6 @@
 package xyz.nowaha.chengetawildlife.data.repos
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -49,6 +50,7 @@ object Repositories {
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun Context.isNetworkAvailable(): Boolean {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

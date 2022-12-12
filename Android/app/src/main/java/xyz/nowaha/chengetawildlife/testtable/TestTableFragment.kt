@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -57,11 +56,6 @@ class TestTableFragment : Fragment(R.layout.fragment_test_table) {
             val repoResponse = Repositories.getEvents(requireContext(), 100, 0)
             if (repoResponse.responseType == RepoResponse.ResponseType.SUCCESS) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        requireContext(),
-                        repoResponse.source.toString(),
-                        Toast.LENGTH_SHORT
-                    ).show()
                     addTableRows(repoResponse.result.map {
                         RecentEventsListViewModel(
                             format.format(it.date),

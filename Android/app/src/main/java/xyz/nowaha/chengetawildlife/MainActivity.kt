@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -23,7 +24,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         var appDatabase: AppDatabase? = null
-        fun offlineMode(context: Context) = context.isNetworkAvailable()
+        val offlineMode = MutableLiveData(false)
+        fun offlineModePrecise(context: Context) = context.isNetworkAvailable()
     }
 
     private val navController by lazy {
@@ -68,12 +70,18 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             while (true) {
-                delay(2500)
-                if (offlineMode(this@MainActivity)) {
-                    binding.offlineNotice.visibility = View.GONE
+                if (offlineModePrecise(this@MainActivity)) {
+                    if (offlineMode.value == false) {
+                        binding.offlineNotice.visibility = View.VISIBLE
+                        offlineMode.postValue(true)
+                    }
                 } else {
-                    binding.offlineNotice.visibility = View.VISIBLE
+                    if (offlineMode.value == true) {
+                        binding.offlineNotice.visibility = View.GONE
+                        offlineMode.postValue(false)
+                    }
                 }
+                delay(2500)
             }
         }
     }
