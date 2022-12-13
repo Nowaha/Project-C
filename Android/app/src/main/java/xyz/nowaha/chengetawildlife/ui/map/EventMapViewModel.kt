@@ -1,5 +1,6 @@
 package xyz.nowaha.chengetawildlife.ui.map
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,6 +16,7 @@ class EventMapViewModel : ViewModel() {
     var selectedEvent: Int? = null
     var tableFragmentCreated = false
 
+    @SuppressLint("NullSafeMutableLiveData")
     suspend fun loadEvents(context: Context): Boolean = withContext(Dispatchers.IO) {
         val response = Repositories.getEvents(context, 16, 0)
 

@@ -34,21 +34,28 @@
             app:tint="@color/handle_color" />
 
         <FrameLayout
-            android:id="@+id/tableHolder"
+            android:id="@+id/tableFragmentHolderFrameLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <FrameLayout
-                android:id="@+id/placeholder_bottom_sheet_map"
+            <fragment
+                android:id="@+id/tableFragment"
+                android:name="xyz.nowaha.chengetawildlife.ui.testtable.RecentEventsListFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                tools:layout="@layout/fragment_recent_events_list" />
         </FrameLayout>
 
-        <include
-            android:id="@+id/eventInfoLayout"
-            layout="@layout/layout_event_data"
-            android:visibility="gone" />
+        <FrameLayout
+            android:id="@+id/eventInfoLayoutFrameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
 
+            <include
+                android:id="@+id/eventInfoLayout"
+                layout="@layout/layout_event_data" />
+        </FrameLayout>
     </RelativeLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

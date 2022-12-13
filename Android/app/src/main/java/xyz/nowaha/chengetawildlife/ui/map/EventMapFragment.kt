@@ -1,17 +1,13 @@
 package xyz.nowaha.chengetawildlife.ui.map
 
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionManager
 import android.view.*
 import android.view.View.*
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -33,7 +29,6 @@ import xyz.nowaha.chengetawildlife.R
 import xyz.nowaha.chengetawildlife.data.SessionManager
 import xyz.nowaha.chengetawildlife.data.pojo.Event
 import xyz.nowaha.chengetawildlife.databinding.FragmentEventMapBinding
-import xyz.nowaha.chengetawildlife.ui.testtable.RecentEventsListFragment
 import xyz.nowaha.chengetawildlife.util.TimeUtils
 import xyz.nowaha.chengetawildlife.util.extensions.dp
 import xyz.nowaha.chengetawildlife.util.extensions.iconBasedOnType
@@ -87,6 +82,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         return binding.root
     }
 
+    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -101,14 +97,6 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
-
-        if (!viewModel.tableFragmentCreated) {
-            viewModel.tableFragmentCreated = true
-            with(childFragmentManager.beginTransaction()) {
-                replace(R.id.placeholder_bottom_sheet_map, RecentEventsListFragment())
-                commit()
-            }
-        }
 
         viewModel.mapEvents.observe(viewLifecycleOwner) { eventList ->
             redrawMap(eventList)
@@ -189,41 +177,6 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     }
 
     @SuppressLint("MissingPermission")
-    val locationPermissionRequest =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                if (permissions.getOrDefault(
-                        android.Manifest.permission.ACCESS_FINE_LOCATION, false
-                    ) || permissions.getOrDefault(
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION, false
-                    )
-                ) {
-                    googleMap.isMyLocationEnabled = true
-                }
-            }
-        }
-
-    @SuppressLint("MissingPermission")
-    fun requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-                requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            googleMap.isMyLocationEnabled = true
-            return
-        }
-
-        locationPermissionRequest.launch(
-            arrayOf(
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            )
-        )
-    }
-
-    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
 
@@ -244,7 +197,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             }
         }
 
-        requestLocationPermission()
+        (activity as? MainActivity)?.requestLocationPermission()
 
         googleMap.setInfoWindowAdapter(object : InfoWindowAdapter {
             override fun getInfoContents(marker: Marker): View? {
@@ -260,6 +213,10 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
         googleMap.setOnMarkerClickListener(this)
         googleMap.setOnMapClickListener { eventDeselected() }
+
+        MainActivity.hasLocationPermission.observe(viewLifecycleOwner) {
+            googleMap.isMyLocationEnabled = it
+        }
 
         this.googleMap.setPadding(0, 0, 0, defaultBottomSheetPeekHeight)
     }
@@ -292,8 +249,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         resetSoundButton()
 
         with(requireView()) {
-            findViewById<FrameLayout>(R.id.tableHolder).visibility = GONE
-            with(findViewById<View>(R.id.eventInfoLayout)) {
+            binding.tableFragmentHolderFrameLayout.visibility = GONE
+            with(binding.eventInfoLayoutFrameLayout) {
                 val soundName = event.soundLabel[0].uppercase() + event.soundLabel.substring(1)
 
                 if (visibility == GONE) {
@@ -312,17 +269,19 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                     )
                 }
 
-                findViewById<TextView>(R.id.dateValue).text = getString(
-                    R.string.event_data_title,
-                    SimpleDateFormat("dd/MM/yyyy, HH:mm:ss", Locale.GERMAN).format(event.date)
-                )
-                findViewById<TextView>(R.id.soundValue).text = soundName
-                findViewById<TextView>(R.id.certaintyValue).text =
-                    getString(R.string.event_data_certainty_value, event.probability)
-                findViewById<TextView>(R.id.longitude).text =
-                    getString(R.string.event_data_coordinates_longitude_value, event.longitude)
-                findViewById<TextView>(R.id.latitude).text =
-                    getString(R.string.event_data_coordinates_latitude_value, event.latitude)
+                with(binding.eventInfoLayout) {
+                    dateValue.text = getString(
+                        R.string.event_data_title,
+                        SimpleDateFormat("dd/MM/yyyy, HH:mm:ss", Locale.GERMAN).format(event.date)
+                    )
+                    soundValue.text = soundName
+                    certaintyValue.text =
+                        getString(R.string.event_data_certainty_value, event.probability)
+                    longitude.text =
+                        getString(R.string.event_data_coordinates_longitude_value, event.longitude)
+                    latitude.text =
+                        getString(R.string.event_data_coordinates_latitude_value, event.latitude)
+                }
 
                 soundPlayButton.setOnClickListener {
                     if (mediaLoading || mediaPlayer?.isPlaying == true) return@setOnClickListener
@@ -379,15 +338,13 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
         markers.forEach { it.value.alpha = 1f }
 
-        with(requireView()) {
-            findViewById<View>(R.id.eventInfoLayout).visibility = GONE
-            findViewById<FrameLayout>(R.id.tableHolder).visibility = VISIBLE
+        binding.eventInfoLayoutFrameLayout.visibility = GONE
+        binding.tableFragmentHolderFrameLayout.visibility = VISIBLE
 
-            TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
-            bottomSheetBehavior.peekHeight = defaultBottomSheetPeekHeight
+        TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
+        bottomSheetBehavior.peekHeight = defaultBottomSheetPeekHeight
 
-            googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
-        }
+        googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
     }
 
     override fun onDestroyView() {
