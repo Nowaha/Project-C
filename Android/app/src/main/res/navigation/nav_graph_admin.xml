@@ -6,6 +6,11 @@
     app:startDestination="@id/adminHomeFragment">
 
     <fragment
+        android:id="@+id/accountOverviewFragment"
+        android:name="xyz.nowaha.chengetawildlife.ui.AccountOverviewFragment"
+        android:label="Account Overview"
+        tools:layout="@layout/fragment_account_overview" />
+    <fragment
         android:id="@+id/createAccountFragment2"
         android:name="xyz.nowaha.chengetawildlife.ui.admin.CreateAccountFragment"
         android:label="Create Account"
@@ -34,6 +39,10 @@
         <action
             android:id="@+id/action_adminHomeFragment_to_deleteAccountFragment"
             app:destination="@id/deleteAccountFragment" />
+        <action
+            android:id="@+id/action_adminHomeFragment_to_accountOverviewFragment"
+            app:destination="@id/accountOverviewFragment" />
     </fragment>
+
 
 </navigation>
