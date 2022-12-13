@@ -1,9 +1,14 @@
 package xyz.nowaha.chengetawildlife
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -27,6 +32,8 @@ class MainActivity : AppCompatActivity() {
         var appDatabase: AppDatabase? = null
         val offlineMode = MutableLiveData(true)
         fun offlineModePrecise(context: Context) = !context.isNetworkAvailable()
+
+        val hasLocationPermission = MutableLiveData(false)
     }
 
     private val navController by lazy {
@@ -37,6 +44,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val topLevelDestinations = setOf(R.id.loginFragmentNav, R.id.eventMapFragment)
+
+    @SuppressLint("MissingPermission")
+    val locationPermissionRequest =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (permissions.getOrDefault(
+                        android.Manifest.permission.ACCESS_FINE_LOCATION, false
+                    ) || permissions.getOrDefault(
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION, false
+                    )
+                ) {
+                    hasLocationPermission.postValue(true)
+                } else {
+                    hasLocationPermission.postValue(false)
+                }
+            }
+        }
+
+    @SuppressLint("MissingPermission")
+    fun requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                applicationContext, android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                applicationContext, android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            hasLocationPermission.postValue(true)
+        }
+
+        locationPermissionRequest.launch(
+            arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
