@@ -2,19 +2,16 @@ package xyz.nowaha.chengetawildlife.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import retrofit2.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import xyz.nowaha.chengetawildlife.data.SessionManager
+import retrofit2.Response
 import xyz.nowaha.chengetawildlife.data.http.APIClient
 import xyz.nowaha.chengetawildlife.data.pojo.AccountListResponse
 
-class AccountOverviewViewModel : ViewModel()
-{
+class AccountOverviewViewModel : ViewModel() {
 
     val usernameInput = MutableLiveData("")
-
 
     val searchForAccountState = MutableLiveData<SearchForAccountState>(
         SearchForAccountState.WaitingForUserInput(
@@ -22,57 +19,52 @@ class AccountOverviewViewModel : ViewModel()
         )
     )
 
-    suspend fun searchForUserAccount() = withContext(Dispatchers.IO)
-    {
-        if(searchForAccountState.value !is SearchForAccountState.WaitingForUserInput) return@withContext
+    suspend fun searchForUserAccount() = withContext(Dispatchers.IO) {
+        if (searchForAccountState.value !is SearchForAccountState.WaitingForUserInput) return@withContext
         searchForAccountState.postValue(SearchForAccountState.Loading)
 
         delay(500)
 
-        var searchforAccountResponse: Response<AccountListResponse>? = null
-
+        var searchForAccountResponse: Response<AccountListResponse>? = null
         try {
-            searchforAccountResponse = APIClient.getAPIInterface().getAccountListByUsername(username = usernameInput.value?: "").execute()
+            searchForAccountResponse = APIClient.getAPIInterface()
+                .getAccountListByUsername(username = usernameInput.value ?: "").execute()
+        } catch (_: Exception) {
         }
-        catch (_: Exception){}
 
-        if (searchforAccountResponse == null || searchforAccountResponse.body() == null && searchforAccountResponse.errorBody() == null)
-        {
-            searchForAccountState.postValue(SearchForAccountState.WaitingForUserInput(SearchForAccountState.SearchForAccountErrorType.CONNECTION_FAILURE))
+        if (searchForAccountResponse == null || searchForAccountResponse.body() == null && searchForAccountResponse.errorBody() == null) {
+            searchForAccountState.postValue(
+                SearchForAccountState.WaitingForUserInput(
+                    SearchForAccountState.SearchForAccountErrorType.CONNECTION_FAILURE
+                )
+            )
             return@withContext
         }
 
-        if(searchforAccountResponse.errorBody() != null)
-        {
-            searchForAccountState.postValue(SearchForAccountState.WaitingForUserInput(SearchForAccountState.SearchForAccountErrorType.UNKNOWN_ERROR))
+        if (searchForAccountResponse.errorBody() != null) {
+            searchForAccountState.postValue(
+                SearchForAccountState.WaitingForUserInput(
+                    SearchForAccountState.SearchForAccountErrorType.UNKNOWN_ERROR
+                )
+            )
             return@withContext
         }
 
-
-        searchforAccountResponse.body()?.let {
+        searchForAccountResponse.body()?.let {
             println(it)
             searchForAccountState.postValue(SearchForAccountState.WaitingForUserInput(null))
         }
-
-
     }
 
+    sealed class SearchForAccountState {
+        data class WaitingForUserInput(val error: SearchForAccountErrorType?) :
+            SearchForAccountState()
 
-
-
-    sealed class SearchForAccountState
-    {
-        data class WaitingForUserInput(val error : SearchForAccountErrorType?) : SearchForAccountState()
         object Loading : SearchForAccountState()
 
-
-
-        enum class SearchForAccountErrorType
-        {
+        enum class SearchForAccountErrorType {
             CONNECTION_FAILURE, UNKNOWN_ERROR
         }
     }
-
-
 
 }

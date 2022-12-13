@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import xyz.nowaha.chengetawildlife.databinding.FragmentAccountOverviewBinding
@@ -28,23 +27,15 @@ class AccountOverviewFragment : Fragment() {
         return binding.root
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
-    {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.usernameTextInputLayout.setEndIconOnClickListener{
+        binding.usernameTextInputLayout.setEndIconOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
                 viewModel.searchForUserAccount()
             }
         }
-
-
     }
-
-
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()
