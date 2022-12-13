@@ -33,7 +33,7 @@ import xyz.nowaha.chengetawildlife.R
 import xyz.nowaha.chengetawildlife.data.SessionManager
 import xyz.nowaha.chengetawildlife.data.pojo.Event
 import xyz.nowaha.chengetawildlife.databinding.FragmentEventMapBinding
-import xyz.nowaha.chengetawildlife.ui.testtable.TestTableFragment
+import xyz.nowaha.chengetawildlife.ui.testtable.RecentEventsListFragment
 import xyz.nowaha.chengetawildlife.util.TimeUtils
 import xyz.nowaha.chengetawildlife.util.extensions.dp
 import xyz.nowaha.chengetawildlife.util.extensions.iconBasedOnType
@@ -105,7 +105,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         if (!viewModel.tableFragmentCreated) {
             viewModel.tableFragmentCreated = true
             with(childFragmentManager.beginTransaction()) {
-                replace(R.id.placeholder_bottom_sheet_map, TestTableFragment())
+                replace(R.id.placeholder_bottom_sheet_map, RecentEventsListFragment())
                 commit()
             }
         }
