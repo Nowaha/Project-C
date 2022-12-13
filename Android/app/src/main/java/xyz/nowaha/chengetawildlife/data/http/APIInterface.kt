@@ -15,6 +15,9 @@ interface APIInterface {
     @GET("/user/login?")
     fun attemptLogin(@Query("username") username: String, @Query("password") password: String) : Call<LoginResponse>
 
+    @GET("/accounts/session/validate")
+    fun validateSession(@Query("sessionKey") sessionKey: String) : Call<SessionValidationResponse>
+
     @POST("/accounts/create")
     fun attemptCreateAccount(@Body request: AccountCreationRequest) : Call<AccountCreationResponse>
 
