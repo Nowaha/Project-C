@@ -63,7 +63,7 @@ namespace ChengetaBackend
                      orderby acc.Username
                      select new
                      {
-                        CreationDate = acc.CreationDate,
+                        CreationDate = (long)((DateTime)(acc.CreationDate)).ToUniversalTime().Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds,
                         Username = acc.Username,
                         Role = acc.Role,
                         Id = acc.Id   
