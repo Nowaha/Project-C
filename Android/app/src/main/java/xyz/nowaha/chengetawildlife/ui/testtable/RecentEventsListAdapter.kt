@@ -8,7 +8,8 @@ import xyz.nowaha.chengetawildlife.R
 
 class RecentEventsListAdapter(
     private val context: Context,
-    var data: ArrayList<RecentEventsListDataModel>
+    var data: ArrayList<RecentEventsListDataModel>,
+    var filteredData: List<RecentEventsListDataModel>,
 ) : Adapter<RecentEventsListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentEventsListViewHolder {
@@ -18,7 +19,7 @@ class RecentEventsListAdapter(
     }
 
     override fun onBindViewHolder(holder: RecentEventsListViewHolder, position: Int) {
-        holder.bindData(data[position])
+        holder.bindData(filteredData[position])
 
         if (position % 2 != 0) {
             holder.rowLinearLayout.setBackgroundColor(context.resources.getColor(R.color.alt_table_row))
@@ -28,7 +29,7 @@ class RecentEventsListAdapter(
     }
 
     override fun getItemCount(): Int {
-        return data.size
+        return filteredData.size
     }
 
 }
