@@ -73,16 +73,22 @@ class MainActivity : AppCompatActivity() {
             while (true) {
                 if (offlineModePrecise(this@MainActivity)) {
                     if (offlineMode.value == false) {
-                        binding.offlineNotice.visibility = View.VISIBLE
                         offlineMode.postValue(true)
                     }
                 } else {
                     if (offlineMode.value == true) {
-                        binding.offlineNotice.visibility = View.GONE
                         offlineMode.postValue(false)
                     }
                 }
                 delay(2500)
+            }
+        }
+
+        offlineMode.observe(this) {
+            if (it) {
+                binding.offlineNotice.visibility = View.VISIBLE
+            } else {
+                binding.offlineNotice.visibility = View.GONE
             }
         }
     }
