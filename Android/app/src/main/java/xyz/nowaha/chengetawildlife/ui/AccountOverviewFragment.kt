@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,9 +21,7 @@ class AccountOverviewFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAccountOverviewBinding.inflate(inflater, container, false)
         return binding.root
@@ -34,12 +33,47 @@ class AccountOverviewFragment : Fragment() {
         binding.usernameTextInputEditText.setText(viewModel.usernameInput.value ?: "")
         binding.usernameTextInputEditText.addTextChangedListener {
             viewModel.usernameInput.postValue(it.toString())
+            binding.usernameTextInputLayout.isErrorEnabled = false
+            binding.usernameTextInputLayout.error = null
         }
 
-        binding.usernameTextInputLayout.setEndIconOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                viewModel.searchForUserAccount()
+        binding.usernameTextInputLayout.setEndIconOnClickListener { makeSearchRequest() }
+
+        binding.usernameTextInputEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (viewModel.searchForAccountState.value !is AccountOverviewViewModel.SearchForAccountState.WaitingForUserInput) return@setOnEditorActionListener true
+                makeSearchRequest()
+                return@setOnEditorActionListener true
             }
+
+            return@setOnEditorActionListener false
+        }
+
+        viewModel.searchForAccountState.observe(viewLifecycleOwner) {
+            when (it) {
+                is AccountOverviewViewModel.SearchForAccountState.WaitingForUserInput -> {
+                    binding.usernameTextInputLayout.isEnabled = true
+                    if (it.error != null) {
+                        binding.usernameTextInputLayout.isErrorEnabled = true
+                        binding.usernameTextInputLayout.error = when (it.error) {
+                            AccountOverviewViewModel.SearchForAccountState.SearchForAccountErrorType.CONNECTION_FAILURE -> "Failed to connect."
+                            AccountOverviewViewModel.SearchForAccountState.SearchForAccountErrorType.UNKNOWN_ERROR -> "Unknown error."
+                        }
+                    } else {
+                        binding.usernameTextInputLayout.isErrorEnabled = false
+                        binding.usernameTextInputLayout.error = null
+                    }
+                }
+                AccountOverviewViewModel.SearchForAccountState.Loading -> {
+                    binding.usernameTextInputLayout.isEnabled = false
+                }
+            }
+        }
+    }
+
+    fun makeSearchRequest() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.searchForUserAccount()
         }
     }
 
