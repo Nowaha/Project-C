@@ -52,7 +52,7 @@ class AccountOverviewFragment : Fragment() {
         viewModel.searchForAccountState.observe(viewLifecycleOwner) {
             when (it) {
                 is AccountOverviewViewModel.SearchForAccountState.WaitingForUserInput -> {
-                    binding.usernameTextInputLayout.isEnabled = true
+                    binding.searchLoadingCircle.visibility = View.GONE
                     if (it.error != null) {
                         binding.usernameTextInputLayout.isErrorEnabled = true
                         binding.usernameTextInputLayout.error = when (it.error) {
@@ -65,7 +65,7 @@ class AccountOverviewFragment : Fragment() {
                     }
                 }
                 AccountOverviewViewModel.SearchForAccountState.Loading -> {
-                    binding.usernameTextInputLayout.isEnabled = false
+                    binding.searchLoadingCircle.visibility = View.VISIBLE
                 }
             }
         }
