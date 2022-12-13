@@ -15,6 +15,9 @@ interface APIInterface {
     @GET("/user/login?")
     fun attemptLogin(@Query("username") username: String, @Query("password") password: String) : Call<LoginResponse>
 
+    @GET("/accounts/session/validate")
+    fun validateSession() : Call<SessionValidationResponse>
+    
     @GET("/accounts/view?")
     fun getAccountList(@Query("rows") rows: Int = 100, @Query("offset") offset: Int = 0) : Call<AccountListResponse>
 
