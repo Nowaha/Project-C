@@ -9,7 +9,14 @@
         android:id="@+id/accountOverviewFragment"
         android:name="xyz.nowaha.chengetawildlife.ui.admin.accountoverview.AccountOverviewFragment"
         android:label="Account Overview"
-        tools:layout="@layout/fragment_account_overview" />
+        tools:layout="@layout/fragment_account_overview" >
+        <action
+            android:id="@+id/action_accountOverviewFragment_to_deleteAccountFragment"
+            app:destination="@id/deleteAccountFragment" />
+        <action
+            android:id="@+id/action_accountOverviewFragment_to_editAccountFragment"
+            app:destination="@id/editAccountFragment" />
+    </fragment>
     <fragment
         android:id="@+id/createAccountFragment2"
         android:name="xyz.nowaha.chengetawildlife.ui.admin.CreateAccountFragment"
@@ -19,12 +26,22 @@
         android:id="@+id/editAccountFragment"
         android:name="xyz.nowaha.chengetawildlife.ui.admin.EditAccountFragment"
         android:label="Edit Account"
-        tools:layout="@layout/fragment_account_editing" />
+        tools:layout="@layout/fragment_account_editing" >
+        <argument
+            android:name="account_name"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/deleteAccountFragment"
         android:name="xyz.nowaha.chengetawildlife.ui.admin.DeleteAccountFragment"
         android:label="Delete Account"
-        tools:layout="@layout/fragment_account_delete" />
+        tools:layout="@layout/fragment_account_delete" >
+        <argument
+            android:name="account_name"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/adminHomeFragment"
         android:name="xyz.nowaha.chengetawildlife.ui.admin.AdminHomeFragment"

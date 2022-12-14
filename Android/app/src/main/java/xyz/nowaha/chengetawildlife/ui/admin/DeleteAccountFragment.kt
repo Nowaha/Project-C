@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import xyz.nowaha.chengetawildlife.MainActivity
@@ -29,13 +30,23 @@ class DeleteAccountFragment : Fragment() {
         _binding = FragmentAccountDeleteBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
+    val args: DeleteAccountFragmentArgs by navArgs()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
 
-        binding.usernameDeleteTextInputEditText.setText(viewModel.usernameInput.value)
+        if (viewModel.usernameInput.value.isNullOrEmpty()) {
+            args.accountName?.let {
+                viewModel.usernameInput.postValue(it)
+                binding.usernameDeleteTextInputEditText.setText(it)
+            }
+        } else {
+            binding.usernameDeleteTextInputEditText.setText(viewModel.usernameInput.value)
+        }
+
         binding.usernameDeleteTextInputEditText.addTextChangedListener {
             binding.usernameDeleteTextInputLayout.error = null
             viewModel.usernameInput.postValue(it.toString())

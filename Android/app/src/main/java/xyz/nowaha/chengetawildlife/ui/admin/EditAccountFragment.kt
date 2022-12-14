@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import xyz.nowaha.chengetawildlife.MainActivity
@@ -33,11 +34,21 @@ class EditAccountFragment : Fragment() {
         return binding.root
     }
 
+    val args: EditAccountFragmentArgs by navArgs()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            usernameTextInputEditText.setText(viewModel.usernameInput.value)
+            if (viewModel.usernameInput.value.isNullOrEmpty()) {
+                args.accountName?.let {
+                    viewModel.usernameInput.postValue(it)
+                    usernameTextInputEditText.setText(it)
+                }
+            } else {
+                usernameTextInputEditText.setText(viewModel.usernameInput.value)
+            }
+
             usernameTextInputEditText.addTextChangedListener {
                 usernameTextInputLayout.error = null
                 viewModel.usernameInput.postValue(it.toString())
