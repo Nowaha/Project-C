@@ -67,6 +67,10 @@ class AccountOverviewFragment : Fragment() {
         binding.userListRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerViewAdapter = AccountOverviewAdapter(requireContext(), viewModel.data)
         binding.userListRecyclerView.adapter = recyclerViewAdapter
+
+        if (recyclerViewAdapter.data.value.isNullOrEmpty() && binding.usernameTextInputEditText.text.isNullOrEmpty()) {
+            makeSearchRequest()
+        }
     }
 
     private fun setupListeners() {
