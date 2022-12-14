@@ -33,10 +33,10 @@
     <string name="percentageText">Percentage</string>
     <string name="soundPlayButton">Play Sound</string>
     <string name="log_out">Log out</string>
-    <string name="userTitle">All Users</string>
+    <string name="userTitle">Account Overview</string>
     <string name="userRole">Role</string>
     <string name="userAction">Moderate</string>
-    <string name="userSearchHint">Search for User...</string>
+    <string name="userSearchHint">Search for user...</string>
 
 
 
