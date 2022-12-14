@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/accountOverviewFragment"
-        android:name="xyz.nowaha.chengetawildlife.ui.AccountOverviewFragment"
+        android:name="xyz.nowaha.chengetawildlife.ui.admin.accountoverview.AccountOverviewFragment"
         android:label="Account Overview"
         tools:layout="@layout/fragment_account_overview" />
     <fragment
