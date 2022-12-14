@@ -13,7 +13,7 @@ data class Account(
     @SerializedName("Username")
     var username: String,
     @SerializedName("Role")
-    var role: String,
+    var role: Int,
     @SerializedName("CreationDate")
     var creationDate: Long,
 
