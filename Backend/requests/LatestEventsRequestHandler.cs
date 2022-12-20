@@ -65,7 +65,8 @@ namespace ChengetaBackend
                          Longitude = evt.Longitude,
                          SoundLabel = evt.SoundLabel,
                          Probability = evt.Probability,
-                         SoundURL = evt.SoundURL
+                         SoundURL = evt.SoundURL,
+                         Status = evt.Status
                      }
                      ).Skip(offset).Take(rows).ToList());
             }

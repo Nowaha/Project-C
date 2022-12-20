@@ -24,7 +24,8 @@ data class Event(
     var probability: Int,
     @SerializedName("SoundURL")
     var soundUrl: String,
-
+    @SerializedName("status")
+    var status: String,
     // Local caching
     var cacheExpiry: Long?
 )
