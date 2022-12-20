@@ -62,6 +62,10 @@ namespace ChengetaBackend
 
         [Required]
         public AccountType Role { get; set; }
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
 
         public enum AccountType
         {
