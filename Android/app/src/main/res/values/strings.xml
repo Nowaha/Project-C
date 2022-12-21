@@ -37,11 +37,11 @@
     <string name="userRole">Role</string>
     <string name="userAction">Moderate</string>
     <string name="userSearchHint">Search for user...</string>
-    <string name="credAddTitle">Enter Credentials</string>
-    <string name="enter_credentials_hint_firstName">Enter first name..</string>
-    <string name="enter_credentials_hint_lastName">Enter last name..</string>
-    <string name="enter_credentials_submit">Submit</string>
-    <string name="enter_credentials_hint_userName">Enter username..</string>
+    <string name="credAddTitle">Edit personalia</string>
+    <string name="enter_name_hint_userName">Account Username</string>
+    <string name="enter_name_hint_firstName">First Name</string>
+    <string name="enter_name_hint_lastName">Last Name</string>
+    <string name="enter_name_submit">Submit</string>
 
 
 </resources>

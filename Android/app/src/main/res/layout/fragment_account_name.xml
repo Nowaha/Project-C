@@ -30,11 +30,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:hint="@string/enter_credentials_hint_userName"
+        android:hint="@string/enter_name_hint_userName"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/firstNameTextInputLayout"
         app:layout_constraintTop_toBottomOf="@id/credAddTitle"
-        app:startIconDrawable="@drawable/ic_baseline_edit_24">
+        app:startIconDrawable="@drawable/ic_user">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/userNameTextInputEditText"
@@ -44,19 +44,15 @@
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
-
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/firstNameTextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
-        android:hint="@string/enter_credentials_hint_firstName"
+        android:hint="@string/enter_name_hint_firstName"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/lastNameTextInputLayout"
-        app:layout_constraintTop_toBottomOf="@id/userNameTextInputLayout"
-        app:startIconDrawable="@drawable/ic_baseline_edit_24">
+        app:layout_constraintTop_toBottomOf="@id/userNameTextInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/firstNameTextInputEditText"
@@ -70,11 +66,10 @@
         android:id="@+id/lastNameTextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/enter_credentials_hint_lastName"
+        android:hint="@string/enter_name_hint_lastName"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/submitCredButton"
-        app:layout_constraintTop_toBottomOf="@id/firstNameTextInputLayout"
-        app:startIconDrawable="@drawable/ic_baseline_edit_24">
+        app:layout_constraintTop_toBottomOf="@id/firstNameTextInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/lastNameTextInputEditText"
@@ -88,7 +83,7 @@
         android:id="@+id/submitCredButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/enter_credentials_submit"
+        android:text="@string/enter_name_submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lastNameTextInputLayout" />
