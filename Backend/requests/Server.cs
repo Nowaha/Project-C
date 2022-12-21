@@ -12,7 +12,6 @@ namespace ChengetaBackend
     {
         private static string LOG_TAG = "HTTP";
 
-        private static int DATA_READ_TIMEOUT = 100;
         private static Dictionary<string, RequestHandler> requestHandlers = new Dictionary<string, RequestHandler>();
 
 
@@ -86,7 +85,7 @@ namespace ChengetaBackend
                     var buffer = new byte[5012];
                     int receivedData = currentConnection.Receive(buffer);
                     data = Encoding.ASCII.GetString(buffer, 0, receivedData);
-                } catch (Exception ex) {
+                } catch (Exception) {
                     currentConnection.Disconnect(false);
                     currentConnection.Close();
                     continue;

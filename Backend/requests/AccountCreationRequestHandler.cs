@@ -47,7 +47,7 @@ namespace ChengetaBackend
             {
                 request = JsonSerializer.Deserialize<AccountCreationRequest>(bodyRaw);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Invalid request structure.");
             }
