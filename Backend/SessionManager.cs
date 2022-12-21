@@ -6,9 +6,16 @@ namespace ChengetaBackend
 {
     public class SessionManager
     {
+        private bool forTesting = false;
+        public SessionManager(bool forTesting = false)
+        {
+            this.forTesting = forTesting;
+        }
+
         private static int SESSION_LENGTH_IN_BYTES = 64;
 
-        // public List<(string username, string password, string salt)> TestAccounts = new();
+        public List<Account> TestAccounts = new();
+
         public Dictionary<string, string> SessionDictionary = new();
 
         public AuthResult Authenticate(string username, string password)
@@ -17,7 +24,16 @@ namespace ChengetaBackend
             {
                 using (var db = new ChengetaContext())
                 {
-                    var account = db.accounts.Where(acc => acc.Username.ToLower() == username.ToLower()).FirstOrDefault();
+                    Account account;
+                    if (!forTesting)
+                    {
+                        account = db.accounts.Where(acc => acc.Username.ToLower() == username.ToLower()).FirstOrDefault();
+                    }
+                    else
+                    {
+                        account = TestAccounts.Where(acc => acc.Username.ToLower() == username.ToLower()).FirstOrDefault();
+                    }
+
                     if (account == null) return new AuthResult(ResultCode.INVALID_CREDENTIALS);
                     if (Utils.HashPassword(password, account.Salt) != account.Password) return new AuthResult(ResultCode.INVALID_CREDENTIALS);
 
@@ -26,7 +42,9 @@ namespace ChengetaBackend
                     SessionDictionary.Add(session, username);
                     return new AuthResult(ResultCode.SUCCESS, session);
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 System.Console.WriteLine(ex.ToString());
                 return new AuthResult(ResultCode.ERROR);
             }
