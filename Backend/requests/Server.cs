@@ -92,8 +92,6 @@ namespace ChengetaBackend
                     continue;
                 }
 
-System.Console.WriteLine(data);
-
                 // If there is no data, we can not do anything with it, so we close it here.
                 if (data.Length == 0 || data.Trim().Length == 0)
                 {
