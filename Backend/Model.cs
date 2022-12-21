@@ -15,6 +15,12 @@ namespace ChengetaBackend
         {
             optionsBuilder.UseNpgsql(Environment.generateConnectionString());
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Event>().Property(b => b.Status).HasDefaultValueSql("0");
+            base.OnModelCreating(modelBuilder);
+        }
     }
 
     public class Event
@@ -41,7 +47,14 @@ namespace ChengetaBackend
 
         [Required]
         public string SoundURL { get; set; }
-        public int Status { get; set; } = 0;
+        public EventStatus Status { get; set; }
+
+        public enum EventStatus {
+            NONE,
+            UNDER_WAY,
+            HANDLED,
+            FALSE_ALARM
+        }
     }
 
     public class Account
@@ -72,17 +85,6 @@ namespace ChengetaBackend
             ADMIN
         }
     }
-
-    // public class statussen
-    // {
-    //     public int Id { get; set; }
-
-    //     [Required]
-    //     public int RangerId { get; set; }
-
-    //     [Required]
-    //     public int Status { get; set; }
-    // }
 
     public class Session
     {
