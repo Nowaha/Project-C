@@ -17,7 +17,7 @@ namespace ChengetaBackend
             string bodyRaw
         )
         {
-            if (!(Program.sessionManager.SessionDictionary.ContainsKey(session)))
+            if (session == "" || !(Program.sessionManager.SessionDictionary.ContainsKey(session)))
             {
                 return new Response(
                     Code.SUCCESS,
