@@ -14,9 +14,11 @@ namespace ChengetaBackend
 
         public static void Main(string[] args)
         {
-            createTestAdminAccount();
-            runTests();
-            Run().Wait();
+            if (args.Contains("--test") || args.Contains("-t")) {
+                runTests();
+            } else {
+                Run().Wait();
+            }
         }
 
         private static void createTestAdminAccount()
@@ -46,13 +48,14 @@ namespace ChengetaBackend
         public static async Task Run()
         {
             ChengetaBackend.MQTTClient client = new MQTTClient(mqttFactory);
-            Parallel.Invoke(() => Server.Run(), () => client.Connect());
+            Parallel.Invoke(async () => await Server.Run(), async () => await client.Connect());
         }
 
         private static void runTests()
         {
+            AuthenticationTest.testSessionCreationOnlyWhenPasswordValid();
             AuthenticationTest.testHashSaltAndPasswordUniqueness();
-            //AuthenticationTest.testSessionCreationOnlyWhenPasswordValid();
+            EndpointAuthLevelTests.testEndpoints(true);
         }
 
         public static void log(string message)
