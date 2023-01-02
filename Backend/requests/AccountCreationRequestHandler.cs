@@ -61,6 +61,8 @@ namespace ChengetaBackend
 
             string userName = request.username;
             string password = request.password;
+            string firstName = request.firstName;
+            string lastName = request.lastName;
 
             //Hashes the entered password and generates a salt for the hashed password
 
@@ -78,7 +80,9 @@ namespace ChengetaBackend
                     Username = userName,
                     Password = userPassHash,
                     Salt = userSalt,
-                    Role = accountType
+                    Role = accountType,
+                    FirstName = firstName,
+                    LastName = lastName
                 };
 
                 //Checks whether the entered username is already in use or not

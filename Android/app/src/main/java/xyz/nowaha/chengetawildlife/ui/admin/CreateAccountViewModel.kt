@@ -15,6 +15,8 @@ class CreateAccountViewModel : ViewModel() {
     val passwordInput = MutableLiveData("")
     val passwordConfirmInput = MutableLiveData("")
     val roleInput = MutableLiveData(0)
+    val firstnameInput = MutableLiveData("")
+    val lastnameInput = MutableLiveData("")
 
 
     val createAccountState =
@@ -32,11 +34,12 @@ class CreateAccountViewModel : ViewModel() {
                 AccountCreationRequest(
                     usernameInput.value.toString(),
                     passwordInput.value.toString(),
-                    roleInput.value ?: 0
-                )
+                    roleInput.value ?: 0,
+                    firstnameInput.value.toString(),
+                    lastnameInput.value.toString(),
+                    )
             ).execute()
         } catch (_: Exception) {
-
         }
 
         if (createAccountResponse?.body() == null && (createAccountResponse?.errorBody() == null || createAccountResponse.code() == 404)) {

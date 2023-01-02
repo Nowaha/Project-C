@@ -43,6 +43,18 @@ class CreateAccountFragment : Fragment() {
                 viewModel.usernameInput.postValue(it.toString())
             }
 
+            FirstnameTextInputEditText.setText(viewModel.firstnameInput.value)
+            FirstnameTextInputEditText.addTextChangedListener {
+                FirstnameTextInputLayout.error = null
+                viewModel.firstnameInput.postValue(it.toString())
+            }
+
+            LastnameTextInputEditText.setText(viewModel.lastnameInput.value)
+            LastnameTextInputEditText.addTextChangedListener {
+                LastnameTextInputLayout.error = null
+                viewModel.lastnameInput.postValue(it.toString())
+            }
+
             passwordTextInputEditText.setText(viewModel.passwordInput.value)
             passwordTextInputEditText.addTextChangedListener {
                 passwordTextInputLayout.error = null
@@ -76,6 +88,8 @@ class CreateAccountFragment : Fragment() {
                 usernameTextInputLayout.error = null
                 passwordTextInputLayout.error = null
                 passwordConfirmTextInputLayout.error = null
+                FirstnameTextInputLayout.error = null
+                LastnameTextInputLayout.error = null
 
                 if (passwordTextInputEditText.text.toString().isBlank()) {
                     passwordTextInputLayout.error = "Please enter a password."
@@ -83,6 +97,14 @@ class CreateAccountFragment : Fragment() {
                 }
                 if (passwordConfirmTextInputEditText.text.toString().isBlank()) {
                     passwordConfirmTextInputLayout.error = "Please confirm your password."
+                    validAccountDetails = false
+                }
+                if (FirstnameTextInputEditText.text.toString().isBlank()) {
+                    FirstnameTextInputLayout.error = "Please confirm your firstname."
+                    validAccountDetails = false
+                }
+                if (LastnameTextInputEditText.text.toString().isBlank()) {
+                    LastnameTextInputLayout.error = "Please confirm your lastname."
                     validAccountDetails = false
                 }
                 if (validAccountDetails && passwordTextInputEditText.text.toString() != passwordConfirmTextInputEditText.text.toString()) {
