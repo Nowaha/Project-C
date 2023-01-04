@@ -45,4 +45,7 @@ interface APIInterface {
 
     @POST("/accounts/edit")
     fun attemptEditAccount(@Body request: AccountEditRequest) : Call<AccountEditResponse>
+
+    @POST("/accounts/editName")
+    fun attemptEditNameAccount(@Body request: AccountEditNameRequest) : Call<AccountEditNameResponse>
 }
