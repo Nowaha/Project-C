@@ -10,7 +10,7 @@ namespace ChengetaBackend
     {
         //Path for the server so it knows where to go to call this
 
-        public string Path => "/accounts/editName";
+        public string Path => "/accounts/edit/name";
 
         public Method Method => Method.POST;
 

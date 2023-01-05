@@ -42,12 +42,12 @@ class EditNameAccountFragment : Fragment() {
                 userNameTextInputLayout.error = null
                 viewModel.usernameInput.postValue(it.toString())
             }
-            firstNameTextInputEditText.setText(viewModel.usernameInput.value)
+            firstNameTextInputEditText.setText(viewModel.firstnameInput.value)
             firstNameTextInputEditText.addTextChangedListener {
                 firstNameTextInputLayout.error = null
                 viewModel.firstnameInput.postValue(it.toString())
             }
-            lastNameTextInputEditText.setText(viewModel.usernameInput.value)
+            lastNameTextInputEditText.setText(viewModel.lastnameInput.value)
             lastNameTextInputEditText.addTextChangedListener {
                 lastNameTextInputLayout.error = null
                 viewModel.lastnameInput.postValue(it.toString())
