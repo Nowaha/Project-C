@@ -30,35 +30,55 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="?android:attr/textColorSecondary" />
 
-    <TextView
-        android:id="@+id/dateLabel"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/eventStatusConstraintLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/event_data_date_label"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/eventDetailsTitle" />
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/eventDetailsTitle">
 
-    <TextView
-        android:id="@+id/dateValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dateLabel"
-        tools:text="22/12/2022, 01:54:23" />
+        <TextView
+            android:id="@+id/statusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Event Status"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <TextView
+            android:id="@+id/statusValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/statusLabel"
+            tools:text="Status: New" />
+
+        <ImageView
+            android:id="@+id/eventStatusIconImageView"
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:src="@drawable/ic_baseline_edit_24"
+            app:tint="?android:attr/textColorSecondary"
+            app:layout_constraintStart_toEndOf="@id/statusLabel"
+            app:layout_constraintTop_toTopOf="@id/statusLabel"
+            app:layout_constraintBottom_toBottomOf="@id/statusLabel"
+            android:layout_marginLeft="6dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/soundLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/event_data_sound_label"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dateValue" />
+        app:layout_constraintTop_toBottomOf="@id/eventStatusConstraintLayout" />
 
     <TextView
         android:id="@+id/soundValue"
@@ -72,7 +92,7 @@
         android:id="@+id/certaintyLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/event_data_certainty_label"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -91,7 +111,7 @@
         android:id="@+id/coordinatesTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/event_data_coordinates_label"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -115,15 +135,34 @@
         tools:text="Latitude: 0.000000" />
 
     <TextView
-        android:id="@+id/listenLabel"
+        android:id="@+id/dateLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/event_data_listen_label"
+        android:layout_marginTop="16dp"
+        android:text="@string/event_data_date_label"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/latitude" />
+
+    <TextView
+        android:id="@+id/dateValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dateLabel"
+        tools:text="22/12/2022, 01:54:23" />
+
+    <TextView
+        android:id="@+id/listenLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/event_data_listen_label"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dateValue" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/soundPlayButton"
@@ -151,6 +190,5 @@
         app:layout_constraintBottom_toBottomOf="@id/soundPlayButton"
         app:layout_constraintLeft_toLeftOf="@id/soundPlayButton"
         app:layout_constraintTop_toTopOf="@id/soundPlayButton" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
