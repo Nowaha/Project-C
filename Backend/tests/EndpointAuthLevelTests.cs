@@ -33,6 +33,8 @@ namespace ChengetaBackend
             endpoints.Add(new EndpointForTesting(accountEditHandler, AccountType.ADMIN));
             var accountNameEditHandler = new AccountNameEditRequestHandler();
             endpoints.Add(new EndpointForTesting(accountNameEditHandler, AccountType.ADMIN));
+            var eventStatusEditHandler = new EventStatusRequestHandler();
+            endpoints.Add(new EndpointForTesting(eventStatusEditHandler, AccountType.RANGER));
         }
 
         public static void testEndpoints(bool verbose = false)
