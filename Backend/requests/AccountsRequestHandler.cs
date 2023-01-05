@@ -72,18 +72,21 @@ namespace ChengetaBackend
             {
                 userName = args["username"];
             }
+            var usernameForFilter = userName.ToLower();
             using (var db = new ChengetaContext())
             {
                 accounts.AddRange(
                     (from acc in db.accounts
-                        where acc.Username.Contains(userName)
+                     where acc.Username.ToLower().Contains(usernameForFilter) || acc.FirstName.ToLower().Contains(usernameForFilter) || acc.LastName.ToLower().Contains(usernameForFilter)
                      orderby acc.Username
                      select new
                      {
-                        CreationDate = (long)((DateTime)(acc.CreationDate)).ToUniversalTime().Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds,
-                        Username = acc.Username,
-                        Role = acc.Role,
-                        Id = acc.Id   
+                         CreationDate = (long)((DateTime)(acc.CreationDate)).ToUniversalTime().Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds,
+                         Username = acc.Username,
+                         Role = acc.Role,
+                         Id = acc.Id,
+                         FirstName = acc.FirstName,
+                         LastName = acc.LastName
                      }
                      ).Skip(offset).Take(rows).ToList());
             }
