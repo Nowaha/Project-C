@@ -31,8 +31,6 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
     var data: ArrayList<RecentEventsListDataModel> = ArrayList()
     var filteredData: ArrayList<RecentEventsListDataModel> = ArrayList()
 
-    private var latestAdded: Long = 0
-
     private var _binding: FragmentRecentEventsListBinding? = null
     private val binding get() = _binding!!
 
@@ -42,6 +40,9 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
         _binding = FragmentRecentEventsListBinding.inflate(inflater, container, false)
         return binding.root
     }
+
+    val updateInterval = 1000 * 30
+    var lastUpdate = System.currentTimeMillis()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,6 +65,15 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
         }
 
         loadNewData()
+
+        lifecycleScope.launch {
+            while (true) {
+                delay(5000)
+                if (System.currentTimeMillis() - lastUpdate >= updateInterval) {
+                    loadNewData()
+                }
+            }
+        }
     }
 
     private fun registerFilterListeners() {
@@ -100,14 +110,18 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
     }
 
     private fun loadNewData() {
+        lastUpdate = System.currentTimeMillis()
+
         binding.loadingCircle.visibility = View.VISIBLE
         binding.refreshButton.imageAlpha = 0
 
         lifecycleScope.launch(Dispatchers.IO) {
-            val format = SimpleDateFormat("dd-MM-yyyy, HH:mm:ss", Locale.GERMAN)
+            val format = SimpleDateFormat("HH:mm:ss, dd MMM", Locale.ENGLISH)
             val repoResponse = Repositories.getEvents(requireContext(), 100, 0)
             when (repoResponse.responseType) {
                 RepoResponse.ResponseType.SUCCESS -> withContext(Dispatchers.Main) {
+                    data.clear()
+                    filteredData.clear()
                     addTableRows(repoResponse.result.map {
                         RecentEventsListDataModel(
                             format.format(it.date),
@@ -150,18 +164,8 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
         }
     }
 
-    fun addTableRow(viewModel: RecentEventsListDataModel) {
-        if (latestAdded >= viewModel.date) return
-        latestAdded = viewModel.date
-        data.add(0, viewModel)
-
-        updateFilters()
-    }
-
     private fun addTableRows(viewModels: List<RecentEventsListDataModel>) {
         for (viewModel in viewModels.reversed()) {
-            if (latestAdded >= viewModel.date) continue
-            latestAdded = viewModel.date
             data.add(0, viewModel)
         }
         updateFilters()
