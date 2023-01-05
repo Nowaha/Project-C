@@ -21,7 +21,7 @@
         android:id="@+id/admin_home_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="The various admin features. This page is still work in progress and is currently here for demonstration purposes."
+        android:text="Please select one of the options below to create, delete and manage existing accounts."
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/accountOverviewButton"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -54,24 +54,39 @@
         android:textAllCaps="false"
         app:icon="@drawable/ic_baseline_add_24"
         app:iconPadding="8dp"
-        app:layout_constraintBottom_toTopOf="@id/editAccountButton"
+        app:layout_constraintBottom_toTopOf="@id/editAccountNameButton"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/accountOverviewButton" />
 
     <Button
-        android:id="@+id/editAccountButton"
+        android:id="@+id/editAccountNameButton"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingVertical="12dp"
         android:paddingLeft="8dp"
-        android:text="Edit Account"
+        android:text="Edit Account Personalia"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_baseline_edit_24"
+        app:iconPadding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/editAccountPasswordButton"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/createAccountButton" />
+
+    <Button
+        android:id="@+id/editAccountPasswordButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="12dp"
+        android:paddingLeft="8dp"
+        android:text="Change Account Password"
         android:textAllCaps="false"
         app:icon="@drawable/ic_baseline_edit_24"
         app:iconPadding="8dp"
         app:layout_constraintBottom_toTopOf="@id/deleteAccountButton"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/createAccountButton" />
+        app:layout_constraintTop_toBottomOf="@id/editAccountNameButton" />
 
     <Button
         android:id="@+id/deleteAccountButton"
@@ -86,6 +101,6 @@
         app:iconPadding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editAccountButton" />
+        app:layout_constraintTop_toBottomOf="@id/editAccountPasswordButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

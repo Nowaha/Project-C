@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/editAccountFragment"
         android:name="xyz.nowaha.chengetawildlife.ui.admin.EditAccountFragment"
-        android:label="Edit Account"
+        android:label="Change Account Password"
         tools:layout="@layout/fragment_account_editing" />
     <fragment
         android:id="@+id/deleteAccountFragment"
@@ -49,7 +49,7 @@
     <fragment
         android:id="@+id/editNameAccountFragment"
         android:name="xyz.nowaha.chengetawildlife.ui.admin.EditNameAccountFragment"
-        android:label="EditNameAccountFragment"
+        android:label="Edit Account Personalia"
         tools:layout="@layout/fragment_account_name" />
 
 

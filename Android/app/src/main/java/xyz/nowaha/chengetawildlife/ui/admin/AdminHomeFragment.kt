@@ -34,7 +34,11 @@ class AdminHomeFragment : Fragment() {
             findNavController().navigate(R.id.action_adminHomeFragment_to_createAccountFragment2)
         }
 
-        binding.editAccountButton.setOnClickListener {
+        binding.editAccountNameButton.setOnClickListener {
+            findNavController().navigate(R.id.action_adminHomeFragment_to_editNameAccountFragment)
+        }
+
+        binding.editAccountPasswordButton.setOnClickListener {
             findNavController().navigate(R.id.action_adminHomeFragment_to_editAccountFragment)
         }
 
