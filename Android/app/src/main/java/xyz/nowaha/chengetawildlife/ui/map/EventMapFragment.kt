@@ -8,6 +8,8 @@ import android.transition.TransitionManager
 import android.view.*
 import android.view.View.*
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +30,7 @@ import xyz.nowaha.chengetawildlife.MainActivity
 import xyz.nowaha.chengetawildlife.R
 import xyz.nowaha.chengetawildlife.data.SessionManager
 import xyz.nowaha.chengetawildlife.data.pojo.Event
+import xyz.nowaha.chengetawildlife.data.pojo.EventStatus
 import xyz.nowaha.chengetawildlife.data.repos.RepoResponse
 import xyz.nowaha.chengetawildlife.databinding.FragmentEventMapBinding
 import xyz.nowaha.chengetawildlife.util.TimeUtils
@@ -127,6 +130,18 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
         MainActivity.offlineMode.observe(viewLifecycleOwner) {
             soundPlayButton.isEnabled = !it
+            binding.eventInfoLayout.eventStatusConstraintLayout.isEnabled = !it
+
+            val imageView =
+                binding.eventInfoLayout.eventStatusConstraintLayout.findViewById<ImageView>(R.id.eventStatusIconImageView)
+
+            imageView.setImageDrawable(
+                ResourcesCompat.getDrawable(
+                    resources,
+                    if (it) R.drawable.ic_password else R.drawable.ic_baseline_edit_24,
+                    requireContext().theme
+                )
+            )
         }
     }
 
@@ -265,71 +280,90 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         }
         resetSoundButton()
 
-        with(requireView()) {
-            binding.tableFragmentHolderFrameLayout.visibility = GONE
-            with(binding.eventInfoLayoutFrameLayout) {
-                val soundName = event.soundLabel[0].uppercase() + event.soundLabel.substring(1)
+        binding.tableFragmentHolderFrameLayout.visibility = GONE
+        with(binding.eventInfoLayoutFrameLayout) {
+            val soundName = event.soundLabel[0].uppercase() + event.soundLabel.substring(1)
 
-                if (visibility == GONE) {
-                    visibility = VISIBLE
-                    if (!noAnimation) TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
-                    bottomSheetBehavior.peekHeight = dp(262)
-                    googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
-                }
+            if (visibility == GONE) {
+                visibility = VISIBLE
+                if (!noAnimation) TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
+                bottomSheetBehavior.peekHeight = dp(262)
+                googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
+            }
 
-                findViewById<ImageButton>(R.id.targetButton).setOnClickListener {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                    googleMap.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            markers[event]!!.position, 7.5f
-                        ), 500, null
-                    )
-                }
+            findViewById<ImageButton>(R.id.targetButton).setOnClickListener {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                googleMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        markers[event]!!.position, 7.5f
+                    ), 500, null
+                )
+            }
 
-                with(binding.eventInfoLayout) {
-                    dateValue.text = getString(
-                        R.string.event_data_title,
-                        SimpleDateFormat("dd/MM/yyyy, HH:mm:ss", Locale.GERMAN).format(event.date)
-                    )
-                    soundValue.text = soundName
-                    certaintyValue.text =
-                        getString(R.string.event_data_certainty_value, event.probability)
-                    longitude.text =
-                        getString(R.string.event_data_coordinates_longitude_value, event.longitude)
-                    latitude.text =
-                        getString(R.string.event_data_coordinates_latitude_value, event.latitude)
-                }
+            with(binding.eventInfoLayout) {
+                dateValue.text = getString(
+                    R.string.event_data_title,
+                    SimpleDateFormat("dd/MM/yyyy, HH:mm:ss", Locale.GERMAN).format(event.date)
+                )
+                soundValue.text = soundName
+                certaintyValue.text =
+                    getString(R.string.event_data_certainty_value, event.probability)
+                longitude.text =
+                    getString(R.string.event_data_coordinates_longitude_value, event.longitude)
+                latitude.text =
+                    getString(R.string.event_data_coordinates_latitude_value, event.latitude)
+                statusValue.text = "Status: ${event.statusString() ?: "Unknown"}"
 
-                soundPlayButton.setOnClickListener {
-                    if (mediaLoading || mediaPlayer?.isPlaying == true) return@setOnClickListener
-                    mediaLoading = true
-                    soundLoadingCircle.visibility = VISIBLE
-                    soundPlayButton.setIconResource(R.drawable.ic_invisible_24)
+                var eventStatus = event.status
 
-                    mediaPlayer?.apply {
-                        if (lastLoadedSound != event.soundUrl) {
-                            setDataSource(event.soundUrl)
-                            prepareAsync()
-                            lastLoadedSound = event.soundUrl
-                        } else {
-                            seekTo(0)
-                            playSound()
+                eventStatusConstraintLayout.setOnClickListener {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Select new status")
+                        .setSingleChoiceItems(
+                            EventStatus.getValues().toTypedArray(),
+                            EventStatus.indexOfNumber(eventStatus)
+                        ) { dialog, index ->
+
                         }
-                        setOnPreparedListener { playSound() }
-                        setOnCompletionListener { resetSoundButton() }
-                    }
+                        .setPositiveButton("Confirm") { dialog, _ ->
+                            val selection = (dialog as AlertDialog).listView.checkedItemPosition
+                            eventStatus = EventStatus.numberAtIndex(selection)
+                            statusValue.text = "Status: ${EventStatus.of(eventStatus) ?: "Unknown"}"
+                        }
+                        .setNegativeButton("Cancel") { _, _ -> }
+                        .show()
                 }
+            }
 
-                markerCoroutine = lifecycleScope.launch {
-                    while (true) {
-                        requireView().findViewById<TextView>(R.id.eventDetailsTitle)?.text =
-                            "$soundName (${
-                                TimeUtils.getRelativeTimeString(
-                                    event.date, System.currentTimeMillis()
-                                )
-                            })"
-                        delay(500)
+            soundPlayButton.setOnClickListener {
+                if (mediaLoading || mediaPlayer?.isPlaying == true) return@setOnClickListener
+                mediaLoading = true
+                soundLoadingCircle.visibility = VISIBLE
+                soundPlayButton.setIconResource(R.drawable.ic_invisible_24)
+
+                mediaPlayer?.apply {
+                    if (lastLoadedSound != event.soundUrl) {
+                        setDataSource(event.soundUrl)
+                        prepareAsync()
+                        lastLoadedSound = event.soundUrl
+                    } else {
+                        seekTo(0)
+                        playSound()
                     }
+                    setOnPreparedListener { playSound() }
+                    setOnCompletionListener { resetSoundButton() }
+                }
+            }
+
+            markerCoroutine = lifecycleScope.launch {
+                while (true) {
+                    requireView().findViewById<TextView>(R.id.eventDetailsTitle)?.text =
+                        "$soundName (${
+                            TimeUtils.getRelativeTimeString(
+                                event.date, System.currentTimeMillis()
+                            )
+                        })"
+                    delay(500)
                 }
             }
         }
