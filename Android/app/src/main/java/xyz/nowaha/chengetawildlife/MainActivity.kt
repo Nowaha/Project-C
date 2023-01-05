@@ -19,6 +19,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.room.Room
 import kotlinx.coroutines.*
 import xyz.nowaha.chengetawildlife.data.AppDatabase
+import xyz.nowaha.chengetawildlife.data.Session
 import xyz.nowaha.chengetawildlife.data.SessionManager
 import xyz.nowaha.chengetawildlife.data.http.APIClient
 import xyz.nowaha.chengetawildlife.data.http.APIInterface
@@ -45,7 +46,8 @@ class MainActivity : AppCompatActivity() {
         navHostFragment.findNavController()
     }
 
-    private val topLevelDestinations = setOf(R.id.loginFragmentNav, R.id.eventMapFragment)
+    private val topLevelDestinations =
+        setOf(R.id.loginFragmentNav, R.id.eventMapFragment, R.id.loadingFragment)
 
     @SuppressLint("MissingPermission")
     val locationPermissionRequest =
@@ -96,54 +98,7 @@ class MainActivity : AppCompatActivity() {
                 .fallbackToDestructiveMigration().build()
         }
 
-        SessionManager.getCurrentSessionLiveData().observe(this) { session ->
-            val graph = navController.navInflater.inflate(R.navigation.nav_graph_main)
-
-            if (session == null) {
-                // Not logged in
-                hideSoftInput(binding.root)
-                graph.setStartDestination(R.id.loginFragmentNav)
-                setupActionBarWithNavController()
-
-                navController.graph = graph
-            } else {
-                // Logged in
-
-                lifecycleScope.launch(Dispatchers.IO) {
-                    var sessionIsValid = false
-                    if (offlineModePrecise(this@MainActivity)) {
-                        sessionIsValid = true
-                    } else {
-                        try {
-                            val req = APIClient.getAPIInterface().validateSession().execute()
-                            sessionIsValid = req.body()?.success == true && req.body()?.valid == true
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
-                    }
-
-                    if (sessionIsValid) {
-                        withContext(Dispatchers.Main) {
-                            hideSoftInput(binding.root)
-                            graph.setStartDestination(R.id.eventMapFragment)
-                            setupActionBarWithNavController()
-
-                            navController.graph = graph
-                        }
-                    } else {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                this@MainActivity,
-                                "Your session expired. Please log in again.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        SessionManager.logOut()
-                    }
-                }
-            }
-        }
+        SessionManager.getCurrentSessionLiveData().observe(this, ::checkSession)
 
         lifecycleScope.launch {
             while (true) {
@@ -161,10 +116,63 @@ class MainActivity : AppCompatActivity() {
         }
 
         offlineMode.observe(this) {
-            if (it) {
-                binding.offlineNotice.visibility = View.VISIBLE
-            } else {
-                binding.offlineNotice.visibility = View.GONE
+            binding.offlineNotice.visibility = if (it) View.VISIBLE else View.GONE
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (navController.currentDestination?.id == R.id.loadingFragment) {
+            runBlocking {
+                checkSession(SessionManager.getCurrentSession())
+            }
+        }
+    }
+
+    private fun checkSession(session: Session?) {
+        val graph = navController.navInflater.inflate(R.navigation.nav_graph_main)
+
+        if (session == null) {
+            // Not logged in
+            hideSoftInput(binding.root)
+            graph.setStartDestination(R.id.loginFragmentNav)
+            setupActionBarWithNavController()
+
+            navController.graph = graph
+        } else {
+            // Logged in
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                var sessionIsValid = false
+                if (offlineModePrecise(this@MainActivity)) {
+                    sessionIsValid = true
+                } else {
+                    try {
+                        val req = APIClient.getAPIInterface().validateSession().execute()
+                        sessionIsValid = req.body()?.success == true && req.body()?.valid == true
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+
+                withContext(Dispatchers.Main) {
+                    if (sessionIsValid) {
+                        hideSoftInput(binding.root)
+                        graph.setStartDestination(R.id.eventMapFragment)
+                        setupActionBarWithNavController()
+
+                        navController.graph = graph
+                    } else {
+
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Your session expired. Please log in again.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        SessionManager.logOut()
+                    }
+                }
             }
         }
     }
