@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,10 +17,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.room.Room
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import xyz.nowaha.chengetawildlife.data.AppDatabase
 import xyz.nowaha.chengetawildlife.data.SessionManager
+import xyz.nowaha.chengetawildlife.data.http.APIClient
+import xyz.nowaha.chengetawildlife.data.http.APIInterface
 import xyz.nowaha.chengetawildlife.data.repos.Repositories.isNetworkAvailable
 import xyz.nowaha.chengetawildlife.databinding.ActivityMainBinding
 import xyz.nowaha.chengetawildlife.util.SoftInputUtils.hideSoftInput
@@ -102,14 +104,45 @@ class MainActivity : AppCompatActivity() {
                 hideSoftInput(binding.root)
                 graph.setStartDestination(R.id.loginFragmentNav)
                 setupActionBarWithNavController()
+
+                navController.graph = graph
             } else {
                 // Logged in
-                hideSoftInput(binding.root)
-                graph.setStartDestination(R.id.eventMapFragment)
-                setupActionBarWithNavController()
-            }
 
-            navController.graph = graph
+                lifecycleScope.launch(Dispatchers.IO) {
+                    var sessionIsValid = false
+                    if (offlineModePrecise(this@MainActivity)) {
+                        sessionIsValid = true
+                    } else {
+                        try {
+                            val req = APIClient.getAPIInterface().validateSession().execute()
+                            sessionIsValid = req.body()?.success == true && req.body()?.valid == true
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    }
+
+                    if (sessionIsValid) {
+                        withContext(Dispatchers.Main) {
+                            hideSoftInput(binding.root)
+                            graph.setStartDestination(R.id.eventMapFragment)
+                            setupActionBarWithNavController()
+
+                            navController.graph = graph
+                        }
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Your session expired. Please log in again.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        SessionManager.logOut()
+                    }
+                }
+            }
         }
 
         lifecycleScope.launch {
