@@ -47,14 +47,7 @@ namespace ChengetaBackend
 
         [Required]
         public string SoundURL { get; set; }
-        public EventStatus Status { get; set; }
-
-        public enum EventStatus {
-            NONE,
-            UNDER_WAY,
-            HANDLED,
-            FALSE_ALARM
-        }
+        public int Status { get; set; }
     }
 
     public class Account
