@@ -13,6 +13,8 @@
     <string name="create_account_title">Create Account</string>
     <string name="create_account_hint_username">New username</string>
     <string name="create_account_hint_password">New password</string>
+    <string name="create_account_hint_firstname">First Name</string>
+    <string name="create_account_hint_lastname">Surname</string>
     <string name="create_account_hint_password_confirm">Confirm password</string>
     <string name="create_account_submit">Create</string>
     <string name="delete_account_title">Delete User</string>

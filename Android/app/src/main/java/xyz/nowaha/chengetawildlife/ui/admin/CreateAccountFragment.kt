@@ -43,6 +43,18 @@ class CreateAccountFragment : Fragment() {
                 viewModel.usernameInput.postValue(it.toString())
             }
 
+            createFirstNameTextInputEditText.setText(viewModel.firstnameInput.value)
+            createFirstNameTextInputEditText.addTextChangedListener {
+                createFirstNameTextInputLayout.error = null
+                viewModel.firstnameInput.postValue(it.toString())
+            }
+
+            createSurnameTextInputEditText.setText(viewModel.lastnameInput.value)
+            createSurnameTextInputEditText.addTextChangedListener {
+                createSurnameTextInputLayout.error = null
+                viewModel.lastnameInput.postValue(it.toString())
+            }
+
             passwordTextInputEditText.setText(viewModel.passwordInput.value)
             passwordTextInputEditText.addTextChangedListener {
                 passwordTextInputLayout.error = null
@@ -76,6 +88,8 @@ class CreateAccountFragment : Fragment() {
                 usernameTextInputLayout.error = null
                 passwordTextInputLayout.error = null
                 passwordConfirmTextInputLayout.error = null
+                createFirstNameTextInputLayout.error = null
+                createSurnameTextInputLayout.error = null
 
                 if (passwordTextInputEditText.text.toString().isBlank()) {
                     passwordTextInputLayout.error = "Please enter a password."
@@ -83,6 +97,14 @@ class CreateAccountFragment : Fragment() {
                 }
                 if (passwordConfirmTextInputEditText.text.toString().isBlank()) {
                     passwordConfirmTextInputLayout.error = "Please confirm your password."
+                    validAccountDetails = false
+                }
+                if (createFirstNameTextInputEditText.text.toString().isBlank()) {
+                    createFirstNameTextInputLayout.error = "Enter a first name."
+                    validAccountDetails = false
+                }
+                if (createSurnameTextInputEditText.text.toString().isBlank()) {
+                    createSurnameTextInputLayout.error = "Enter a surname."
                     validAccountDetails = false
                 }
                 if (validAccountDetails && passwordTextInputEditText.text.toString() != passwordConfirmTextInputEditText.text.toString()) {

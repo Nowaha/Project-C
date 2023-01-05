@@ -28,10 +28,10 @@
             android:id="@+id/usernameTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="6dp"
             android:hint="@string/create_account_hint_username"
             app:errorEnabled="true"
-            app:layout_constraintBottom_toTopOf="@id/passwordTextInputLayout"
+            app:layout_constraintBottom_toTopOf="@id/createFirstNameTextInputLayout"
             app:layout_constraintTop_toBottomOf="@id/accCreateTitle"
             app:startIconDrawable="@drawable/ic_user">
 
@@ -44,14 +44,55 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/createFirstNameTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6dp"
+            android:hint="@string/create_account_hint_firstname"
+            app:errorEnabled="true"
+            app:layout_constraintTop_toBottomOf="@id/usernameTextInputLayout"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toTopOf="@id/passwordTextInputLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/createSurnameTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/createFirstNameTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/createSurnameTextInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/create_account_hint_lastname"
+            app:errorEnabled="true"
+            android:layout_marginLeft="6dp"
+            app:layout_constraintBottom_toBottomOf="@id/createFirstNameTextInputLayout"
+            app:layout_constraintLeft_toRightOf="@id/createFirstNameTextInputLayout"
+            app:layout_constraintRight_toRightOf="@id/passwordTextInputLayout"
+            app:layout_constraintTop_toTopOf="@id/createFirstNameTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/createSurnameTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/passwordTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="6dp"
             android:hint="@string/create_account_hint_password"
             app:errorEnabled="true"
             app:layout_constraintBottom_toTopOf="@id/passwordConfirmTextInputLayout"
-            app:layout_constraintTop_toBottomOf="@id/usernameTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/createFirstNameTextInputLayout"
             app:passwordToggleEnabled="true"
             app:startIconDrawable="@drawable/ic_password">
 
@@ -67,7 +108,7 @@
             android:id="@+id/passwordConfirmTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="0dp"
             android:hint="@string/edit_account_hint_password_confirm"
             app:errorEnabled="true"
             app:layout_constraintBottom_toTopOf="@id/roleSelect"
@@ -88,7 +129,7 @@
             android:id="@+id/roleSelect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="6dp"
             android:checked="true"
             android:text="@string/role_select_text"
             app:layout_constraintBottom_toTopOf="@id/createAccountButton"
