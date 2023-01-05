@@ -54,6 +54,10 @@ namespace ChengetaBackend
                 );
             }
             string userName = request.username.Trim();
+
+            if (userName.ToLower() == "admin") return Response.generateBasicError(Code.FORBIDDEN, Message.FORBIDDEN, "You do not have the right.");
+            if (userName.ToLower() == logInName.ToLower()) return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "You can not delete yourself.");
+
             using (var db = new ChengetaContext())
             {
                 // Checks if the account exists
