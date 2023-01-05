@@ -27,7 +27,9 @@ namespace ChengetaBackend
             requestHandlers.Add("/accounts/view", new AccountSearchRequestHandler());
             requestHandlers.Add("/accounts/session/validate", new SessionValidationRequestHandler());
             requestHandlers.Add("/accounts/edit/name", new AccountNameEditRequestHandler());
+            requestHandlers.Add("/events/status", new EventStatusRequestHandler());
         }
+        
         public static async Task Run()
         {
             Program.log(LOG_TAG, "Server is starting...");
