@@ -8,97 +8,97 @@
     android:fitsSystemWindows="true">
 
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="24dp">
-
-    <TextView
-        android:id="@+id/credAddTitle"
-        style="@style/fragment_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="@string/credAddTitle"
-        app:layout_constraintBottom_toTopOf="@id/userNameTextInputLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/userNameTextInputLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:hint="@string/enter_name_hint_userName"
-        app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="@id/firstNameTextInputLayout"
-        app:layout_constraintTop_toBottomOf="@id/credAddTitle"
-        app:startIconDrawable="@drawable/ic_user">
+        android:padding="24dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/userNameTextInputEditText"
+        <TextView
+            android:id="@+id/credAddTitle"
+            style="@style/fragment_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="@string/credAddTitle"
+            app:layout_constraintBottom_toTopOf="@id/userNameTextInputLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/userNameTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginBottom="12dp"
+            android:hint="@string/edit_account_hint_username"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toTopOf="@id/firstNameTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/credAddTitle"
+            app:startIconDrawable="@drawable/ic_user">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/firstNameTextInputLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:hint="@string/enter_name_hint_firstName"
-        app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="@id/lastNameTextInputLayout"
-        app:layout_constraintTop_toBottomOf="@id/userNameTextInputLayout">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/userNameTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/firstNameTextInputEditText"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/firstNameTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginBottom="4dp"
+            android:hint="@string/enter_name_hint_firstName"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toTopOf="@id/lastNameTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/userNameTextInputLayout">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/lastNameTextInputLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/enter_name_hint_lastName"
-        app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="@id/submitCredButton"
-        app:layout_constraintTop_toBottomOf="@id/firstNameTextInputLayout">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/firstNameTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/lastNameTextInputEditText"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/lastNameTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext"
-            android:inputType="text" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginBottom="32dp"
+            android:hint="@string/enter_name_hint_lastName"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toTopOf="@id/submitCredButton"
+            app:layout_constraintTop_toBottomOf="@id/firstNameTextInputLayout">
 
-    <Button
-        android:id="@+id/submitCredButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/enter_name_submit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lastNameTextInputLayout" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/lastNameTextInputEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/backButton"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/goBackText"
-        app:layout_constraintBottom_toBottomOf="@id/submitCredButton"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@id/submitCredButton" />
+        <Button
+            android:id="@+id/submitCredButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_name_submit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lastNameTextInputLayout" />
+
+        <Button
+            android:id="@+id/backButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/goBackText"
+            app:layout_constraintBottom_toBottomOf="@id/submitCredButton"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@id/submitCredButton" />
 
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
