@@ -14,7 +14,7 @@ class RecentEventsListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecentEventsListViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.template_table_row, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.template_table_row_event, parent, false)
         return RecentEventsListViewHolder(view)
     }
 

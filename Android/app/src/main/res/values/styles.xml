@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Table"/>
-    <style name="Table.TextView">
+    <style name="Table.TextView" tools:targetApi="o">
         <item name="android:padding">16dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeStepGranularity">2sp</item>
+        <item name="android:autoSizeMinTextSize">2sp</item>
+        <item name="android:autoSizeMaxTextSize">32sp</item>
     </style>
 
     <style name="Table.TextView.Header">

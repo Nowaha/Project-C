@@ -6,23 +6,26 @@
 
     <TextView
         style="@style/Table.TextView.Header"
-        android:layout_width="0dp"
+        android:layout_width="176dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="@string/timeText" />
 
     <TextView
         style="@style/Table.TextView.Header"
-        android:layout_width="0dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="@string/soundText" />
 
     <TextView
         style="@style/Table.TextView.Header"
-        android:layout_width="0dp"
+        android:layout_width="64dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="@string/percentageText" />
+
+    <TextView
+        style="@style/Table.TextView.Header"
+        android:layout_width="146dp"
+        android:layout_height="wrap_content"
+        android:text="@string/statusText" />
 
 </LinearLayout>

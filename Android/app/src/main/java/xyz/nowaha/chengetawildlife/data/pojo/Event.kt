@@ -25,7 +25,9 @@ data class Event(
     @SerializedName("SoundURL")
     var soundUrl: String,
     @SerializedName("Status")
-    var status: String,
+    var status: Int,
     // Local caching
     var cacheExpiry: Long?
-)
+) {
+    fun statusString() = EventStatus.of(status)
+}

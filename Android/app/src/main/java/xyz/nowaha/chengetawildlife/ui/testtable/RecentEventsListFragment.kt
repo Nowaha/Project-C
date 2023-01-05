@@ -104,7 +104,7 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
         binding.refreshButton.imageAlpha = 0
 
         lifecycleScope.launch(Dispatchers.IO) {
-            val format = SimpleDateFormat("HH:mm:ss", Locale.GERMAN)
+            val format = SimpleDateFormat("dd-MM-yyyy, HH:mm:ss", Locale.GERMAN)
             val repoResponse = Repositories.getEvents(requireContext(), 100, 0)
             when (repoResponse.responseType) {
                 RepoResponse.ResponseType.SUCCESS -> withContext(Dispatchers.Main) {
@@ -113,6 +113,7 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
                             format.format(it.date),
                             it.soundLabel,
                             it.probability.toString() + "%",
+                            it.statusString() ?: "Unknown",
                             it.date
                         )
                     })

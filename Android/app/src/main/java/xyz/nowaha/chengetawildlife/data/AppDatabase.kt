@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import xyz.nowaha.chengetawildlife.data.pojo.Event
 
-@Database(entities = [Session::class, Event::class], version = 3)
+@Database(entities = [Session::class, Event::class], version = 4)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun sessionDao(): SessionDao

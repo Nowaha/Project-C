@@ -32,7 +32,8 @@
     <string name="passWordText">Password</string>
     <string name="timeText">Time</string>
     <string name="soundText">Sound</string>
-    <string name="percentageText">Percentage</string>
+    <string name="percentageText">%</string>
+    <string name="statusText">Status</string>
     <string name="soundPlayButton">Play Sound</string>
     <string name="log_out">Log out</string>
     <string name="userTitle">Account Overview</string>
