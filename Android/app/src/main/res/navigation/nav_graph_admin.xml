@@ -42,7 +42,15 @@
         <action
             android:id="@+id/action_adminHomeFragment_to_accountOverviewFragment"
             app:destination="@id/accountOverviewFragment" />
+        <action
+            android:id="@+id/action_adminHomeFragment_to_editNameAccountFragment"
+            app:destination="@id/editNameAccountFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/editNameAccountFragment"
+        android:name="xyz.nowaha.chengetawildlife.ui.admin.EditNameAccountFragment"
+        android:label="EditNameAccountFragment"
+        tools:layout="@layout/fragment_account_name" />
 
 
 </navigation>

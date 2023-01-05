@@ -21,7 +21,7 @@
     <string name="delete_account_hint_username">Username to delete</string>
     <string name="delete_account_delete">Delete</string>
     <string name="edit_account_title">Edit Account</string>
-    <string name="edit_account_hint_username">Account username</string>
+    <string name="edit_account_hint_username">Account Username</string>
     <string name="edit_account_hint_password">New password</string>
     <string name="edit_account_hint_password_confirm">Confirm password</string>
     <string name="edit_account_submit">Edit</string>
@@ -40,9 +40,8 @@
     <string name="userAction">Moderate</string>
     <string name="userSearchHint">Search for user...</string>
     <string name="credAddTitle">Edit personalia</string>
-    <string name="enter_name_hint_userName">Account Username</string>
     <string name="enter_name_hint_firstName">First Name</string>
-    <string name="enter_name_hint_lastName">Last Name</string>
+    <string name="enter_name_hint_lastName">Surname</string>
     <string name="enter_name_submit">Submit</string>
 
 
