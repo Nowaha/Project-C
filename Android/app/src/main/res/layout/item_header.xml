@@ -6,7 +6,7 @@
 
     <TextView
         style="@style/Table.TextView.Header"
-        android:layout_width="176dp"
+        android:layout_width="136dp"
         android:layout_height="wrap_content"
         android:text="@string/timeText" />
 
