@@ -31,7 +31,7 @@
             android:layout_marginBottom="6dp"
             android:hint="@string/create_account_hint_username"
             app:errorEnabled="true"
-            app:layout_constraintBottom_toTopOf="@id/FirstnameTextInputLayout"
+            app:layout_constraintBottom_toTopOf="@id/createFirstNameTextInputLayout"
             app:layout_constraintTop_toBottomOf="@id/accCreateTitle"
             app:startIconDrawable="@drawable/ic_user">
 
@@ -44,18 +44,20 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/FirstnameTextInputLayout"
-            android:layout_width="match_parent"
+            android:id="@+id/createFirstNameTextInputLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+            android:layout_marginRight="6dp"
             android:hint="@string/create_account_hint_firstname"
             app:errorEnabled="true"
-            app:layout_constraintBottom_toTopOf="@id/LastnameTextInputLayout"
             app:layout_constraintTop_toBottomOf="@id/usernameTextInputLayout"
-            app:startIconDrawable="@drawable/ic_user">
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toTopOf="@id/passwordTextInputLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/createSurnameTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/FirstnameTextInputEditText"
+                android:id="@+id/createFirstNameTextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
@@ -63,18 +65,19 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/LastnameTextInputLayout"
-            android:layout_width="match_parent"
+            android:id="@+id/createSurnameTextInputLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
             android:hint="@string/create_account_hint_lastname"
             app:errorEnabled="true"
-            app:layout_constraintBottom_toTopOf="@id/passwordTextInputLayout"
-            app:layout_constraintTop_toBottomOf="@id/FirstnameTextInputLayout"
-            app:startIconDrawable="@drawable/ic_user">
+            android:layout_marginLeft="6dp"
+            app:layout_constraintBottom_toBottomOf="@id/createFirstNameTextInputLayout"
+            app:layout_constraintLeft_toRightOf="@id/createFirstNameTextInputLayout"
+            app:layout_constraintRight_toRightOf="@id/passwordTextInputLayout"
+            app:layout_constraintTop_toTopOf="@id/createFirstNameTextInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/LastnameTextInputEditText"
+                android:id="@+id/createSurnameTextInputEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
@@ -89,7 +92,7 @@
             android:hint="@string/create_account_hint_password"
             app:errorEnabled="true"
             app:layout_constraintBottom_toTopOf="@id/passwordConfirmTextInputLayout"
-            app:layout_constraintTop_toBottomOf="@id/LastnameTextInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/createFirstNameTextInputLayout"
             app:passwordToggleEnabled="true"
             app:startIconDrawable="@drawable/ic_password">
 

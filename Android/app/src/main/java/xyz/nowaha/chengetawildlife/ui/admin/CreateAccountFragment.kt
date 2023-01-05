@@ -43,15 +43,15 @@ class CreateAccountFragment : Fragment() {
                 viewModel.usernameInput.postValue(it.toString())
             }
 
-            FirstnameTextInputEditText.setText(viewModel.firstnameInput.value)
-            FirstnameTextInputEditText.addTextChangedListener {
-                FirstnameTextInputLayout.error = null
+            createFirstNameTextInputEditText.setText(viewModel.firstnameInput.value)
+            createFirstNameTextInputEditText.addTextChangedListener {
+                createFirstNameTextInputLayout.error = null
                 viewModel.firstnameInput.postValue(it.toString())
             }
 
-            LastnameTextInputEditText.setText(viewModel.lastnameInput.value)
-            LastnameTextInputEditText.addTextChangedListener {
-                LastnameTextInputLayout.error = null
+            createSurnameTextInputEditText.setText(viewModel.lastnameInput.value)
+            createSurnameTextInputEditText.addTextChangedListener {
+                createSurnameTextInputLayout.error = null
                 viewModel.lastnameInput.postValue(it.toString())
             }
 
@@ -88,8 +88,8 @@ class CreateAccountFragment : Fragment() {
                 usernameTextInputLayout.error = null
                 passwordTextInputLayout.error = null
                 passwordConfirmTextInputLayout.error = null
-                FirstnameTextInputLayout.error = null
-                LastnameTextInputLayout.error = null
+                createFirstNameTextInputLayout.error = null
+                createSurnameTextInputLayout.error = null
 
                 if (passwordTextInputEditText.text.toString().isBlank()) {
                     passwordTextInputLayout.error = "Please enter a password."
@@ -99,12 +99,12 @@ class CreateAccountFragment : Fragment() {
                     passwordConfirmTextInputLayout.error = "Please confirm your password."
                     validAccountDetails = false
                 }
-                if (FirstnameTextInputEditText.text.toString().isBlank()) {
-                    FirstnameTextInputLayout.error = "Please confirm your firstname."
+                if (createFirstNameTextInputEditText.text.toString().isBlank()) {
+                    createFirstNameTextInputLayout.error = "Enter a first name."
                     validAccountDetails = false
                 }
-                if (LastnameTextInputEditText.text.toString().isBlank()) {
-                    LastnameTextInputLayout.error = "Please confirm your lastname."
+                if (createSurnameTextInputEditText.text.toString().isBlank()) {
+                    createSurnameTextInputLayout.error = "Enter a surname."
                     validAccountDetails = false
                 }
                 if (validAccountDetails && passwordTextInputEditText.text.toString() != passwordConfirmTextInputEditText.text.toString()) {
