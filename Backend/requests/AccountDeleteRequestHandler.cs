@@ -16,9 +16,6 @@ namespace ChengetaBackend
 
         public Response HandleRequest(string session, Dictionary<string, string> args, string bodyRaw)
         {
-
-
-
             if (!Program.sessionManager.SessionDictionary.ContainsKey(session))
             {
                 return Response.generateBasicError(Code.UNAUTHORIZED, Message.UNAUTHORIZED, "Server could not find session");
@@ -56,12 +53,12 @@ namespace ChengetaBackend
                     "Invalid request structure."
                 );
             }
-            string userName = request.username;
+            string userName = request.username.Trim();
             using (var db = new ChengetaContext())
             {
-                //Checks if the account already exist or not
-                var dep = db.accounts.Where(user => user.Username == userName).FirstOrDefault();
-                if (dep == null)
+                // Checks if the account exists
+                var acc = db.accounts.Where(user => user.Username.ToLower() == userName.ToLower()).FirstOrDefault();
+                if (acc == null)
                 {
                     return Response.generateBasicError(
                         Code.BAD_REQUEST,
@@ -69,7 +66,7 @@ namespace ChengetaBackend
                         "Username doesn't exist."
                     );
                 }
-                db.accounts.Remove(dep);
+                db.accounts.Remove(acc);
                 db.SaveChanges();
 
                 return new Response(

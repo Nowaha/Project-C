@@ -8,8 +8,6 @@ namespace ChengetaBackend
 {
     class AccountNameEditRequestHandler : RequestHandler
     {
-        //Path for the server so it knows where to go to call this
-
         public string Path => "/accounts/edit/name";
 
         public Method Method => Method.POST;
@@ -40,7 +38,6 @@ namespace ChengetaBackend
             };
 
             AccountNameEditRequest request;
-
             try
             {
                 request = JsonSerializer.Deserialize<AccountNameEditRequest>(bodyRaw);
@@ -53,14 +50,15 @@ namespace ChengetaBackend
                     "Invalid request structure."
                 );
             }
-            string userName = request.username;
-            string firstname = request.firstname;
-            string lastname = request.lastname;
+            
+            string userName = request.username.Trim();
+            string firstname = request.firstname.Trim();
+            string lastname = request.lastname.Trim();
 
             using (var db = new ChengetaContext())
             {
-                //Checks if the account already exist or not
-                var dep = db.accounts.Where(user => user.Username == userName).FirstOrDefault();
+                // Checks if the account exists or not
+                var dep = db.accounts.Where(user => user.Username.ToLower() == userName.ToLower()).FirstOrDefault();
                 if (dep == null)
                 {
                     return Response.generateBasicError(

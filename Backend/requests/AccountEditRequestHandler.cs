@@ -53,26 +53,24 @@ namespace ChengetaBackend
                     "Invalid request structure."
                 );
             }
-            string userName = request.username;
-            string password = request.password;
+            string userName = request.username.Trim();
+            string password = request.password.Trim();
 
             using (var db = new ChengetaContext())
             {
-                var newPassDetails = Utils.HashNewPassword(password);
-                var userPassHash = newPassDetails.hashed;
-                var userSalt = newPassDetails.salt;
-
-                //Checks if the account already exist or not
-                var dep = db.accounts.Where(user => user.Username == userName).FirstOrDefault();
-                if (dep == null)
+                // Checks if the account exists or not
+                var acc = db.accounts.Where(user => user.Username.ToLower() == userName.ToLower()).FirstOrDefault();
+                if (acc == null)
                 {
                     return Response.generateBasicError(
                         Code.BAD_REQUEST,
                         Message.BAD_REQUEST,
                         "Username doesn't exist.");
                 }
-                dep.Password = userPassHash;
-                dep.Salt = userSalt;
+
+                var newPassDetails = Utils.HashNewPassword(password);
+                acc.Password = newPassDetails.hashed;
+                acc.Salt = newPassDetails.salt;
                 db.SaveChanges();
 
                 return new Response(
