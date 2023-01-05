@@ -31,6 +31,8 @@ namespace ChengetaBackend
             endpoints.Add(new EndpointForTesting(sessionValidationHandler, null));
             var accountEditHandler = new AccountEditRequestHandler();
             endpoints.Add(new EndpointForTesting(accountEditHandler, AccountType.ADMIN));
+            var accountNameEditHandler = new AccountNameEditRequestHandler();
+            endpoints.Add(new EndpointForTesting(accountNameEditHandler, AccountType.ADMIN));
         }
 
         public static void testEndpoints(bool verbose = false)
