@@ -7,6 +7,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object APIClient {
 
+    private const val endpointURL = "http://173.249.1.107:34100"
+
     private lateinit var retrofit: Retrofit
     private lateinit var apiInterface: APIInterface
 
@@ -17,7 +19,7 @@ object APIClient {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         val client = OkHttpClient.Builder().addInterceptor(interceptor).addInterceptor(BearerAuthInterceptor()).retryOnConnectionFailure(true).build()
         retrofit = Retrofit.Builder()
-            .baseUrl("http://173.249.1.107:34100")
+            .baseUrl(endpointURL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
