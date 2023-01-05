@@ -16,6 +16,10 @@ data class Account(
     var role: Int,
     @SerializedName("CreationDate")
     var creationDate: Long,
+    @SerializedName("FirstName")
+    var firstName: String?,
+    @SerializedName("LastName")
+    var lastName: String?,
 
     // Local caching
     var cacheExpiry: Long?
