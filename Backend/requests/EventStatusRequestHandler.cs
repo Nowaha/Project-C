@@ -7,27 +7,20 @@ using System.Text.Json;
 namespace ChengetaBackend
 {
     class EventStatusRequestHandler : RequestHandler
-
     {
         public string Path => "/events/status";
 
         public Method Method => Method.POST;
-
-
 
         public Response HandleRequest(string session, Dictionary<string, string> args, string bodyRaw)
         {
 
             if (!Program.sessionManager.SessionDictionary.ContainsKey(session))
             {
-                return Response.generateBasicError(Code.UNAUTHORIZED, Message.UNAUTHORIZED, "Invalid session");
+                return Response.generateBasicError(Code.UNAUTHORIZED, Message.UNAUTHORIZED, "Invalid session.");
             }
 
-
-
-
             EventStatusEditRequest request;
-
             try
             {
                 request = JsonSerializer.Deserialize<EventStatusEditRequest>(bodyRaw);
@@ -37,13 +30,8 @@ namespace ChengetaBackend
                 return Response.generateBasicError(Code.BAD_REQUEST, Message.BAD_REQUEST, "Invalid request structure.");
             }
 
-
             int eventId = request.eventId;
             int status = request.status;
-
-
-
-
             using (var db = new ChengetaContext())
             {
 
@@ -51,13 +39,12 @@ namespace ChengetaBackend
                 if (currentEvent == null)
                 {
                     return Response.generateBasicError(
-                            Code.BAD_REQUEST,
-                            Message.BAD_REQUEST,
+                            Code.NOT_FOUND,
+                            Message.NOT_FOUND,
                             "Event doesn't exist.");
                 }
                 currentEvent.Status = status;
                 db.SaveChanges();
-
 
                 return new Response(
                     Code.SUCCESS,
@@ -67,15 +54,11 @@ namespace ChengetaBackend
                             new
                             {
                                 success = true,
-                                message = $"Event status of event {eventId} updated successfully"
+                                message = $"Event status of event {eventId} updated successfully."
                             }
-
                     ))
                 );
             }
-
-
         }
     }
-
 }
