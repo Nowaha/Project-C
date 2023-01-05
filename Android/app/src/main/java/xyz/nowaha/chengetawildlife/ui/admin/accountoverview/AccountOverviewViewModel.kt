@@ -46,11 +46,22 @@ class AccountOverviewViewModel : ViewModel() {
         }
 
         if (searchForAccountResponse.errorBody() != null) {
-            searchForAccountState.postValue(
-                SearchForAccountState.WaitingForUserInput(
-                    SearchForAccountState.SearchForAccountErrorType.UNKNOWN_ERROR
-                )
-            )
+            when (searchForAccountResponse.code()) {
+                401, 403 -> {
+                    searchForAccountState.postValue(
+                        SearchForAccountState.WaitingForUserInput(
+                            SearchForAccountState.SearchForAccountErrorType.UNAUTHORIZED
+                        )
+                    )
+                }
+                else -> {
+                    searchForAccountState.postValue(
+                        SearchForAccountState.WaitingForUserInput(
+                            SearchForAccountState.SearchForAccountErrorType.UNKNOWN_ERROR
+                        )
+                    )
+                }
+            }
             return@withContext
         }
 
@@ -73,7 +84,7 @@ class AccountOverviewViewModel : ViewModel() {
         object Loading : SearchForAccountState()
 
         enum class SearchForAccountErrorType {
-            CONNECTION_FAILURE, UNKNOWN_ERROR
+            CONNECTION_FAILURE, UNAUTHORIZED, UNKNOWN_ERROR
         }
     }
 

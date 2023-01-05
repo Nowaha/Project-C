@@ -45,6 +45,7 @@ class AccountOverviewFragment : Fragment() {
                         binding.usernameTextInputLayout.isErrorEnabled = true
                         binding.usernameTextInputLayout.error = when (it.error) {
                             AccountOverviewViewModel.SearchForAccountState.SearchForAccountErrorType.CONNECTION_FAILURE -> "Failed to connect."
+                            AccountOverviewViewModel.SearchForAccountState.SearchForAccountErrorType.UNAUTHORIZED -> "Session expired or no admin permissions."
                             AccountOverviewViewModel.SearchForAccountState.SearchForAccountErrorType.UNKNOWN_ERROR -> "Unknown error."
                         }
                     } else {

@@ -14,18 +14,17 @@ class EventMapViewModel : ViewModel() {
 
     val mapEvents = MutableLiveData<List<Event>>(arrayListOf())
     var selectedEvent: Int? = null
-    var tableFragmentCreated = false
 
     @SuppressLint("NullSafeMutableLiveData")
-    suspend fun loadEvents(context: Context): Boolean = withContext(Dispatchers.IO) {
-        val response = Repositories.getEvents(context, 16, 0)
+    suspend fun loadEvents(context: Context): RepoResponse.ResponseType =
+        withContext(Dispatchers.IO) {
+            val response = Repositories.getEvents(context, 16, 0)
 
-        if (response.responseType == RepoResponse.ResponseType.SUCCESS) {
-            mapEvents.postValue(response.result)
-            return@withContext true
+            if (response.responseType == RepoResponse.ResponseType.SUCCESS) {
+                mapEvents.postValue(response.result)
+            }
+
+            return@withContext response.responseType
         }
-
-        return@withContext false
-    }
 
 }

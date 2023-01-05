@@ -5,15 +5,19 @@ import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import xyz.nowaha.chengetawildlife.MainActivity
 import xyz.nowaha.chengetawildlife.R
+import xyz.nowaha.chengetawildlife.data.SessionManager
 import xyz.nowaha.chengetawildlife.data.repos.RepoResponse
 import xyz.nowaha.chengetawildlife.data.repos.Repositories
 import xyz.nowaha.chengetawildlife.databinding.FragmentRecentEventsListBinding
@@ -102,8 +106,8 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
         lifecycleScope.launch(Dispatchers.IO) {
             val format = SimpleDateFormat("HH:mm:ss", Locale.GERMAN)
             val repoResponse = Repositories.getEvents(requireContext(), 100, 0)
-            if (repoResponse.responseType == RepoResponse.ResponseType.SUCCESS) {
-                withContext(Dispatchers.Main) {
+            when (repoResponse.responseType) {
+                RepoResponse.ResponseType.SUCCESS -> withContext(Dispatchers.Main) {
                     addTableRows(repoResponse.result.map {
                         RecentEventsListDataModel(
                             format.format(it.date),
@@ -113,9 +117,29 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
                         )
                     })
                 }
-            } else {
-                loadNewData()
-                return@launch
+                RepoResponse.ResponseType.UNAUTHORIZED -> {
+                    delay(250)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Your session expired. Please log in again.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    SessionManager.logOut()
+                }
+                else -> {
+                    delay(250)
+                    Snackbar.make(
+                        requireContext(),
+                        requireView(),
+                        "Failed to connect to server.",
+                        Snackbar.LENGTH_LONG
+                    )
+                        .setAction("Retry") {
+                            loadNewData()
+                        }.show()
+                }
             }
 
             withContext(Dispatchers.Main) {

@@ -28,6 +28,7 @@ import xyz.nowaha.chengetawildlife.MainActivity
 import xyz.nowaha.chengetawildlife.R
 import xyz.nowaha.chengetawildlife.data.SessionManager
 import xyz.nowaha.chengetawildlife.data.pojo.Event
+import xyz.nowaha.chengetawildlife.data.repos.RepoResponse
 import xyz.nowaha.chengetawildlife.databinding.FragmentEventMapBinding
 import xyz.nowaha.chengetawildlife.util.TimeUtils
 import xyz.nowaha.chengetawildlife.util.extensions.dp
@@ -182,11 +183,25 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
         if (viewModel.mapEvents.value == null || viewModel.mapEvents.value!!.isEmpty()) {
             lifecycleScope.launch {
-                while (!viewModel.loadEvents(requireContext())) {
-                    delay(1000)
-                }
-                markers.entries.firstOrNull()?.let {
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it.value.position, 5f))
+                while (true) {
+                    when (viewModel.loadEvents(requireContext())) {
+                        RepoResponse.ResponseType.SUCCESS -> {
+                            withContext(Dispatchers.Main) {
+                                binding.loadingCircleEventMap.visibility = GONE
+                            }
+                            markers.entries.firstOrNull()?.let {
+                                googleMap.moveCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        it.value.position, 5f
+                                    )
+                                )
+                            }
+                            break
+                        }
+                        else -> {
+                            delay(1000)
+                        }
+                    }
                 }
             }
         } else {
@@ -195,6 +210,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                     eventSelected(it.key, noAnimation = true)
                 }
             }
+
+            binding.loadingCircleEventMap.visibility = GONE
         }
 
         (activity as? MainActivity)?.requestLocationPermission()
