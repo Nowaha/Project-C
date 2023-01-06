@@ -12,8 +12,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
@@ -33,18 +36,22 @@ import xyz.nowaha.chengetawildlife.data.pojo.Event
 import xyz.nowaha.chengetawildlife.data.pojo.EventStatus
 import xyz.nowaha.chengetawildlife.data.repos.RepoResponse
 import xyz.nowaha.chengetawildlife.databinding.FragmentEventMapBinding
+import xyz.nowaha.chengetawildlife.ui.EventDataViewModel
+import xyz.nowaha.chengetawildlife.ui.EventSelectionPipeViewModel
 import xyz.nowaha.chengetawildlife.util.TimeUtils
 import xyz.nowaha.chengetawildlife.util.extensions.dp
 import xyz.nowaha.chengetawildlife.util.extensions.iconBasedOnType
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Collections.min
+import kotlin.collections.LinkedHashMap
 
 
 @Suppress("DEPRECATION")
 class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var googleMap: GoogleMap
-    private val markers = HashMap<Event, Marker>()
+    private val markers = hashMapOf<Event, Marker>()
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<RelativeLayout>
     private var defaultBottomSheetPeekHeight: Int = 0
@@ -55,6 +62,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     private var markerCoroutine: Job? = null
 
     val viewModel: EventMapViewModel by viewModels()
+    val eventDataViewModel: EventDataViewModel by navGraphViewModels(R.id.nav_graph_main)
+    val eventSelectionPipeViewModel: EventSelectionPipeViewModel by navGraphViewModels(R.id.nav_graph_main)
 
     private var mediaPlayer: MediaPlayer? = null
     private var mediaLoading = false
@@ -90,6 +99,16 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        eventSelectionPipeViewModel.eventSelected.observe(viewLifecycleOwner) {
+            if (it >= 0) {
+                if (viewModel.selectedEvent == it) return@observe
+                val event = eventDataViewModel.data.value?.data?.firstOrNull { e -> e.id == it } ?: return@observe
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                eventSelected(event, true)
+                moveToMarkerAt(markers[event]!!.position)
+            }
+        }
+
         mediaPlayer = MediaPlayer()
         mediaPlayer?.setAudioAttributes(
             AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
@@ -102,19 +121,44 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        viewModel.mapEvents.observe(viewLifecycleOwner) { eventList ->
-            redrawMap(eventList)
+        eventDataViewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                EventDataViewModel.EventDataState.Done -> {
+                    binding.loadingCircleEventMap.visibility = GONE
+                }
+                EventDataViewModel.EventDataState.Idle -> {
+                    binding.loadingCircleEventMap.visibility = GONE
+                }
+                EventDataViewModel.EventDataState.Loading -> {
+                    binding.loadingCircleEventMap.visibility = VISIBLE
+                }
+            }
         }
 
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMap)
         defaultBottomSheetPeekHeight = bottomSheetBehavior.peekHeight
 
+        var debounce = false
         binding.bottomSheetMap.isFocusableInTouchMode = true
         binding.bottomSheetMap.requestFocus()
         binding.bottomSheetMap.setOnKeyListener(OnKeyListener { _, keyCode, _ ->
             if (keyCode == KeyEvent.KEYCODE_BACK) {
+                if (debounce) return@OnKeyListener true
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    debounce = true
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    lifecycleScope.launch {
+                        delay(10)
+                        debounce = false
+                    }
+                    return@OnKeyListener true
+                } else if (viewModel.selectedEvent != null) {
+                    debounce = true
+                    eventDeselected()
+                    lifecycleScope.launch {
+                        delay(10)
+                        debounce = false
+                    }
                     return@OnKeyListener true
                 }
             }
@@ -146,13 +190,12 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     }
 
     private fun redrawMap(eventList: List<Event>) {
-        if (!::googleMap.isInitialized) return
-
         markers.forEach { it.value.remove() }
         markers.clear()
 
         if (eventList.isEmpty()) return
 
+        var shown = 0
         eventList.forEach {
             val position = LatLng(it.latitude.toDouble(), it.longitude.toDouble())
             val marker = MarkerOptions()
@@ -161,7 +204,20 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             marker.snippet("${it.probability}% certainty\n${it.latitude}; ${it.longitude}")
             marker.title("Loading...")
 
+            if (++shown >= 16) {
+                marker.visible(false)
+            }
+
             markers[it] = googleMap.addMarker(marker)!!
+        }
+
+        if (viewModel.selectedEvent != null) {
+            val evt = eventList.firstOrNull { it.id == viewModel.selectedEvent }
+            if (evt != null) {
+                eventSelected(evt, true)
+            } else {
+                eventDeselected()
+            }
         }
     }
 
@@ -196,37 +252,10 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
 
-        if (viewModel.mapEvents.value == null || viewModel.mapEvents.value!!.isEmpty()) {
-            lifecycleScope.launch {
-                while (true) {
-                    when (viewModel.loadEvents(requireContext())) {
-                        RepoResponse.ResponseType.SUCCESS -> {
-                            withContext(Dispatchers.Main) {
-                                binding.loadingCircleEventMap.visibility = GONE
-                            }
-                            markers.entries.firstOrNull()?.let {
-                                googleMap.moveCamera(
-                                    CameraUpdateFactory.newLatLngZoom(
-                                        it.value.position, 5f
-                                    )
-                                )
-                            }
-                            break
-                        }
-                        else -> {
-                            delay(1000)
-                        }
-                    }
-                }
+        if (viewModel.selectedEvent != null) {
+            markers.entries.firstOrNull { it.key.id == viewModel.selectedEvent }?.let {
+                eventSelected(it.key, noAnimation = true)
             }
-        } else {
-            if (viewModel.selectedEvent != null) {
-                markers.entries.firstOrNull { it.key.id == viewModel.selectedEvent }?.let {
-                    eventSelected(it.key, noAnimation = true)
-                }
-            }
-
-            binding.loadingCircleEventMap.visibility = GONE
         }
 
         (activity as? MainActivity)?.requestLocationPermission()
@@ -251,12 +280,28 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         }
 
         this.googleMap.setPadding(0, 0, 0, defaultBottomSheetPeekHeight)
+
+        eventDataViewModel.data.observe(viewLifecycleOwner) { eventData ->
+            if (eventData.lastResponse == RepoResponse.ResponseType.SUCCESS) {
+                if (eventData.data.isEmpty()) return@observe
+                redrawMap(eventData.data)
+
+                if (viewModel.firstLoad) {
+                    viewModel.firstLoad = false
+
+                    markers.entries.firstOrNull()?.let {
+                        googleMap.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                it.value.position, 5f
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        markerCoroutine?.cancel()
-        markerCoroutine = null
-
         val event =
             markers.filter { it.value == marker }.map { it.key }.firstOrNull() ?: return false
 
@@ -266,11 +311,22 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         return false
     }
 
+    private fun moveToMarkerAt(position: LatLng) {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        googleMap.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                position, 7.5f
+            ), 500, null
+        )
+    }
+
     private fun eventSelected(event: Event, noAnimation: Boolean = false) {
+        eventDeselected(false)
         viewModel.selectedEvent = event.id
 
         markers.forEach { it.value.alpha = 0.7f }
         markers[event]?.alpha = 1f
+        markers[event]?.isVisible = true
 
         mediaLoading = false
         lastLoadedSound = null
@@ -292,12 +348,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
             }
 
             findViewById<ImageButton>(R.id.targetButton).setOnClickListener {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                googleMap.animateCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                        markers[event]!!.position, 7.5f
-                    ), 500, null
-                )
+                moveToMarkerAt(markers[event]!!.position)
             }
 
             with(binding.eventInfoLayout) {
@@ -317,21 +368,17 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                 var eventStatus = event.status
 
                 eventStatusConstraintLayout.setOnClickListener {
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("Select new status")
+                    MaterialAlertDialogBuilder(requireContext()).setTitle("Select new status")
                         .setSingleChoiceItems(
                             EventStatus.getValues().toTypedArray(),
                             EventStatus.indexOfNumber(eventStatus)
                         ) { dialog, index ->
 
-                        }
-                        .setPositiveButton("Confirm") { dialog, _ ->
+                        }.setPositiveButton("Confirm") { dialog, _ ->
                             val selection = (dialog as AlertDialog).listView.checkedItemPosition
                             eventStatus = EventStatus.numberAtIndex(selection)
                             statusValue.text = "Status: ${EventStatus.of(eventStatus) ?: "Unknown"}"
-                        }
-                        .setNegativeButton("Cancel") { _, _ -> }
-                        .show()
+                        }.setNegativeButton("Cancel") { _, _ -> }.show()
                 }
             }
 
@@ -381,21 +428,35 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
         soundPlayButton.setIconResource(R.drawable.drawable_play_arrow)
     }
 
-    private fun eventDeselected() {
+    private fun eventDeselected(changeBottomSheet: Boolean = true) {
         markerCoroutine?.cancel()
         markerCoroutine = null
 
+        val oldSelected = viewModel.selectedEvent
         viewModel.selectedEvent = null
 
-        markers.forEach { it.value.alpha = 1f }
+        if (oldSelected != null) {
+            val list = eventDataViewModel.data.value?.data
+            if (list != null) {
+                val event = list.firstOrNull { it.id == oldSelected }
+                val sublist = list.subList(0, list.size.coerceAtMost(16))
+                if (!sublist.contains(event)) {
+                    markers[event]?.isVisible = false
+                }
+            }
+        }
 
-        binding.eventInfoLayoutFrameLayout.visibility = GONE
-        binding.tableFragmentHolderFrameLayout.visibility = VISIBLE
+        if (changeBottomSheet) {
+            markers.forEach { it.value.alpha = 1f }
 
-        TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
-        bottomSheetBehavior.peekHeight = defaultBottomSheetPeekHeight
+            binding.eventInfoLayoutFrameLayout.visibility = GONE
+            binding.tableFragmentHolderFrameLayout.visibility = VISIBLE
 
-        googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
+            TransitionManager.beginDelayedTransition(binding.bottomSheetMap)
+            bottomSheetBehavior.peekHeight = defaultBottomSheetPeekHeight
+
+            googleMap.setPadding(0, 0, 0, bottomSheetBehavior.peekHeight)
+        }
     }
 
     override fun onDestroyView() {

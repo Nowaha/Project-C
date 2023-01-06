@@ -12,19 +12,7 @@ import xyz.nowaha.chengetawildlife.data.repos.Repositories
 
 class EventMapViewModel : ViewModel() {
 
-    val mapEvents = MutableLiveData<List<Event>>(arrayListOf())
     var selectedEvent: Int? = null
-
-    @SuppressLint("NullSafeMutableLiveData")
-    suspend fun loadEvents(context: Context): RepoResponse.ResponseType =
-        withContext(Dispatchers.IO) {
-            val response = Repositories.getEvents(context, 16, 0)
-
-            if (response.responseType == RepoResponse.ResponseType.SUCCESS) {
-                mapEvents.postValue(response.result)
-            }
-
-            return@withContext response.responseType
-        }
+    var firstLoad = true
 
 }

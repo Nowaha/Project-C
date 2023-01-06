@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import xyz.nowaha.chengetawildlife.MainActivity
@@ -21,6 +23,9 @@ import xyz.nowaha.chengetawildlife.data.SessionManager
 import xyz.nowaha.chengetawildlife.data.repos.RepoResponse
 import xyz.nowaha.chengetawildlife.data.repos.Repositories
 import xyz.nowaha.chengetawildlife.databinding.FragmentRecentEventsListBinding
+import xyz.nowaha.chengetawildlife.ui.EventDataViewModel
+import xyz.nowaha.chengetawildlife.ui.EventSelectionPipeViewModel
+import xyz.nowaha.chengetawildlife.ui.map.EventMapViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,6 +33,10 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
 
     lateinit var recyclerView: RecyclerView
     lateinit var adapter: RecentEventsListAdapter
+
+    private val eventDataViewModel: EventDataViewModel by navGraphViewModels(R.id.nav_graph_main)
+    val eventSelectionPipeViewModel: EventSelectionPipeViewModel by navGraphViewModels(R.id.nav_graph_main)
+
     var data: ArrayList<RecentEventsListDataModel> = ArrayList()
     var filteredData: ArrayList<RecentEventsListDataModel> = ArrayList()
 
@@ -41,21 +50,18 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
         return binding.root
     }
 
-    val updateInterval = 1000 * 30
-    var lastUpdate = System.currentTimeMillis()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView = view.findViewById(R.id.tableRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         this.adapter =
-            RecentEventsListAdapter(requireActivity().applicationContext, data, filteredData)
+            RecentEventsListAdapter(requireActivity().applicationContext, this, data, filteredData)
         recyclerView.adapter = this.adapter
 
         binding.refreshButton.setOnClickListener {
             if (binding.loadingCircle.visibility != View.GONE) return@setOnClickListener
-            loadNewData()
+            eventDataViewModel.update()
         }
 
         registerFilterListeners()
@@ -64,13 +70,54 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
             binding.refreshButton.isEnabled = !it
         }
 
-        loadNewData()
+        eventDataViewModel.state.observe(viewLifecycleOwner) {
+            when (it) {
+                EventDataViewModel.EventDataState.Loading -> {
+                    binding.loadingCircle.visibility = View.VISIBLE
+                    binding.refreshButton.imageAlpha = 0
+                }
+                EventDataViewModel.EventDataState.Idle -> {
+                    binding.loadingCircle.visibility = View.GONE
+                    binding.refreshButton.imageAlpha = 255
+                }
+                else -> {}
+            }
+        }
 
-        lifecycleScope.launch {
-            while (true) {
-                delay(5000)
-                if (System.currentTimeMillis() - lastUpdate >= updateInterval) {
-                    loadNewData()
+        val format = SimpleDateFormat("HH:mm:ss, dd MMM", Locale.ENGLISH)
+        eventDataViewModel.data.observe(viewLifecycleOwner) { eventData ->
+            when (eventData.lastResponse) {
+                RepoResponse.ResponseType.SUCCESS -> {
+                    data.clear()
+                    filteredData.clear()
+                    addTableRows(eventData.data.map {
+                        RecentEventsListDataModel(
+                            format.format(it.date),
+                            it.soundLabel,
+                            it.probability.toString() + "%",
+                            it.statusString() ?: "Unknown",
+                            it.date,
+                            it.id
+                        )
+                    })
+                }
+                RepoResponse.ResponseType.UNAUTHORIZED -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Your session expired. Please log in again.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    lifecycleScope.launch {
+                        SessionManager.logOut()
+                    }
+                }
+                else -> {
+                    Snackbar.make(
+                        requireContext(),
+                        requireView(),
+                        "Failed to connect to server.",
+                        Snackbar.LENGTH_LONG
+                    ).setAction("Retry") { eventDataViewModel.update() }.show()
                 }
             }
         }
@@ -107,61 +154,6 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
             adapter.filteredData = data.filter { !filters.contains(it.text2Value.lowercase()) }
         }
         adapter.notifyDataSetChanged()
-    }
-
-    private fun loadNewData() {
-        lastUpdate = System.currentTimeMillis()
-
-        binding.loadingCircle.visibility = View.VISIBLE
-        binding.refreshButton.imageAlpha = 0
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            val format = SimpleDateFormat("HH:mm:ss, dd MMM", Locale.ENGLISH)
-            val repoResponse = Repositories.getEvents(requireContext(), 100, 0)
-            when (repoResponse.responseType) {
-                RepoResponse.ResponseType.SUCCESS -> withContext(Dispatchers.Main) {
-                    data.clear()
-                    filteredData.clear()
-                    addTableRows(repoResponse.result.map {
-                        RecentEventsListDataModel(
-                            format.format(it.date),
-                            it.soundLabel,
-                            it.probability.toString() + "%",
-                            it.statusString() ?: "Unknown",
-                            it.date
-                        )
-                    })
-                }
-                RepoResponse.ResponseType.UNAUTHORIZED -> {
-                    delay(250)
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Your session expired. Please log in again.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    SessionManager.logOut()
-                }
-                else -> {
-                    delay(250)
-                    Snackbar.make(
-                        requireContext(),
-                        requireView(),
-                        "Failed to connect to server.",
-                        Snackbar.LENGTH_LONG
-                    )
-                        .setAction("Retry") {
-                            loadNewData()
-                        }.show()
-                }
-            }
-
-            withContext(Dispatchers.Main) {
-                binding.loadingCircle.visibility = View.GONE
-                binding.refreshButton.imageAlpha = 255
-            }
-        }
     }
 
     private fun addTableRows(viewModels: List<RecentEventsListDataModel>) {

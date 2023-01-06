@@ -5,5 +5,6 @@ class RecentEventsListDataModel(
     var text2Value: String,
     var text3Value: String,
     var text4Value: String,
-    var date: Long
+    var date: Long,
+    val eventId: Int
 )
