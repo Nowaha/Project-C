@@ -28,11 +28,14 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import xyz.nowaha.chengetawildlife.MainActivity
 import xyz.nowaha.chengetawildlife.R
 import xyz.nowaha.chengetawildlife.data.SessionManager
+import xyz.nowaha.chengetawildlife.data.http.APIClient
 import xyz.nowaha.chengetawildlife.data.pojo.Event
+import xyz.nowaha.chengetawildlife.data.pojo.EventEditTaskRequest
 import xyz.nowaha.chengetawildlife.data.pojo.EventStatus
 import xyz.nowaha.chengetawildlife.data.repos.RepoResponse
 import xyz.nowaha.chengetawildlife.databinding.FragmentEventMapBinding
@@ -101,8 +104,9 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
 
         eventSelectionPipeViewModel.eventSelected.observe(viewLifecycleOwner) {
             if (it >= 0) {
-                if (viewModel.selectedEvent == it) return@observe
-                val event = eventDataViewModel.data.value?.data?.firstOrNull { e -> e.id == it } ?: return@observe
+                if (viewModel.selectedEvent == it || viewModel.selectedEvent != null) return@observe
+                val event = eventDataViewModel.data.value?.data?.firstOrNull { e -> e.id == it }
+                    ?: return@observe
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 eventSelected(event, true)
                 moveToMarkerAt(markers[event]!!.position)
@@ -372,12 +376,34 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                         .setSingleChoiceItems(
                             EventStatus.getValues().toTypedArray(),
                             EventStatus.indexOfNumber(eventStatus)
-                        ) { dialog, index ->
-
-                        }.setPositiveButton("Confirm") { dialog, _ ->
+                        ) { _, _ -> }.setPositiveButton("Confirm") { dialog, _ ->
                             val selection = (dialog as AlertDialog).listView.checkedItemPosition
                             eventStatus = EventStatus.numberAtIndex(selection)
+
+                            val oldStatus = statusValue.text
                             statusValue.text = "Status: ${EventStatus.of(eventStatus) ?: "Unknown"}"
+
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                val req = APIClient.getAPIInterface().attemptEditEventStatus(
+                                    EventEditTaskRequest(
+                                        event.id,
+                                        eventStatus
+                                    )
+                                ).execute()
+                                if (!req.isSuccessful) {
+                                    withContext(Dispatchers.Main) {
+                                        statusValue.text = oldStatus
+                                        Snackbar.make(
+                                            requireContext(),
+                                            requireView(),
+                                            "There was an error changing the event status. Please try again.",
+                                            Snackbar.LENGTH_LONG
+                                        )
+                                    }
+                                } else {
+                                    eventDataViewModel.update()
+                                }
+                            }
                         }.setNegativeButton("Cancel") { _, _ -> }.show()
                 }
             }
@@ -431,6 +457,8 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
     private fun eventDeselected(changeBottomSheet: Boolean = true) {
         markerCoroutine?.cancel()
         markerCoroutine = null
+
+        eventSelectionPipeViewModel.eventSelected.postValue(-1)
 
         val oldSelected = viewModel.selectedEvent
         viewModel.selectedEvent = null
