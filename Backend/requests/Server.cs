@@ -47,7 +47,6 @@ namespace ChengetaBackend
         public static void Stop()
         {
             run = false;
-            var w = new byte[0];
 
             Console.ForegroundColor = ConsoleColor.Red;
             Program.log(LOG_TAG, "Shutting down socket...");
