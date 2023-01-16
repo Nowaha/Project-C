@@ -37,4 +37,8 @@ class RecentEventsListAdapter(
         return filteredData.size
     }
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
 }

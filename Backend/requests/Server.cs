@@ -82,19 +82,17 @@ namespace ChengetaBackend
 
                     string data;
 
-                    // A loop to read any and all incoming data until there is no more left to read (.Available)
-                    try
-                    {
-                        var buffer = new byte[5012];
-                        int receivedData = currentConnection.Receive(buffer);
-                        data = Encoding.ASCII.GetString(buffer, 0, receivedData);
-                    }
-                    catch (Exception)
-                    {
-                        currentConnection.Disconnect(false);
-                        currentConnection.Close();
-                        continue;
-                    }
+                // A loop to read any and all incoming data until there is no more left to read (.Available)
+                try
+                {
+                    var buffer = new byte[5012];
+                    int receivedData = currentConnection.Receive(buffer);
+                    data = Encoding.ASCII.GetString(buffer, 0, receivedData);
+                } catch (Exception) {
+                    currentConnection.Disconnect(false);
+                    currentConnection.Close();
+                    continue;
+                }
 
                     // If there is no data, we can not do anything with it, so we close it here.
                     if (data.Length == 0 || data.Trim().Length == 0)

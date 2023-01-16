@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ChengetaWildlife</string>
+    <string name="app_name">Chengeta APU</string>
     <string name="table_title">Recent Events</string>
     <string name="event_data_title">Event at %1$s</string>
     <string name="event_data_date_label">Exact date</string>
