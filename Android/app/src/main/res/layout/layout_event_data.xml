@@ -42,7 +42,7 @@
             android:id="@+id/statusLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Event Status"
+            android:text="@string/event_status"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"

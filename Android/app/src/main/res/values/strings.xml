@@ -3,10 +3,10 @@
     <string name="table_title">Recent Events</string>
     <string name="event_data_title">Event at %1$s</string>
     <string name="event_data_date_label">Exact date</string>
-    <string name="event_data_sound_label">Detected Sound</string>
+    <string name="event_data_sound_label">Detected sound</string>
     <string name="event_data_certainty_label">Certainty</string>
     <string name="event_data_certainty_value">%1$d%% certain</string>
-    <string name="event_data_coordinates_label">Event Coordinates</string>
+    <string name="event_data_coordinates_label">Event coordinates</string>
     <string name="event_data_listen_label">Listen to sound</string>
     <string name="event_data_coordinates_longitude_value">Longitude: %1$f</string>
     <string name="event_data_coordinates_latitude_value">Latitude: %1$f</string>
@@ -44,6 +44,7 @@
     <string name="enter_name_hint_firstName">First Name</string>
     <string name="enter_name_hint_lastName">Surname</string>
     <string name="enter_name_submit">Submit</string>
+    <string name="event_status">Event status</string>
 
 
 </resources>
