@@ -17,7 +17,7 @@ namespace ChengetaBackend
             if (args.Contains("--test") || args.Contains("-t")) {
                 runTests();
             } else {
-                Run().Wait();
+                Run();
             }
         }
 
@@ -45,7 +45,7 @@ namespace ChengetaBackend
             }
         }
 
-        public static async Task Run()
+        public static void Run()
         {
             ChengetaBackend.MQTTClient client = new MQTTClient(mqttFactory);
             Parallel.Invoke(async () => await Server.Run(), async () => await client.Connect());
