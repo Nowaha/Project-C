@@ -57,6 +57,7 @@ class RecentEventsListFragment : Fragment(R.layout.fragment_recent_events_list) 
 
         this.adapter =
             RecentEventsListAdapter(requireActivity().applicationContext, this, data, filteredData)
+        adapter.setHasStableIds(true)
         recyclerView.adapter = this.adapter
 
         binding.refreshButton.setOnClickListener {

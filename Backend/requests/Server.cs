@@ -82,7 +82,6 @@ namespace ChengetaBackend
 
                 string data;
 
-                // A loop to read any and all incoming data until there is no more left to read (.Available)
                 try
                 {
                     var buffer = new byte[5012];
