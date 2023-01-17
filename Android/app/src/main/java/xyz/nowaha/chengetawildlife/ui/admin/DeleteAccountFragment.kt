@@ -12,7 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import xyz.nowaha.chengetawildlife.MainActivity
+import xyz.nowaha.chengetawildlife.data.SessionManager
 import xyz.nowaha.chengetawildlife.databinding.FragmentAccountDeleteBinding
 
 class DeleteAccountFragment : Fragment() {
@@ -46,12 +48,25 @@ class DeleteAccountFragment : Fragment() {
 
             binding.usernameDeleteTextInputLayout.error = null
 
-            var validAccountDetails = true
             if (binding.usernameDeleteTextInputEditText.text.toString().isBlank()) {
                 binding.usernameDeleteTextInputLayout.error = "Please enter a username."
-                validAccountDetails = false
+                return@setOnClickListener
             }
-            if (!validAccountDetails) return@setOnClickListener
+            if (binding.usernameDeleteTextInputEditText.text.toString().lowercase() == "admin") {
+                binding.usernameDeleteTextInputLayout.error = "The admin account can not be deleted."
+                return@setOnClickListener
+            }
+
+            var usernameCurrentUser: String
+            runBlocking {
+                usernameCurrentUser = (SessionManager.getCurrentSession()?.username ?: "-")
+            }
+
+            if (binding.usernameDeleteTextInputEditText.text.toString().lowercase() == usernameCurrentUser.lowercase()) {
+                binding.usernameDeleteTextInputLayout.error = "You can not delete your own account."
+                return@setOnClickListener
+            }
+
             lifecycleScope.launch(Dispatchers.IO) {
                 viewModel.deleteAccount()
             }

@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import xyz.nowaha.chengetawildlife.BuildConfig
 
 object APIClient {
 
@@ -15,13 +16,18 @@ object APIClient {
     fun getClient(): Retrofit {
         if (this::retrofit.isInitialized) return retrofit
 
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client = OkHttpClient.Builder().addInterceptor(interceptor).addInterceptor(BearerAuthInterceptor()).retryOnConnectionFailure(true).build()
+        var clientBuilder = OkHttpClient.Builder()
+        if (BuildConfig.DEBUG) {
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+            clientBuilder = clientBuilder.addInterceptor(interceptor)
+        }
+
+        clientBuilder = clientBuilder.addInterceptor(BearerAuthInterceptor()).retryOnConnectionFailure(true)
         retrofit = Retrofit.Builder()
             .baseUrl(endpointURL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
+            .client(clientBuilder.build())
             .build()
 
         return retrofit
