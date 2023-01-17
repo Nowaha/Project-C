@@ -26,7 +26,7 @@ class CreateAccountViewModel : ViewModel() {
         if (createAccountState.value !is CreateAccountState.WaitingForUserInput) return@withContext
         createAccountState.postValue(CreateAccountState.Loading)
 
-        delay(500)
+        delay(100)
 
         var createAccountResponse: Response<AccountCreationResponse>? = null
         try {

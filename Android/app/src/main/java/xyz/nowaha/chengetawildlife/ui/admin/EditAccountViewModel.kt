@@ -22,7 +22,7 @@ class EditAccountViewModel : ViewModel() {
         if (editAccountState.value !is EditAccountState.WaitingForUserInput) return@withContext
         editAccountState.postValue(EditAccountState.Loading)
 
-        delay(500)
+        delay(100)
 
         var editAccountResponse: Response<AccountEditResponse>? = null
         try {

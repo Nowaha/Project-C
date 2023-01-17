@@ -12,9 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -46,8 +44,6 @@ import xyz.nowaha.chengetawildlife.util.extensions.dp
 import xyz.nowaha.chengetawildlife.util.extensions.iconBasedOnType
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Collections.min
-import kotlin.collections.LinkedHashMap
 
 
 @Suppress("DEPRECATION")
@@ -436,7 +432,7 @@ class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClick
                                 event.date, System.currentTimeMillis()
                             )
                         })"
-                    delay(500)
+                    delay(250)
                 }
             }
         }
