@@ -27,7 +27,7 @@ class AccountOverviewViewModel : ViewModel() {
         searchForAccountState.postValue(SearchForAccountState.Loading)
         data.postValue(listOf())
 
-        delay(500)
+        delay(100)
 
         var searchForAccountResponse: Response<AccountListResponse>? = null
         try {

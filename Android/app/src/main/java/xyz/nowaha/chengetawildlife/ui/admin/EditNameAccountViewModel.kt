@@ -22,7 +22,7 @@ class EditNameAccountViewModel : ViewModel() {
         if (editNameAccountState.value !is EditNameAccountState.WaitingForUserInput) return@withContext
         editNameAccountState.postValue(EditNameAccountState.Loading)
 
-        delay(500)
+        delay(100)
 
         var editNameAccountResponse: Response<AccountEditNameResponse>? = null
         try {

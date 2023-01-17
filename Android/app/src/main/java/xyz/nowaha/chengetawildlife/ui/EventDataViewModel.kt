@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import xyz.nowaha.chengetawildlife.data.pojo.Event
 import xyz.nowaha.chengetawildlife.data.repos.RepoResponse
 import xyz.nowaha.chengetawildlife.data.repos.Repositories
@@ -41,7 +40,7 @@ class EventDataViewModel(application: Application) : AndroidViewModel(applicatio
         val repoResponse = Repositories.getEvents(getApplication<Application>(), 100, 0)
         data.postValue(EventData(repoResponse.responseType, repoResponse.result))
         state.postValue(EventDataState.Done)
-        delay(500)
+        delay(100)
         state.postValue(EventDataState.Idle)
     }
 

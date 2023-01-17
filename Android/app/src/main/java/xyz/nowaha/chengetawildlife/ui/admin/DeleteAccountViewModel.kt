@@ -20,7 +20,7 @@ class DeleteAccountViewModel : ViewModel() {
         if (deleteAccountState.value !is DeleteAccountState.WaitingForUserInput) return@withContext
         deleteAccountState.postValue(DeleteAccountState.Loading)
 
-        delay(500)
+        delay(100)
 
         var deleteAccountResponse: Response<AccountDeleteResponse>? = null
         try {

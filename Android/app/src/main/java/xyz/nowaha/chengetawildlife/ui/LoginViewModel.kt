@@ -22,7 +22,7 @@ class LoginViewModel : ViewModel() {
         if (loginState.value !is LoginState.WaitingForUserInput) return@withContext
         loginState.postValue(LoginState.Loading)
 
-        delay(500)
+        delay(100)
 
         var loginResponse: Response<LoginResponse>? = null
         try {
